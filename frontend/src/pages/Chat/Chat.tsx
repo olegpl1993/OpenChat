@@ -44,8 +44,8 @@ export function Chat() {
         </div>
 
         <div className={styles.messageBox}>
-          {messages.map((message) => (
-            <div>
+          {messages.map((message, index) => (
+            <div key={index}>
               {message.name}: {message.message}
             </div>
           ))}
