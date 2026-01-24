@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 4000;
 
-// HTTP server без Express
+// HTTP server
 const server = createServer((req, res) => {
   try {
     res.setHeader("Content-Type", "text/html");

@@ -6,13 +6,9 @@
   <body>
     <script src="/socket.io/socket.io.js"></script>
     <div style="text-align: center">
-      <input
-        type="text"
-        id="nameInput"
-        placeholder="name"
-        style="margin-bottom: 10px"
-      /><br />
-      <input type="text" id="chatInput" placeholder="message" /><br />
+      <input type="text" id="nameInput" placeholder="name" style="margin-bottom: 10px" /><br />
+      <input type="text" id="chatInput" placeholder="message" style="margin-bottom: 10px" /><br />
+      <button id="button" onclick="socket.emit('ping');">Push</button>
       <div id="messages"></div>
     </div>
 
@@ -23,21 +19,25 @@
 
       const nameInput = document.getElementById("nameInput");
       const chatInput = document.getElementById("chatInput");
+      const button = document.getElementById("button");
 
+      button.onclick = () => pushMessage();
       chatInput.onkeypress = (event) => {
-        if (event.key === "Enter") {
-          const name = nameInput.value || "Anonymous";
-          const messageText = chatInput.value;
-
-          socket.emit("chat message", { name, message: messageText }, () => {
-            const message = document.createElement("p");
-            message.innerHTML = `${name}: ${messageText}`;
-            message.style.color = "blue";
-            document.getElementById("messages").appendChild(message);
-            chatInput.value = "";
-          });
-        }
+        if (event.key === "Enter") pushMessage();
       };
+
+      function pushMessage() {
+        const name = nameInput.value || "Anonymous";
+        const messageText = chatInput.value;
+
+        socket.emit("chat message", { name, message: messageText }, () => {
+          const message = document.createElement("p");
+          message.innerHTML = `${name}: ${messageText}`;
+          message.style.color = "blue";
+          document.getElementById("messages").appendChild(message);
+          chatInput.value = "";
+        });
+      }
 
       socket.on("chat message", (messageObject) => {
         const message = document.createElement("p");
