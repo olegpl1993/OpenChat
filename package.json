@@ -10,16 +10,12 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
-    "express": "^4.21.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
     "@types/node": "^20.3.2",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
