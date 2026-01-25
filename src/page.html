@@ -4,46 +4,79 @@
     <title>Open Chat</title>
   </head>
   <body>
-    <script src="/socket.io/socket.io.js"></script>
-    <div style="text-align: center">
-      <input type="text" id="nameInput" placeholder="name" style="margin-bottom: 10px" /><br />
-      <input type="text" id="chatInput" placeholder="message" style="margin-bottom: 10px" /><br />
-      <button id="button" onclick="socket.emit('ping');">Push</button>
-      <div id="messages"></div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
+      <div
+        id="messages"
+        style="
+          text-align: left;
+          border: 1px solid black;
+          padding: 10px;
+          height: 300px;
+          width: 400px;
+          overflow-y: scroll;
+        "
+      ></div>
+      <input id="nameInput" placeholder="name" />
+      <input id="chatInput" placeholder="message" />
+      <button id="button">Push</button>
     </div>
 
     <script>
-      const socket = io();
-      socket.emit("ping", () => console.log("ping"));
-      socket.on("pong", () => console.log("pong"));
+      const socket = new WebSocket(`ws://${location.host}`);
+
+      socket.onopen = () => {
+        socket.send(JSON.stringify({ type: "ping" }));
+      };
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "pong") {
+          console.log("pong");
+          return;
+        }
+
+        if (data.type === "chat") {
+          addMessage(data.name, data.message);
+        }
+      };
 
       const nameInput = document.getElementById("nameInput");
       const chatInput = document.getElementById("chatInput");
       const button = document.getElementById("button");
 
-      button.onclick = () => pushMessage();
+      button.onclick = sendMessage;
       chatInput.onkeypress = (event) => {
-        if (event.key === "Enter") pushMessage();
+        if (event.key === "Enter") {
+          sendMessage();
+        }
       };
 
-      function pushMessage() {
+      function sendMessage() {
         const name = nameInput.value || "Anonymous";
-        const messageText = chatInput.value;
+        const message = chatInput.value;
 
-        socket.emit("chat message", { name, message: messageText }, () => {
-          const message = document.createElement("p");
-          message.innerHTML = `${name}: ${messageText}`;
-          message.style.color = "blue";
-          document.getElementById("messages").appendChild(message);
-          chatInput.value = "";
-        });
+        socket.send(
+          JSON.stringify({
+            type: "chat",
+            name,
+            message,
+          })
+        );
+
+        addMessage(name, message, "blue");
+        chatInput.value = "";
       }
 
-      socket.on("chat message", (messageObject) => {
-        const message = document.createElement("p");
-        message.innerHTML = `${messageObject.name}: ${messageObject.message}`;
-        document.getElementById("messages").appendChild(message);
-      });
+      function addMessage(name, text, color = "black") {
+        const p = document.createElement("p");
+        p.textContent = `${name}: ${text}`;
+        p.style.color = color;
+        document.getElementById("messages").appendChild(p);
+
+        const messages = document.getElementById("messages");
+        messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+      }
     </script>
   </body>
 </html>

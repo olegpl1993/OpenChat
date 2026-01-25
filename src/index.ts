@@ -1,45 +1,47 @@
 import fs from "fs";
-import { createServer } from "node:http";
+import http from "node:http";
 import path from "path";
-import { Server } from "socket.io";
-
+import { WebSocketServer } from "ws";
 import { fileURLToPath } from "url";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 4000;
 
-// HTTP server
-const server = createServer((req, res) => {
-  try {
-    res.setHeader("Content-Type", "text/html");
-    res.end(fs.readFileSync(path.join(__dirname, "./page.html"), "utf8"));
-  } catch (error) {
-    res.end(`Error: ${error}`);
-  }
+// HTTP server (HTML)
+const server = http.createServer((req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.end(fs.readFileSync(path.join(__dirname, "./page.html"), "utf8"));
 });
 
-// Socket.IO
-const io = new Server(server, {
-  cors: {
-    origin: ["https://chat.marker.cx.ua", "http://localhost:5173"],
-  },
-});
+// WebSocket server
+const wss = new WebSocketServer({ server });
 
-io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
+wss.on("connection", (ws) => {
+  console.log("User connected");
 
-  socket.on("ping", () => {
-    socket.emit("pong");
+  ws.on("message", (data) => {
+    const msg = JSON.parse(data);
+
+    // ping / pong
+    if (msg.type === "ping") {
+      ws.send(JSON.stringify({ type: "pong" }));
+      return;
+    }
+
+    // chat message
+    if (msg.type === "chat") {
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === 1) {
+          client.send(JSON.stringify(msg));
+        }
+      });
+    }
   });
 
-  socket.on("chat message", (msg, callback) => {
-    socket.broadcast.emit("chat message", msg);
-    callback?.();
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
+  ws.on("close", () => {
+    console.log("User disconnected");
   });
 });
 
