@@ -6,14 +6,23 @@
   </head>
   <body>
     <div class="container">
-      <div id="messages" class="messages"></div>
-
-      <div class="inputWrapper">
-        <div class="inputBox">
-          <input id="nameInput" class="input" placeholder="name" />
-          <input id="chatInput" class="input" placeholder="message" />
+      <div class="wrapper">
+        <div class="messageBox">
+          <div id="messages" class="messages"></div>
         </div>
-        <button id="button" class="buttonSend">Send</button>
+
+        <div class="inputWrapper">
+          <div class="inputBox">
+            <div class="inputContainer">
+              <input id="nameInput" class="input" placeholder="name" />
+              <input id="keyInput" class="input" placeholder="secret key" />
+            </div>
+            <div class="inputContainer">
+              <input id="chatInput" class="input" placeholder="message" />
+            </div>
+          </div>
+          <button id="button" class="buttonSend">Send</button>
+        </div>
       </div>
     </div>
 
