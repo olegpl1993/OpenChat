@@ -11,6 +11,12 @@ const PORT = process.env.PORT || 4000;
 
 // HTTP server (HTML)
 const server = http.createServer((req, res) => {
+  if (req.url === "/client.js") {
+    res.setHeader("Content-Type", "application/javascript");
+    res.end(fs.readFileSync(path.join(__dirname, "client.js"), "utf8"));
+    return;
+  }
+
   res.setHeader("Content-Type", "text/html");
   res.end(fs.readFileSync(path.join(__dirname, "./page.html"), "utf8"));
 });
