@@ -1,12 +1,13 @@
 import fs from "fs";
 import http from "node:http";
+import { fileURLToPath } from "node:url";
 import path from "path";
-import { fileURLToPath } from "url";
 import { WebSocketServer } from "ws";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// Для dev (ESM) и prod (CJS)
+const __filenameCJS =
+  typeof __filename !== "undefined" ? __filename : fileURLToPath(import.meta.url);
+const __dirnameCJS = typeof __dirname !== "undefined" ? __dirname : path.dirname(__filenameCJS);
 const PORT = process.env.PORT || 4000;
 
 // HTTP server
@@ -15,11 +16,11 @@ const server = http.createServer((req, res) => {
   let contentType: string;
 
   if (req.url === "/" || req.url === "/index.html") {
-    filePath = path.join(__dirname, "client/page.html");
+    filePath = path.join(__dirnameCJS, "client/page.html");
     contentType = "text/html";
   } else {
     // Отдаём любые файлы из корня (css, js и др.)
-    filePath = path.join(__dirname, req.url!);
+    filePath = path.join(__dirnameCJS, req.url!);
     const ext = path.extname(filePath);
 
     switch (ext) {
