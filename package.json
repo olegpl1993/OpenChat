@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "mkdir dist && mkdir dist\\client && rmdir /s /q dist && tsc && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
+    "build": "tsc && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
     "dev": "tsx watch src/index.ts",
     "prod": "node dist/index.js",
     "start": "node index.js"
