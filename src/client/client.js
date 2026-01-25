@@ -1,5 +1,5 @@
-const socket = new WebSocket(`ws://${location.host}`);
-
+const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+const socket = new WebSocket(`${protocol}://${location.host}`);
 socket.onopen = () => {
   socket.send(JSON.stringify({ type: "ping" }));
 };
