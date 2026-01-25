@@ -1,8 +1,8 @@
 import fs from "fs";
 import http from "node:http";
 import path from "path";
-import { WebSocketServer } from "ws";
 import { fileURLToPath } from "url";
+import { WebSocketServer } from "ws";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,8 +21,8 @@ const wss = new WebSocketServer({ server });
 wss.on("connection", (ws) => {
   console.log("User connected");
 
-  ws.on("message", (data) => {
-    const msg = JSON.parse(data);
+  ws.on("message", (data: Buffer) => {
+    const msg = JSON.parse(data.toString());
 
     // ping / pong
     if (msg.type === "ping") {
