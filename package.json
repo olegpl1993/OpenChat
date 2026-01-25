@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/index.cjs && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
     "dev": "tsx watch src/index.ts",
-    "prod": "node dist/index.js",
-    "start": "node index.js"
+    "prod": "node dist/index.cjs",
+    "start": "node index.cjs"
   },
   "dependencies": {
     "ws": "^8.19.0"
@@ -16,10 +16,10 @@
     "@eslint/js": "^9.9.0",
     "@types/node": "^20.3.2",
     "@types/ws": "^8.18.1",
+    "esbuild": "^0.27.2",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.9.0",
     "prettier": "^3.3.3",
     "tsx": "^4.19.1",
     "typescript": "^5.1.5",
