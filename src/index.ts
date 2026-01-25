@@ -15,7 +15,7 @@ const server = http.createServer((req, res) => {
   let contentType: string;
 
   if (req.url === "/" || req.url === "/index.html") {
-    filePath = path.join(__dirname, "page.html");
+    filePath = path.join(__dirname, "client/page.html");
     contentType = "text/html";
   } else {
     // Отдаём любые файлы из корня (css, js и др.)
