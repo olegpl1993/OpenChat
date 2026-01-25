@@ -9,16 +9,44 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 4000;
 
-// HTTP server (HTML)
+// HTTP server
 const server = http.createServer((req, res) => {
-  if (req.url === "/client.js") {
-    res.setHeader("Content-Type", "application/javascript");
-    res.end(fs.readFileSync(path.join(__dirname, "client.js"), "utf8"));
-    return;
+  let filePath: string;
+  let contentType: string;
+
+  if (req.url === "/" || req.url === "/index.html") {
+    filePath = path.join(__dirname, "page.html");
+    contentType = "text/html";
+  } else {
+    // Отдаём любые файлы из корня (css, js и др.)
+    filePath = path.join(__dirname, req.url!);
+    const ext = path.extname(filePath);
+
+    switch (ext) {
+      case ".css":
+        contentType = "text/css";
+        break;
+      case ".js":
+        contentType = "application/javascript";
+        break;
+      case ".html":
+        contentType = "text/html";
+        break;
+      default:
+        contentType = "application/octet-stream";
+    }
   }
 
-  res.setHeader("Content-Type", "text/html");
-  res.end(fs.readFileSync(path.join(__dirname, "./page.html"), "utf8"));
+  // Проверка существования файла
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      res.statusCode = 404;
+      res.end("File not found");
+      return;
+    }
+    res.setHeader("Content-Type", contentType);
+    res.end(data);
+  });
 });
 
 // WebSocket server

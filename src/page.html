@@ -2,23 +2,19 @@
 <html>
   <head>
     <title>Open Chat</title>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px">
-      <div
-        id="messages"
-        style="
-          text-align: left;
-          border: 1px solid black;
-          padding: 10px;
-          height: 300px;
-          width: 400px;
-          overflow-y: scroll;
-        "
-      ></div>
-      <input id="nameInput" placeholder="name" />
-      <input id="chatInput" placeholder="message" />
-      <button id="button">Push</button>
+    <div class="container">
+      <div id="messages" class="messages"></div>
+
+      <div class="inputWrapper">
+        <div class="inputBox">
+          <input id="nameInput" class="input" placeholder="name" />
+          <input id="chatInput" class="input" placeholder="message" />
+        </div>
+        <button id="button" class="buttonSend">Send</button>
+      </div>
     </div>
 
     <script type="module" src="/client.js"></script>
