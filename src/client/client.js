@@ -67,10 +67,13 @@ async function addMessage(name, text) {
 // Восстанавливаем значение при открытии страницы
 window.addEventListener("DOMContentLoaded", () => {
   const savedName = localStorage.getItem("name");
+  const savedKey = localStorage.getItem("key");
+  if (savedKey) keyInput.value = savedKey;
   if (savedName) nameInput.value = savedName;
 });
 
 // Сохраняем значение перед закрытием или обновлением страницы
 window.addEventListener("beforeunload", () => {
   localStorage.setItem("name", nameInput.value);
+  localStorage.setItem("key", keyInput.value);
 });
