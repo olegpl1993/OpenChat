@@ -1,4 +1,6 @@
-const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+import { decrypt, encrypt } from "./crypt.js";
+
+const protocol = location.protocol === "https:" ? "wss" : "ws";
 const socket = new WebSocket(`${protocol}://${location.host}`);
 socket.onopen = () => {
   socket.send(JSON.stringify({ type: "ping" }));
@@ -6,6 +8,7 @@ socket.onopen = () => {
 
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
+  console.log('onmessage', data);
 
   if (data.type === "pong") {
     console.log("pong");
@@ -19,6 +22,7 @@ socket.onmessage = (event) => {
 
 const nameInput = document.getElementById("nameInput");
 const chatInput = document.getElementById("chatInput");
+const keyInput = document.getElementById("keyInput");
 const button = document.getElementById("button");
 
 button.onclick = sendMessage;
@@ -26,9 +30,9 @@ chatInput.onkeypress = (event) => {
   if (event.key === "Enter") sendMessage();
 };
 
-function sendMessage() {
+async function sendMessage() {
   const name = nameInput.value || "Anonymous";
-  const message = chatInput.value;
+  const message = await encrypt(chatInput.value, keyInput.value);
 
   socket.send(
     JSON.stringify({
@@ -42,9 +46,11 @@ function sendMessage() {
   chatInput.value = "";
 }
 
-function addMessage(name, text, color = "black") {
+async function addMessage(name, text, color = "black") {
+  const decryptedText = await decrypt(text, keyInput.value);
   const p = document.createElement("p");
-  p.textContent = `${name}: ${text}`;
+  p.className = "message";
+  p.textContent = `${name}: ${decryptedText}`;
   p.style.color = color;
 
   const messages = document.getElementById("messages");
