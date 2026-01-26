@@ -7,7 +7,7 @@
     "build:bundleServer": "esbuild src/index.ts --bundle --minify --platform=node --format=cjs --target=node22 --outfile=dist/index.cjs",
     "build:bundleClient": "esbuild src/client/client.js --bundle --minify --platform=node --format=esm --target=node22 --outfile=dist/client/client.js",
     "build:assets": "copy .htaccess dist && copy package.json dist && xcopy src\\client\\*.html dist\\client /E /I /Y && xcopy src\\client\\*.css dist\\client /E /I /Y",
-    "build": "npm run build:bundleServer && npm run build:bundleClient && npm run build:assets",
+    "build": "node esbuild.config.mjs",
     "dev": "tsx watch src/index.ts",
     "prod": "node dist/index.cjs",
     "start": "node index.cjs"

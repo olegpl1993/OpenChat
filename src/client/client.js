@@ -1,4 +1,5 @@
 import { decrypt, encrypt } from "./crypt.js";
+import "./styles.css";
 
 const nameInput = document.getElementById("nameInput");
 const chatInput = document.getElementById("chatInput");
