@@ -56,14 +56,33 @@
 }
 
 .message {
+  align-self: flex-end;
   background-color: #fff;
   border-radius: 15px;
   padding: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 75%;
+  max-width: 80%;
+}
+
+.userName {
+  font-weight: bold;
+  margin-bottom: 5px;
   word-wrap: break-word;
   hyphens: auto;
   overflow-wrap: break-word;
+}
+
+.userText {
+  margin: 0;
+  word-wrap: break-word;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.user {
+  align-self: flex-start;
+  background-color: #1e90ff;
+  color: #fff;
 }
 
 .inputWrapper {

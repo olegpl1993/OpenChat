@@ -38,19 +38,29 @@ async function sendMessage() {
     })
   );
 
-  addMessage(name, message, "blue");
+  addMessage(name, message);
   chatInput.value = "";
 }
 
-async function addMessage(name, text, color = "black") {
+async function addMessage(name, text) {
+  const isUser = name === nameInput.value;
   const decryptedText = await decrypt(text, keyInput.value);
-  const p = document.createElement("p");
-  p.className = "message";
-  p.textContent = `${name}: ${decryptedText}`;
-  p.style.color = color;
+
+  const userName = document.createElement("p");
+  userName.className = `userName ${isUser ? "user" : "other"}`;
+  userName.textContent = `${name}`;
+
+  const messageText = document.createElement("p");
+  messageText.className = `messageText ${isUser ? "user" : "other"}`;
+  messageText.textContent = `${decryptedText}`;
+
+  const message = document.createElement("div");
+  message.className = `message ${isUser ? "user" : "other"}`;
+  message.appendChild(userName);
+  message.appendChild(messageText);
 
   const messages = document.getElementById("messages");
-  messages.appendChild(p);
+  messages.appendChild(message);
   messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 }
 
