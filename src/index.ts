@@ -5,9 +5,8 @@ import path from "path";
 import { WebSocketServer } from "ws";
 
 // Для dev (ESM) и prod (CJS)
-const __filenameCJS =
-  typeof __filename !== "undefined" ? __filename : fileURLToPath(import.meta.url);
-const __dirnameCJS = typeof __dirname !== "undefined" ? __dirname : path.dirname(__filenameCJS);
+const __dirnameCJS =
+  typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
 
 // HTTP server

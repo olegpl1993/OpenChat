@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/index.cjs && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
+    "build": "node esbuild.config.mjs",
     "dev": "tsx watch src/index.ts",
     "prod": "node dist/index.cjs",
     "start": "node index.cjs"
