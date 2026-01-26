@@ -109,6 +109,7 @@ h6 {
 @media screen and (max-width: 768px) {
   .messageBox {
     height: calc(100% - 90px);
+    margin-top: 0px;
   }
 }
 
