@@ -53,3 +53,14 @@ async function addMessage(name, text, color = "black") {
   messages.appendChild(p);
   messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 }
+
+// Восстанавливаем значение при открытии страницы
+window.addEventListener("DOMContentLoaded", () => {
+  const savedName = localStorage.getItem("name");
+  if (savedName) nameInput.value = savedName;
+});
+
+// Сохраняем значение перед закрытием или обновлением страницы
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("name", nameInput.value);
+});
