@@ -1,5 +1,7 @@
 import { decrypt, encrypt } from "./crypt.js";
-import "./styles.css";
+
+// Подключаем стили для билда
+typeof process !== "undefined" && import("./styles.css");
 
 const nameInput = document.getElementById("nameInput");
 const chatInput = document.getElementById("chatInput");
