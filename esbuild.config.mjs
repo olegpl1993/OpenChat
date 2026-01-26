@@ -6,11 +6,9 @@ const distRoot = path.resolve("dist");
 const distClient = path.join(distRoot, "client");
 
 const buildAll = async () => {
-  // --- Создаем чистый dist ---
   if (fs.existsSync(distRoot)) fs.rmSync(distRoot, { recursive: true, force: true });
   fs.mkdirSync(distClient, { recursive: true });
 
-  // --- Серверный билд ---
   await build({
     entryPoints: ["src/index.ts"],
     bundle: true,
@@ -22,9 +20,8 @@ const buildAll = async () => {
   });
   console.log("✔ Server built");
 
-  // --- Клиентский билд ---
   const result = await build({
-    entryPoints: ["src/client/client.js"], // JS с импортом CSS
+    entryPoints: ["src/client/client.js"],
     bundle: true,
     minify: true,
     platform: "browser",
@@ -37,12 +34,10 @@ const buildAll = async () => {
     metafile: true,
   });
 
-  // --- Находим JS и CSS с хешем ---
   const outputs = Object.keys(result.metafile.outputs).map((f) => path.basename(f));
   const jsFile = outputs.find((f) => f.startsWith("client") && f.endsWith(".js"));
   const cssFile = outputs.find((f) => f.endsWith(".css"));
 
-  // --- Обновляем HTML ---
   const htmlFiles = fs.readdirSync("src/client").filter((f) => f.endsWith(".html"));
   for (const file of htmlFiles) {
     let html = fs.readFileSync(`src/client/${file}`, "utf8");
@@ -52,7 +47,6 @@ const buildAll = async () => {
   }
   console.log("✔ Client built with hashed assets");
 
-  // --- Копирование статических файлов ---
   fs.copyFileSync(".htaccess", path.join(distRoot, ".htaccess"));
   fs.copyFileSync("package.json", path.join(distRoot, "package.json"));
   console.log("✔ Assets copied");

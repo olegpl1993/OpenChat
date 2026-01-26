@@ -4,12 +4,10 @@ import { fileURLToPath } from "node:url";
 import path from "path";
 import { WebSocketServer } from "ws";
 
-// Для dev (ESM) и prod (CJS)
 const __dirnameCJS =
   typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
 
-// HTTP server
 const server = http.createServer((req, res) => {
   let filePath: string;
   let contentType: string;
@@ -18,7 +16,6 @@ const server = http.createServer((req, res) => {
     filePath = path.join(__dirnameCJS, "client/page.html");
     contentType = "text/html";
   } else {
-    // Отдаём любые файлы из корня (css, js и др.)
     filePath = path.join(__dirnameCJS, req.url!);
     const ext = path.extname(filePath);
 
@@ -37,19 +34,18 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  // Проверка существования файла
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       res.statusCode = 404;
       res.end("File not found");
       return;
     }
+
     res.setHeader("Content-Type", contentType);
     res.end(data);
   });
 });
 
-// WebSocket server
 const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws) => {
@@ -57,14 +53,11 @@ wss.on("connection", (ws) => {
 
   ws.on("message", (data: Buffer) => {
     const msg = JSON.parse(data.toString());
-
-    // ping / pong
     if (msg.type === "ping") {
       ws.send(JSON.stringify({ type: "pong" }));
       return;
     }
 
-    // chat message
     if (msg.type === "chat") {
       wss.clients.forEach((client) => {
         if (client !== ws && client.readyState === 1) {

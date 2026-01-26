@@ -1,6 +1,4 @@
 import { decrypt, encrypt } from "./crypt.js";
-
-// Подключаем стили для билда
 typeof process !== "undefined" && import("./styles.css");
 
 const nameInput = document.getElementById("nameInput");
@@ -27,7 +25,8 @@ chatInput.addEventListener("keydown", (event) => {
 });
 
 async function sendMessage() {
-  const name = nameInput.value || "Anonymous";
+  if (!chatInput.value || !nameInput.value) return;
+  const name = nameInput.value;
   const message = await encrypt(chatInput.value, keyInput.value);
 
   socket.send(
@@ -64,15 +63,12 @@ async function addMessage(name, text) {
   messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
 }
 
-// Восстанавливаем значение при открытии страницы
 window.addEventListener("DOMContentLoaded", () => {
   const savedName = localStorage.getItem("name");
   const savedKey = localStorage.getItem("key");
   if (savedKey) keyInput.value = savedKey;
   if (savedName) nameInput.value = savedName;
 });
-
-// Сохраняем значение перед закрытием или обновлением страницы
 window.addEventListener("beforeunload", () => {
   localStorage.setItem("name", nameInput.value);
   localStorage.setItem("key", keyInput.value);
