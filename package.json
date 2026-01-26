@@ -4,7 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/index.cjs && copy .htaccess dist && copy package.json dist && xcopy src\\client dist\\client /E /I /Y",
+    "build:bundleServer": "esbuild src/index.ts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/index.cjs",
+    "build:bundleClient": "esbuild src/client/client.js --bundle --platform=node --format=esm --target=node22 --outfile=dist/client/client.js",
+    "build:assets": "copy .htaccess dist && copy package.json dist && xcopy src\\client\\*.html dist\\client /E /I /Y && xcopy src\\client\\*.css dist\\client /E /I /Y",
+    "build": "npm run build:bundleServer && npm run build:bundleClient && npm run build:assets",
     "dev": "tsx watch src/index.ts",
     "prod": "node dist/index.cjs",
     "start": "node index.cjs"

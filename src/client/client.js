@@ -1,34 +1,27 @@
 import { decrypt, encrypt } from "./crypt.js";
 
-const protocol = location.protocol === "https:" ? "wss" : "ws";
-const socket = new WebSocket(`${protocol}://${location.host}`);
-socket.onopen = () => {
-  socket.send(JSON.stringify({ type: "ping" }));
-};
-
-socket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  console.log('onmessage', data);
-
-  if (data.type === "pong") {
-    console.log("pong");
-    return;
-  }
-
-  if (data.type === "chat") {
-    addMessage(data.name, data.message);
-  }
-};
-
 const nameInput = document.getElementById("nameInput");
 const chatInput = document.getElementById("chatInput");
 const keyInput = document.getElementById("keyInput");
 const button = document.getElementById("button");
 
-button.onclick = sendMessage;
-chatInput.onkeypress = (event) => {
-  if (event.key === "Enter") sendMessage();
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+const socket = new WebSocket(`${protocol}://${location.host}`);
+socket.onopen = () => socket.send(JSON.stringify({ type: "ping" }));
+
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === "pong") console.log("pong");
+  if (data.type === "chat") addMessage(data.name, data.message);
 };
+
+button.onclick = sendMessage;
+chatInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendMessage();
+  }
+});
 
 async function sendMessage() {
   const name = nameInput.value || "Anonymous";
