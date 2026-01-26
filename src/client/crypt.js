@@ -1,4 +1,5 @@
 export async function encrypt(text, key) {
+  if (!key) return text;
   const enc = new TextEncoder();
 
   const cryptoKey = await crypto.subtle.importKey(
