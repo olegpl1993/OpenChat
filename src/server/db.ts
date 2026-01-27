@@ -19,11 +19,22 @@ connection.connect((err) => {
   console.log("✅ MySQL connected");
 });
 
-export function getMessages(): Promise<Message[]> {
+export function getMessages(beforeId?: number, limit = 20): Promise<Message[]> {
   return new Promise((resolve, reject) => {
-    connection.query<Message[]>("SELECT * FROM messages ORDER BY created_at ASC", (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
+    let sql: string;
+    let params: (number)[] = [];
+
+    if (beforeId) {
+      sql = "SELECT * FROM messages WHERE id < ? ORDER BY id DESC LIMIT ?";
+      params = [beforeId, limit];
+    } else {
+      sql = "SELECT * FROM messages ORDER BY id DESC LIMIT ?";
+      params = [limit];
+    }
+
+    connection.query<Message[]>(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows.reverse());
     });
   });
 }
