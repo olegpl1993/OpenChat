@@ -9,6 +9,8 @@ export function setupWebSocket(server: any) {
     ws.on("message", (data: Buffer) => {
       const msg = JSON.parse(data.toString());
 
+      console.log(msg);
+
       if (msg.type === "ping") {
         ws.send(JSON.stringify({ type: "pong" }));
         return;
