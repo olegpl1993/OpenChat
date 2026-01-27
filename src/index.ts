@@ -1,76 +1,19 @@
-import fs from "fs";
-import http from "node:http";
-import { fileURLToPath } from "node:url";
-import path from "path";
-import { WebSocketServer } from "ws";
+import { createServer, PORT } from "./server/server";
+import { getMessages } from "./server/db";
+import { setupWebSocket } from "./server/ws";
 
-const __dirnameCJS =
-  typeof __dirname !== "undefined" ? __dirname : path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT || 4000;
-
-const server = http.createServer((req, res) => {
-  let filePath: string;
-  let contentType: string;
-
-  if (req.url === "/" || req.url === "/index.html") {
-    filePath = path.join(__dirnameCJS, "client/page.html");
-    contentType = "text/html";
-  } else {
-    filePath = path.join(__dirnameCJS, req.url!);
-    const ext = path.extname(filePath);
-
-    switch (ext) {
-      case ".css":
-        contentType = "text/css";
-        break;
-      case ".js":
-        contentType = "application/javascript";
-        break;
-      case ".html":
-        contentType = "text/html";
-        break;
-      default:
-        contentType = "application/octet-stream";
-    }
+async function testDB() {
+  try {
+    const messages = await getMessages();
+    console.log("Messages:", messages);
+  } catch (err) {
+    console.error("DB error:", err);
   }
+}
+testDB();
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      res.statusCode = 404;
-      res.end("File not found");
-      return;
-    }
-
-    res.setHeader("Content-Type", contentType);
-    res.end(data);
-  });
-});
-
-const wss = new WebSocketServer({ server });
-
-wss.on("connection", (ws) => {
-  console.log("User connected");
-
-  ws.on("message", (data: Buffer) => {
-    const msg = JSON.parse(data.toString());
-    if (msg.type === "ping") {
-      ws.send(JSON.stringify({ type: "pong" }));
-      return;
-    }
-
-    if (msg.type === "chat") {
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === 1) {
-          client.send(JSON.stringify(msg));
-        }
-      });
-    }
-  });
-
-  ws.on("close", () => {
-    console.log("User disconnected");
-  });
-});
+const server = createServer();
+const wss = setupWebSocket(server);
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
