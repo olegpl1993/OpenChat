@@ -5,3 +5,9 @@ export interface Message extends RowDataPacket {
   text: string;
   created_at: string;
 }
+
+export type Msg = {
+  type: string;
+  name: string;
+  message: string;
+};

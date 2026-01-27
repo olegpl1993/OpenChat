@@ -37,7 +37,6 @@ async function sendMessage() {
     })
   );
 
-  addMessage(name, message);
   chatInput.value = "";
 }
 
