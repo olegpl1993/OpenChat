@@ -10,6 +10,8 @@
     "start": "node index.cjs"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.16.2",
     "ws": "^8.19.0"
   },
   "devDependencies": {
