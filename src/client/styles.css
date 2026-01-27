@@ -158,15 +158,13 @@ h6 {
 .userName {
   font-weight: bold;
   margin-bottom: 5px;
-  word-wrap: break-word;
-  hyphens: auto;
+  word-break: break-word;
   overflow-wrap: break-word;
 }
 
-.userText {
+.messageText {
   margin: 0;
-  word-wrap: break-word;
-  hyphens: auto;
+  word-break: break-word;
   overflow-wrap: break-word;
 }
 

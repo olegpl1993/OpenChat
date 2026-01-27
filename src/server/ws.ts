@@ -1,12 +1,25 @@
 import { WebSocket, WebSocketServer } from "ws";
-import { saveMessage } from "./db";
+import { getMessages, saveMessage } from "./db";
 import { Msg } from "./types";
 
 export function setupWebSocket(server: any) {
   const wss = new WebSocketServer({ server });
 
-  wss.on("connection", (ws: WebSocket) => {
+  wss.on("connection", async (ws: WebSocket) => {
     console.log("User connected");
+
+    try {
+      const history = await getMessages();
+
+      ws.send(
+        JSON.stringify({
+          type: "history",
+          messages: history,
+        })
+      );
+    } catch (err) {
+      console.error("Failed to load history:", err);
+    }
 
     ws.on("message", async (data: Buffer) => {
       let msg: Msg;

@@ -14,6 +14,9 @@ socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
   if (data.type === "pong") console.log("pong");
   if (data.type === "chat") addMessage(data.name, data.message);
+  if (data.type === "history") {
+    data.messages.forEach((message) => addMessage(message.user, message.text));
+  }
 };
 
 button.onclick = sendMessage;
