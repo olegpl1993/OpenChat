@@ -22,7 +22,7 @@ connection.connect((err) => {
 export function getMessages(beforeId?: number, limit = 20): Promise<Message[]> {
   return new Promise((resolve, reject) => {
     let sql: string;
-    let params: (number)[] = [];
+    let params: number[] = [];
 
     if (beforeId) {
       sql = "SELECT * FROM messages WHERE id < ? ORDER BY id DESC LIMIT ?";

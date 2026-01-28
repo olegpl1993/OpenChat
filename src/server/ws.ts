@@ -1,8 +1,9 @@
+import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
 import { getMessages, saveMessage } from "./db";
 import { Msg } from "./types";
 
-export function setupWebSocket(server: any) {
+export function setupWebSocket(server: http.Server): WebSocketServer {
   const wss = new WebSocketServer({ server });
 
   wss.on("connection", async (ws: WebSocket) => {
