@@ -17,7 +17,7 @@ socket.onopen = () => socket.send(JSON.stringify({ type: "ping" }));
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);
   if (data.type === "pong") console.log("pong");
-  if (data.type === "chat") addMessage(data.name, data.message);
+  if (data.type === "chat") addMessage(data.messages[0].user, data.messages[0].text);
   if (data.type === "history") {
     data.messages.forEach((message) => addMessage(message.user, message.text));
   }
@@ -39,8 +39,7 @@ async function sendMessage() {
   socket.send(
     JSON.stringify({
       type: "chat",
-      name,
-      message,
+      messages: [{ user: name, text: message }],
     })
   );
 
