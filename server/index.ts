@@ -3,13 +3,11 @@ import http from "http";
 import path from "path";
 import { setupWebSocket } from "./ws";
 
-const __dirname = path.resolve();
+const __dirname = path.dirname(process.argv[1]);
 export const PORT = process.env.PORT || 4000;
 
-// __dirname уже указывает на dist/
 const server = http.createServer((req, res) => {
-  // для "/" отдаём index.html, иначе отдаем файл по req.url
-  let filePath =
+  const filePath =
     req.url === "/"
       ? path.join(__dirname, "index.html")
       : path.join(__dirname, req.url!);
@@ -22,11 +20,6 @@ const server = http.createServer((req, res) => {
     ".json": "application/json",
     ".svg": "image/svg+xml",
   };
-
-  // Если файла нет или это не файл — отдаём index.html (SPA)
-  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-    filePath = path.join(__dirname, "index.html");
-  }
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
