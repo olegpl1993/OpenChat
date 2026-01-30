@@ -1,20 +1,7 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "types": ["node"],
-    "strict": true,
-    "noImplicitOverride": true,
-    "skipLibCheck": true,
-    "importHelpers": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test/**/*.ts", "**/*.spec.ts"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

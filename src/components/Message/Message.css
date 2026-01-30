@@ -1,0 +1,32 @@
+.message {
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 80%;
+}
+
+.userName {
+  font-weight: bold;
+  margin-bottom: 5px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.messageText {
+  margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.user {
+  align-self: flex-end;
+  background-color: #1e90ff;
+  color: #fff;
+  border-bottom-right-radius: 0;
+}
+.other {
+  align-self: flex-start;
+  background-color: #fff;
+  color: #333;
+  border-bottom-left-radius: 0;
+}

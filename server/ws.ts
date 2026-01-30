@@ -1,8 +1,9 @@
+import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
+import { WSData } from "../types/types";
 import { getMessages, saveMessage } from "./db";
-import { Msg } from "./types";
 
-export function setupWebSocket(server: any) {
+export function setupWebSocket(server: http.Server): WebSocketServer {
   const wss = new WebSocketServer({ server });
 
   wss.on("connection", async (ws: WebSocket) => {
@@ -15,44 +16,39 @@ export function setupWebSocket(server: any) {
         JSON.stringify({
           type: "history",
           messages: history,
-        })
+        }),
       );
     } catch (err) {
       console.error("Failed to load history:", err);
     }
 
     ws.on("message", async (data: Buffer) => {
-      let msg: Msg;
+      let wsData: WSData;
 
       try {
-        msg = JSON.parse(data.toString());
+        wsData = JSON.parse(data.toString());
       } catch {
-        ws.send(JSON.stringify({ type: "error", message: "Invalid JSON" }));
+        ws.send(JSON.stringify({ type: "error", messages: [] }));
         return;
       }
 
-      if (msg.type === "ping") {
-        ws.send(JSON.stringify({ type: "pong" }));
+      if (wsData.type === "ping") {
+        ws.send(JSON.stringify({ type: "pong", messages: [] }));
         return;
       }
 
-      if (msg.type === "chat") {
-        if (!msg.name || !msg.message || msg.message.length > 1000) {
-          ws.send(JSON.stringify({ type: "error", message: "Invalid message" }));
-          return;
-        }
-
+      if (wsData.type === "chat") {
         try {
-          await saveMessage(msg.name, msg.message);
+          await saveMessage(wsData.messages[0].user, wsData.messages[0].text);
         } catch (err) {
           console.error("DB error:", err);
-          ws.send(JSON.stringify({ type: "error", message: "DB error" }));
+          ws.send(JSON.stringify({ type: "error", messages: [] }));
           return;
         }
 
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(msg));
+            client.send(JSON.stringify(wsData));
           }
         });
       }
