@@ -6,11 +6,8 @@ const distRoot = path.resolve("dist");
 const distClient = path.join(distRoot, "client");
 
 const buildAll = async () => {
-  if (fs.existsSync(distRoot)) fs.rmSync(distRoot, { recursive: true, force: true });
-  fs.mkdirSync(distClient, { recursive: true });
-
   await build({
-    entryPoints: ["src/index.ts"],
+    entryPoints: ["server/index.ts"],
     bundle: true,
     minify: true,
     platform: "node",
@@ -19,33 +16,6 @@ const buildAll = async () => {
     outfile: path.join(distRoot, "index.cjs"),
   });
   console.log("✔ Server built");
-
-  const result = await build({
-    entryPoints: ["src/client/client.js"],
-    bundle: true,
-    minify: true,
-    platform: "browser",
-    format: "esm",
-    target: "es2022",
-    outdir: distClient,
-    entryNames: "[name]-[hash]",
-    assetNames: "assets/[name]-[hash]",
-    loader: { ".css": "css" },
-    metafile: true,
-  });
-
-  const outputs = Object.keys(result.metafile.outputs).map((f) => path.basename(f));
-  const jsFile = outputs.find((f) => f.startsWith("client") && f.endsWith(".js"));
-  const cssFile = outputs.find((f) => f.endsWith(".css"));
-
-  const htmlFiles = fs.readdirSync("src/client").filter((f) => f.endsWith(".html"));
-  for (const file of htmlFiles) {
-    let html = fs.readFileSync(`src/client/${file}`, "utf8");
-    if (jsFile) html = html.replace(/client\.js/, jsFile);
-    if (cssFile) html = html.replace(/styles\.css/, cssFile);
-    fs.writeFileSync(path.join(distClient, file), html);
-  }
-  console.log("✔ Client built with hashed assets");
 
   fs.copyFileSync(".htaccess", path.join(distRoot, ".htaccess"));
   fs.copyFileSync("package.json", path.join(distRoot, "package.json"));

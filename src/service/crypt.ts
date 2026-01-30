@@ -1,4 +1,4 @@
-export async function encrypt(text, key) {
+export async function encrypt(text: string | undefined, key: string | undefined) {
   if (!key) return text;
   const enc = new TextEncoder();
 
@@ -25,7 +25,7 @@ export async function encrypt(text, key) {
   return btoa(String.fromCharCode(...result));
 }
 
-export async function decrypt(encryptedText, key) {
+export async function decrypt(encryptedText: string, key: string | undefined) {
   try {
     const data = Uint8Array.from(atob(encryptedText), c => c.charCodeAt(0));
     const iv = data.slice(0, 12);

@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import mysql from "mysql2";
-import { Message } from "./types";
+import { DBrequestType, MessageType } from "../types/types";
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ connection.connect((err) => {
   console.log("✅ MySQL connected");
 });
 
-export function getMessages(beforeId?: number, limit = 20): Promise<Message[]> {
+export function getMessages(beforeId?: number, limit = 20): Promise<MessageType[]> {
   return new Promise((resolve, reject) => {
     let sql: string;
     let params: number[] = [];
@@ -32,7 +32,7 @@ export function getMessages(beforeId?: number, limit = 20): Promise<Message[]> {
       params = [limit];
     }
 
-    connection.query<Message[]>(sql, params, (err, rows) => {
+    connection.query<DBrequestType[]>(sql, params, (err, rows) => {
       if (err) return reject(err);
       resolve(rows.reverse());
     });

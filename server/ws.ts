@@ -1,7 +1,7 @@
 import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
+import { WSData } from "../types/types";
 import { getMessages, saveMessage } from "./db";
-import { WSData } from "./types";
 
 export function setupWebSocket(server: http.Server): WebSocketServer {
   const wss = new WebSocketServer({ server });
@@ -16,7 +16,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
         JSON.stringify({
           type: "history",
           messages: history,
-        })
+        }),
       );
     } catch (err) {
       console.error("Failed to load history:", err);
