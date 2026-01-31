@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MessageType } from "../../../types/types";
-import { encrypt } from "../../service/crypt";
+import { encrypt } from "../../utils/crypt";
 import styles from "./Inputs.module.css";
 
 interface Props {

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { type MessageType } from "../../types/types";
 import Inputs from "../components/Inputs/Inputs";
 import Messages from "../components/Messages/Messages";
-import { chatService } from "../service/chatService";
+import { chatService } from "../services/chatService";
 import styles from "./App.module.css";
 
 const App = () => {
