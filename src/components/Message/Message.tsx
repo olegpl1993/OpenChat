@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { decrypt } from "../../service/crypt";
-import "./Message.css";
+import styles from "./Message.module.css";
 
-interface MessageProps {
+interface Props {
   name: string;
   text: string;
   currentUser: string;
   criptoKey: string;
 }
 
-export const Message = ({ name, text, currentUser, criptoKey }: MessageProps) => {
+const Message = ({ name, text, currentUser, criptoKey }: Props) => {
   const [decryptedText, setDecryptedText] = useState("");
 
   useEffect(() => {
@@ -23,9 +23,19 @@ export const Message = ({ name, text, currentUser, criptoKey }: MessageProps) =>
   const isUser = name === currentUser;
 
   return (
-    <div className={`message ${isUser ? "user" : "other"}`}>
-      <p className={`userName ${isUser ? "user" : "other"}`}>{name}</p>
-      <p className={`messageText ${isUser ? "user" : "other"}`}>{decryptedText}</p>
+    <div className={`${styles.message} ${isUser ? styles.user : styles.other}`}>
+      <p
+        className={`${styles.userName} ${isUser ? styles.user : styles.other}`}
+      >
+        {name}
+      </p>
+      <p
+        className={`${styles.messageText} ${isUser ? styles.user : styles.other}`}
+      >
+        {decryptedText}
+      </p>
     </div>
   );
 };
+
+export default Message;
