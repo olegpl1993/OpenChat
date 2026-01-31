@@ -19,6 +19,7 @@ const server = http.createServer((req, res) => {
     ".html": "text/html",
     ".json": "application/json",
     ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
   };
 
   fs.readFile(filePath, (err, data) => {
@@ -37,4 +38,4 @@ const server = http.createServer((req, res) => {
 
 setupWebSocket(server);
 
-server.listen(PORT, () => console.log("🚀 Server on http://localhost:4000"));
+server.listen(PORT, () => console.log(`🚀 Server on http://localhost:${PORT}`));
