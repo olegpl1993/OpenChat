@@ -84,12 +84,22 @@
   transition: all 0.2s ease;
 }
 .buttonSend:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 .buttonSend:active {
-  transform: translateY(1px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+.buttonSend:disabled {
+  background: #b5b5b5;
+  color: #eee;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+.buttonSend:disabled:hover,
+.buttonSend:disabled:active {
+  transform: none;
+  box-shadow: none;
 }
 @media screen and (max-width: 768px) {
   .buttonSend {

@@ -61,7 +61,8 @@ const Inputs = ({
             value={keyInput}
           />
         </div>
-        <div className="inputContainer">
+
+        <div className={styles.inputContainer}>
           <input
             className={styles.input}
             placeholder="message"
@@ -77,7 +78,12 @@ const Inputs = ({
           />
         </div>
       </div>
-      <button className={styles.buttonSend} onClick={() => handleSend()}>
+
+      <button
+        className={styles.buttonSend}
+        onClick={() => handleSend()}
+        disabled={!messageTextInput || !userNameInput}
+      >
         Send
       </button>
     </div>
