@@ -8,7 +8,7 @@ interface Props {
   setUserNameInput: React.Dispatch<React.SetStateAction<string>>;
   keyInput: string;
   setKeyInput: React.Dispatch<React.SetStateAction<string>>;
-  socketRef: React.RefObject<WebSocket | null>;
+  sendMessage: (message: MessageType) => void;
 }
 
 const Inputs = ({
@@ -16,7 +16,7 @@ const Inputs = ({
   setUserNameInput,
   keyInput,
   setKeyInput,
-  socketRef,
+  sendMessage,
 }: Props) => {
   const [messageTextInput, setMessageTextInput] = useState("");
 
@@ -32,12 +32,7 @@ const Inputs = ({
       created_at: new Date().toISOString(),
     };
 
-    socketRef.current?.send(
-      JSON.stringify({
-        type: "chat",
-        messages: [createdMessage],
-      }),
-    );
+    sendMessage(createdMessage);
 
     setMessageTextInput("");
   };
