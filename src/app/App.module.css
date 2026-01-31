@@ -1,0 +1,24 @@
+.app {
+  display: flex;
+  min-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100dvh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 768px;
+  height: 100dvh;
+  padding-left: 10px;
+  padding-right: 10px;
+  justify-content: space-between;
+}
+@media screen and (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 0px;
+  }
+}
