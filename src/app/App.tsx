@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { type MessageType, type WSData } from "../../types/types";
+import Inputs from "../components/Inputs/Inputs";
 import Messages from "../components/Messages/Messages";
-import { encrypt } from "../service/crypt";
-import "./App.css";
+import styles from "./App.module.css";
 
 const App = () => {
   const socketRef = useRef<WebSocket | null>(null);
 
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
-  const [messageTextInput, setMessageTextInput] = useState("");
+
   const [userNameInput, setUserNameInput] = useState(
     () => localStorage.getItem("name") ?? "",
   );
@@ -69,31 +69,9 @@ const App = () => {
     localStorage.setItem("key", keyInput);
   }, [keyInput]);
 
-  const handleSend = async () => {
-    if (!messageTextInput || !userNameInput) return;
-    const cryptoMessageText = await encrypt(messageTextInput, keyInput);
-    if (!cryptoMessageText) return;
-
-    const createdMessage: MessageType = {
-      id: Date.now(),
-      user: userNameInput,
-      text: cryptoMessageText,
-      created_at: new Date().toISOString(),
-    };
-
-    socketRef.current?.send(
-      JSON.stringify({
-        type: "chat",
-        messages: [createdMessage],
-      }),
-    );
-
-    setMessageTextInput("");
-  };
-
   return (
-    <div className="container">
-      <div className="wrapper">
+    <div className={styles.app}>
+      <div className={styles.container}>
         <Messages
           messagesState={messagesState}
           messagesRef={messagesRef}
@@ -101,51 +79,13 @@ const App = () => {
           keyInput={keyInput}
         />
 
-        <div className="inputWrapper">
-          <div className="inputBox">
-            <div className="inputContainer">
-              <input
-                id="nameInput"
-                className="input"
-                placeholder="name"
-                maxLength={25}
-                onChange={(e) => setUserNameInput(e.target.value)}
-                value={userNameInput}
-              />
-              <input
-                id="keyInput"
-                className="input"
-                placeholder="crypto key"
-                maxLength={25}
-                onChange={(e) => setKeyInput(e.target.value)}
-                value={keyInput}
-              />
-            </div>
-            <div className="inputContainer">
-              <input
-                id="chatInput"
-                className="input"
-                placeholder="message"
-                maxLength={300}
-                onChange={(e) => setMessageTextInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-                value={messageTextInput}
-              />
-            </div>
-          </div>
-          <button
-            id="button"
-            className="buttonSend"
-            onClick={() => handleSend()}
-          >
-            Send
-          </button>
-        </div>
+        <Inputs
+          userNameInput={userNameInput}
+          setUserNameInput={setUserNameInput}
+          keyInput={keyInput}
+          setKeyInput={setKeyInput}
+          socketRef={socketRef}
+        />
       </div>
     </div>
   );

@@ -1,29 +1,4 @@
-.container {
-  display: flex;
-  min-width: 100%;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100dvh;
-}
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 768px;
-  height: 100dvh;
-  padding-left: 10px;
-  padding-right: 10px;
-  justify-content: space-between;
-}
-@media screen and (max-width: 768px) {
-  .wrapper {
-    width: 100%;
-    padding: 0px;
-  }
-}
-
-.inputWrapper {
+.inputs {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -32,7 +7,7 @@
   gap: 5px;
 }
 @media screen and (max-width: 768px) {
-  .inputWrapper {
+  .inputs {
     height: 90px;
     padding-left: 5px;
     padding-right: 5px;

@@ -16,8 +16,8 @@ const Messages = ({
   keyInput,
 }: Props) => {
   return (
-    <div className={styles.messageBox}>
-      <div className={styles.messages} ref={messagesRef}>
+    <div className={styles.messages}>
+      <div className={styles.messagesBox} ref={messagesRef}>
         {messagesState.map((msg) => (
           <Message
             key={msg.id}
