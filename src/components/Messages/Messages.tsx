@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { MessageType } from "../../../types/types";
 import Message from "../Message/Message";
 import styles from "./Messages.module.css";
@@ -24,7 +25,7 @@ const Messages = ({
             name={msg.user}
             text={msg.text}
             currentUser={userNameInput}
-            criptoKey={keyInput}
+            cryptoKey={keyInput}
           />
         ))}
       </div>
@@ -32,4 +33,4 @@ const Messages = ({
   );
 };
 
-export default Messages;
+export default memo(Messages);

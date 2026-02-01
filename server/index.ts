@@ -19,22 +19,40 @@ const server = http.createServer((req, res) => {
     ".html": "text/html",
     ".json": "application/json",
     ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
   };
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
+fs.readFile(filePath, (err, data) => {
+  if (!err) {
+    res.writeHead(200, {
+      "Content-Type": types[ext] || "text/plain",
+      "Cache-Control": ext === ".html" ? "no-cache" : "max-age=31536000",
+    });
+    return res.end(data);
+  }
+
+  if (err.code !== "ENOENT") {
+    res.writeHead(500);
+    return res.end("Server error");
+  }
+
+  const indexPath = path.join(__dirname, "index.html");
+
+  fs.readFile(indexPath, (indexErr, indexData) => {
+    if (indexErr) {
       res.writeHead(500);
       return res.end("Server error");
     }
 
     res.writeHead(200, {
-      "Content-Type": types[ext] || "text/plain",
-      "Cache-Control": ext === ".html" ? "no-cache" : "max-age=31536000",
+      "Content-Type": "text/html",
+      "Cache-Control": "no-cache",
     });
-    res.end(data);
+    res.end(indexData);
   });
+});
 });
 
 setupWebSocket(server);
 
-server.listen(PORT, () => console.log("🚀 Server on http://localhost:4000"));
+server.listen(PORT, () => console.log(`🚀 Server on http://localhost:${PORT}`));

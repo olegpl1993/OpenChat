@@ -1,24 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { MessageType } from "../../../types/types";
-import { encrypt } from "../../service/crypt";
+import { useAppContext } from "../../app/context/AppContext";
+import { encrypt } from "../../utils/crypt";
 import styles from "./Inputs.module.css";
 
 interface Props {
   userNameInput: string;
-  setUserNameInput: React.Dispatch<React.SetStateAction<string>>;
   keyInput: string;
-  setKeyInput: React.Dispatch<React.SetStateAction<string>>;
-  socketRef: React.RefObject<WebSocket | null>;
+  sendMessage: (message: MessageType) => void;
 }
 
-const Inputs = ({
-  userNameInput,
-  setUserNameInput,
-  keyInput,
-  setKeyInput,
-  socketRef,
-}: Props) => {
+const Inputs = ({ userNameInput, keyInput, sendMessage }: Props) => {
+  const { setUserNameInput, setKeyInput } = useAppContext();
   const [messageTextInput, setMessageTextInput] = useState("");
+  const navigate = useNavigate();
 
   const handleSend = async () => {
     if (!messageTextInput || !userNameInput) return;
@@ -32,36 +28,30 @@ const Inputs = ({
       created_at: new Date().toISOString(),
     };
 
-    socketRef.current?.send(
-      JSON.stringify({
-        type: "chat",
-        messages: [createdMessage],
-      }),
-    );
+    sendMessage(createdMessage);
 
     setMessageTextInput("");
+  };
+
+  const handleExit = () => {
+    setUserNameInput("");
+    setKeyInput("");
+    localStorage.removeItem("name");
+    localStorage.removeItem("key");
+    navigate("/");
   };
 
   return (
     <div className={styles.inputs}>
       <div className={styles.inputBox}>
-        <div className={styles.inputContainer}>
-          <input
-            className={styles.input}
-            placeholder="name"
-            maxLength={25}
-            onChange={(e) => setUserNameInput(e.target.value)}
-            value={userNameInput}
-          />
-          <input
-            className={styles.input}
-            placeholder="crypto key"
-            maxLength={25}
-            onChange={(e) => setKeyInput(e.target.value)}
-            value={keyInput}
-          />
+        <div className={styles.wrapper}>
+          <div className={styles.name}>{userNameInput}</div>
+          <button className={styles.exit} onClick={() => handleExit()}>
+            Exit
+          </button>
         </div>
-        <div className="inputContainer">
+
+        <div className={styles.inputContainer}>
           <input
             className={styles.input}
             placeholder="message"
@@ -77,7 +67,12 @@ const Inputs = ({
           />
         </div>
       </div>
-      <button className={styles.buttonSend} onClick={() => handleSend()}>
+
+      <button
+        className={styles.buttonSend}
+        onClick={() => handleSend()}
+        disabled={!messageTextInput || !userNameInput}
+      >
         Send
       </button>
     </div>

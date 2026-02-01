@@ -1,41 +1,34 @@
-import { useEffect, useState } from "react";
-import { decrypt } from "../../service/crypt";
+import { memo, useEffect, useState } from "react";
+import { decrypt } from "../../utils/crypt";
 import styles from "./Message.module.css";
 
 interface Props {
   name: string;
   text: string;
   currentUser: string;
-  criptoKey: string;
+  cryptoKey: string;
 }
 
-const Message = ({ name, text, currentUser, criptoKey }: Props) => {
+const Message = ({ name, text, currentUser, cryptoKey }: Props) => {
   const [decryptedText, setDecryptedText] = useState("");
+
+  const isUser = name === currentUser;
+  const roleClass = isUser ? styles.user : styles.other;
 
   useEffect(() => {
     async function decryptText() {
-      const decryptedText = await decrypt(text, criptoKey);
+      const decryptedText = await decrypt(text, cryptoKey);
       setDecryptedText(decryptedText);
     }
     decryptText();
-  }, [text, criptoKey]);
-
-  const isUser = name === currentUser;
+  }, [text, cryptoKey]);
 
   return (
-    <div className={`${styles.message} ${isUser ? styles.user : styles.other}`}>
-      <p
-        className={`${styles.userName} ${isUser ? styles.user : styles.other}`}
-      >
-        {name}
-      </p>
-      <p
-        className={`${styles.messageText} ${isUser ? styles.user : styles.other}`}
-      >
-        {decryptedText}
-      </p>
+    <div className={`${styles.message} ${roleClass}`}>
+      <p className={`${styles.userName} ${roleClass}`}>{name}</p>
+      <p className={`${styles.messageText} ${roleClass}`}>{decryptedText}</p>
     </div>
   );
 };
 
-export default Message;
+export default memo(Message);
