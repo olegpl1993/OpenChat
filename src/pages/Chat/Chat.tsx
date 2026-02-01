@@ -7,8 +7,7 @@ import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
 
 const Chat = () => {
-  const { userNameInput, setUserNameInput, keyInput, setKeyInput } =
-    useAppContext();
+  const { userNameInput, keyInput } = useAppContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,9 +41,7 @@ const Chat = () => {
 
       <Inputs
         userNameInput={userNameInput}
-        setUserNameInput={setUserNameInput}
         keyInput={keyInput}
-        setKeyInput={setKeyInput}
         sendMessage={(msg: MessageType) => chatService.sendMessage(msg)}
       />
     </div>

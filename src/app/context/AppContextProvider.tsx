@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "./AppContext";
 
 interface Props {
@@ -6,19 +7,21 @@ interface Props {
 }
 
 export const AppContextProvider = ({ children }: Props) => {
+  const navigate = useNavigate();
   const [userNameInput, setUserNameInput] = useState(
     () => localStorage.getItem("name") ?? "",
   );
   const [keyInput, setKeyInput] = useState(
     () => localStorage.getItem("key") ?? "",
   );
-  useEffect(() => {
-    localStorage.setItem("name", userNameInput);
-  }, [userNameInput]);
 
   useEffect(() => {
-    localStorage.setItem("key", keyInput);
-  }, [keyInput]);
+    if (userNameInput) {
+      navigate("/chat");
+    } else {
+      navigate("/");
+    }
+  }, [userNameInput, navigate]);
 
   return (
     <AppContext.Provider
