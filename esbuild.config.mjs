@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 
 const distRoot = path.resolve("dist");
-const distClient = path.join(distRoot, "client");
 
 const buildAll = async () => {
   await build({
