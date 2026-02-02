@@ -49,7 +49,7 @@ function scheduleReconnect() {
 
 createConnection();
 
-export function getMessages(
+export async function getMessages(
   beforeId?: number,
   limit = 20,
 ): Promise<MessageType[]> {
@@ -57,7 +57,7 @@ export function getMessages(
     let sql: string;
     let params: number[] = [];
 
-    if (beforeId) {
+    if (beforeId && beforeId > 1) {
       sql = "SELECT * FROM messages WHERE id < ? ORDER BY id DESC LIMIT ?";
       params = [beforeId, limit];
     } else {

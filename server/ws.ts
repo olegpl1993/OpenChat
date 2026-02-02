@@ -28,12 +28,12 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       try {
         wsData = JSON.parse(data.toString());
       } catch {
-        ws.send(JSON.stringify({ type: "error", messages: [] }));
+        ws.send(JSON.stringify({ type: "error" }));
         return;
       }
 
       if (wsData.type === "ping") {
-        ws.send(JSON.stringify({ type: "pong", messages: [] }));
+        ws.send(JSON.stringify({ type: "pong" }));
         return;
       }
 
@@ -42,7 +42,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
           await saveMessage(wsData.messages[0].user, wsData.messages[0].text);
         } catch (err) {
           console.error("DB error:", err);
-          ws.send(JSON.stringify({ type: "error", messages: [] }));
+          ws.send(JSON.stringify({ type: "error" }));
           return;
         }
 
@@ -51,6 +51,17 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
             client.send(JSON.stringify(wsData));
           }
         });
+      }
+
+      if (wsData.type === "getHistory") {
+        try {
+          const history = await getMessages(wsData.beforeId);
+          ws.send(JSON.stringify({ type: "history", messages: history }));
+        } catch (err) {
+          console.error("DB error:", err);
+          ws.send(JSON.stringify({ type: "error" }));
+          return;
+        }
       }
     });
 

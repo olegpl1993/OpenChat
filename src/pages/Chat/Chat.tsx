@@ -1,49 +1,45 @@
 import { useEffect, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
 import Inputs from "../../components/Inputs/Inputs";
 import Messages from "../../components/Messages/Messages";
 import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
+import Info from "../../components/Info/Info";
 
 const Chat = () => {
-  const { userNameInput, keyInput } = useAppContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     chatService.connect({
-      onHistory: (messages) => setMessagesState(messages),
-      onChat: (messages) => setMessagesState((prev) => [...prev, ...messages]),
+      onHistory: (messages) =>
+        setMessagesState((prev) => [...messages, ...prev]),
+      onChat: (messages) => {
+        setMessagesState((prev) => [...prev, ...messages]);
+
+        // scroll to bottom on new message
+        setTimeout(() => {
+          messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+        }, 250);
+      },
       onOpen: () => console.log("WS connected"),
       onClose: () => console.log("WS disconnected"),
     });
     return () => chatService.disconnect();
-  }, []);
+  }, [setMessagesState]);
 
+  // scroll to bottom on initial render
   useEffect(() => {
-    const el = messagesRef.current;
-    if (!el) return;
-    const timeout = setTimeout(() => {
-      el.scrollTop = el.scrollHeight;
-    }, 1);
-    return () => clearTimeout(timeout);
-  }, [messagesState]);
+    setTimeout(() => {
+      messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+    }, 500);
+  }, []);
 
   return (
     <div className={styles.chat}>
-      <Messages
-        messagesState={messagesState}
-        messagesRef={messagesRef}
-        userNameInput={userNameInput}
-        keyInput={keyInput}
-      />
-
-      <Inputs
-        userNameInput={userNameInput}
-        keyInput={keyInput}
-        sendMessage={(msg: MessageType) => chatService.sendMessage(msg)}
-      />
+      <Info />
+      <Messages messagesRef={messagesRef} messagesState={messagesState} />
+      <Inputs />
     </div>
   );
 };

@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 
 const distRoot = path.resolve("dist");
-const distClient = path.join(distRoot, "client");
 
 const buildAll = async () => {
   await build({
@@ -19,6 +18,7 @@ const buildAll = async () => {
 
   fs.copyFileSync(".htaccess", path.join(distRoot, ".htaccess"));
   fs.copyFileSync("package.json", path.join(distRoot, "package.json"));
+  fs.copyFileSync(".env", path.join(distRoot, ".env"));
   console.log("✔ Assets copied");
 };
 

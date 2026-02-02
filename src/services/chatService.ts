@@ -10,6 +10,10 @@ type Handlers = {
 class ChatService {
   private socket: WebSocket | null = null;
 
+  private sendRaw(data: WSData) {
+    this.socket?.send(JSON.stringify(data));
+  }
+
   connect(handlers: Handlers) {
     if (this.socket) return;
     const WS_PORT = import.meta.env.DEV ? 4000 : location.port;
@@ -40,14 +44,11 @@ class ChatService {
   }
 
   sendMessage(message: MessageType) {
-    this.sendRaw({
-      type: "chat",
-      messages: [message],
-    });
+    this.sendRaw({ type: "chat", messages: [message] });
   }
 
-  private sendRaw(data: WSData) {
-    this.socket?.send(JSON.stringify(data));
+  getHistory(beforeId: number) {
+    if (beforeId > 1) this.sendRaw({ type: "getHistory", beforeId });
   }
 
   disconnect() {
