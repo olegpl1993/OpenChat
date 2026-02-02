@@ -12,6 +12,7 @@ export interface DBrequestType extends RowDataPacket, MessageType {}
 export type WSData =
   | { type: "ping" }
   | { type: "pong" }
-  | { type: "error"; messages: MessageType[] }
+  | { type: "error" }
   | { type: "history"; messages: MessageType[] }
-  | { type: "chat"; messages: MessageType[] };
+  | { type: "chat"; messages: MessageType[] }
+  | { type: "getHistory", beforeId: number };

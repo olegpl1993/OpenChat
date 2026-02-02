@@ -13,28 +13,34 @@ const Chat = () => {
 
   useEffect(() => {
     chatService.connect({
-      onHistory: (messages) => setMessagesState(messages),
-      onChat: (messages) => setMessagesState((prev) => [...prev, ...messages]),
+      onHistory: (messages) =>
+        setMessagesState((prev) => [...messages, ...prev]),
+      onChat: (messages) => {
+        setMessagesState((prev) => [...prev, ...messages]);
+
+        // scroll to bottom on new message
+        setTimeout(() => {
+          messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+        }, 100);
+      },
       onOpen: () => console.log("WS connected"),
       onClose: () => console.log("WS disconnected"),
     });
     return () => chatService.disconnect();
   }, []);
 
+  // scroll to bottom on initial render
   useEffect(() => {
-    const el = messagesRef.current;
-    if (!el) return;
-    const timeout = setTimeout(() => {
-      el.scrollTop = el.scrollHeight;
-    }, 1);
-    return () => clearTimeout(timeout);
-  }, [messagesState]);
+    setTimeout(() => {
+      messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+    }, 100);
+  }, []);
 
   return (
     <div className={styles.chat}>
       <Messages
-        messagesState={messagesState}
         messagesRef={messagesRef}
+        messagesState={messagesState}
         userNameInput={userNameInput}
         keyInput={keyInput}
       />
