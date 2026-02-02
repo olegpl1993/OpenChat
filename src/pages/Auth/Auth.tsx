@@ -33,10 +33,8 @@ const Auth = () => {
             }
           }}
           value={formUserNameInput}
+          type="text"
           autoComplete="off"
-          autoCorrect="off"
-          inputMode="text"
-          name="chat-name"
         />
         <input
           className={styles.input}
@@ -50,10 +48,8 @@ const Auth = () => {
             }
           }}
           value={formKeyInput}
+          type="text"
           autoComplete="off"
-          autoCorrect="off"
-          inputMode="text"
-          name="chat-name"
         />
         <button
           className={styles.buttonEnter}
