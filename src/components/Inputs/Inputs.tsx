@@ -42,6 +42,10 @@ const Inputs = () => {
               }
             }}
             value={messageTextInput}
+            autoComplete="off"
+            autoCorrect="off"
+            inputMode="text"
+            name="chat-name"
           />
         </div>
       </div>

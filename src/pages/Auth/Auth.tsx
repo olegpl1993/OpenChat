@@ -33,19 +33,27 @@ const Auth = () => {
             }
           }}
           value={formUserNameInput}
+          autoComplete="off"
+          autoCorrect="off"
+          inputMode="text"
+          name="chat-name"
         />
         <input
           className={styles.input}
           placeholder="crypto key"
           maxLength={25}
           onChange={(e) => setFormKeyInput(e.target.value)}
-          value={formKeyInput}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
               handleEnter();
             }
           }}
+          value={formKeyInput}
+          autoComplete="off"
+          autoCorrect="off"
+          inputMode="text"
+          name="chat-name"
         />
         <button
           className={styles.buttonEnter}
