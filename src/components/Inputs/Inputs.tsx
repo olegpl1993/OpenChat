@@ -42,6 +42,7 @@ const Inputs = () => {
               }
             }}
             value={messageTextInput}
+            name="message"
             type="text"
             autoComplete="off"
           />

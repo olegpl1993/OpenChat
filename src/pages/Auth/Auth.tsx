@@ -33,6 +33,7 @@ const Auth = () => {
             }
           }}
           value={formUserNameInput}
+          name="user"
           type="text"
           autoComplete="off"
         />
@@ -48,6 +49,7 @@ const Auth = () => {
             }
           }}
           value={formKeyInput}
+          name="key"
           type="text"
           autoComplete="off"
         />
