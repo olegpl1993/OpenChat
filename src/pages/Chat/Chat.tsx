@@ -4,6 +4,7 @@ import Inputs from "../../components/Inputs/Inputs";
 import Messages from "../../components/Messages/Messages";
 import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
+import Info from "../../components/Info/Info";
 
 const Chat = () => {
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
@@ -36,6 +37,7 @@ const Chat = () => {
 
   return (
     <div className={styles.chat}>
+      <Info />
       <Messages messagesRef={messagesRef} messagesState={messagesState} />
       <Inputs />
     </div>

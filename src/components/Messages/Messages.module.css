@@ -1,7 +1,6 @@
 .messages {
   width: 100%;
   height: calc(100% - 120px);
-  margin-top: 10px;
   padding: 1px;
   overflow: hidden;
   min-height: 0;
