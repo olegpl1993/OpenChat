@@ -20,7 +20,7 @@ const Chat = () => {
         // scroll to bottom on new message
         setTimeout(() => {
           messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-        }, 100);
+        }, 250);
       },
       onOpen: () => console.log("WS connected"),
       onClose: () => console.log("WS disconnected"),
@@ -32,7 +32,7 @@ const Chat = () => {
   useEffect(() => {
     setTimeout(() => {
       messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-    }, 100);
+    }, 500);
   }, []);
 
   return (

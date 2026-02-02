@@ -31,7 +31,7 @@ const Messages = ({ messagesRef, messagesState }: Props) => {
     };
     setTimeout(() => {
       loadingRef.current = false;
-    }, 500);
+    }, 1000);
     messagesEl.addEventListener("scroll", handleScroll);
     return () => messagesEl.removeEventListener("scroll", handleScroll);
   }, [messagesState, messagesRef]);
