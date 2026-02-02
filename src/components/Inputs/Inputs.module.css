@@ -112,13 +112,13 @@
 @media screen and (max-width: 768px) {
   .input {
     font-size: 12px;
-    border-radius: 0px;
+    border-radius: 4px;
   }
 }
 
 .buttonSend {
   border: none;
-  border-radius: 30%;
+  border-radius: 26px;
   min-width: 90px;
   min-height: 90px;
   background: linear-gradient(135deg, #37aee2, #1e96fc);
@@ -156,5 +156,6 @@
     min-width: 65px;
     min-height: 65px;
     font-size: 14px;
+    border-radius: 10px;
   }
 }
