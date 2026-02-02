@@ -4,7 +4,7 @@ import { useAppContext } from "../../app/context/AppContext";
 import styles from "./Auth.module.css";
 
 const Auth = () => {
-  const { setUserNameInput, setKeyInput } = useAppContext();
+  const { setUserName, setKey } = useAppContext();
   const navigate = useNavigate();
 
   const [formUserNameInput, setFormUserNameInput] = useState("");
@@ -13,8 +13,8 @@ const Auth = () => {
   const handleEnter = () => {
     localStorage.setItem("name", formUserNameInput);
     localStorage.setItem("key", formKeyInput);
-    setUserNameInput(formUserNameInput);
-    setKeyInput(formKeyInput);
+    setUserName(formUserNameInput);
+    setKey(formKeyInput);
     navigate("/chat");
   };
 

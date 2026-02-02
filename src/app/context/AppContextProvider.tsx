@@ -8,24 +8,27 @@ interface Props {
 
 export const AppContextProvider = ({ children }: Props) => {
   const navigate = useNavigate();
-  const [userNameInput, setUserNameInput] = useState(
+  const [userName, setUserName] = useState(
     () => localStorage.getItem("name") ?? "",
   );
-  const [keyInput, setKeyInput] = useState(
-    () => localStorage.getItem("key") ?? "",
-  );
+  const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
 
   useEffect(() => {
-    if (userNameInput) {
+    if (userName) {
       navigate("/chat");
     } else {
       navigate("/");
     }
-  }, [userNameInput, navigate]);
+  }, [userName, navigate]);
 
   return (
     <AppContext.Provider
-      value={{ userNameInput, setUserNameInput, keyInput, setKeyInput }}
+      value={{
+        userName,
+        setUserName,
+        key,
+        setKey,
+      }}
     >
       {children}
     </AppContext.Provider>

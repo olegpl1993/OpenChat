@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
 import Inputs from "../../components/Inputs/Inputs";
 import Messages from "../../components/Messages/Messages";
 import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
 
 const Chat = () => {
-  const { userNameInput, keyInput } = useAppContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,7 +25,7 @@ const Chat = () => {
       onClose: () => console.log("WS disconnected"),
     });
     return () => chatService.disconnect();
-  }, []);
+  }, [setMessagesState]);
 
   // scroll to bottom on initial render
   useEffect(() => {
@@ -38,18 +36,8 @@ const Chat = () => {
 
   return (
     <div className={styles.chat}>
-      <Messages
-        messagesRef={messagesRef}
-        messagesState={messagesState}
-        userNameInput={userNameInput}
-        keyInput={keyInput}
-      />
-
-      <Inputs
-        userNameInput={userNameInput}
-        keyInput={keyInput}
-        sendMessage={(msg: MessageType) => chatService.sendMessage(msg)}
-      />
+      <Messages messagesRef={messagesRef} messagesState={messagesState} />
+      <Inputs />
     </div>
   );
 };

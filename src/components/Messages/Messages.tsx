@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef } from "react";
 import type { MessageType } from "../../../types/types";
+import { useAppContext } from "../../app/context/AppContext";
 import { chatService } from "../../services/chatService";
 import Message from "../Message/Message";
 import styles from "./Messages.module.css";
@@ -7,16 +8,11 @@ import styles from "./Messages.module.css";
 interface Props {
   messagesRef: React.RefObject<HTMLDivElement | null>;
   messagesState: MessageType[];
-  userNameInput: string;
-  keyInput: string;
 }
 
-const Messages = ({
-  messagesRef,
-  messagesState,
-  userNameInput,
-  keyInput,
-}: Props) => {
+const Messages = ({ messagesRef, messagesState }: Props) => {
+  const { userName, key } = useAppContext();
+
   // on scroll to top
   const loadingRef = useRef(true);
   useEffect(() => {
@@ -48,8 +44,8 @@ const Messages = ({
             key={msg.id}
             name={msg.user}
             text={msg.text}
-            currentUser={userNameInput}
-            cryptoKey={keyInput}
+            currentUser={userName}
+            cryptoKey={key}
           />
         ))}
       </div>

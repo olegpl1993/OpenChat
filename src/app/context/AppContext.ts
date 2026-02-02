@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
 
 export interface AppContextType {
-  userNameInput: string;
-  setUserNameInput: React.Dispatch<React.SetStateAction<string>>;
-  keyInput: string;
-  setKeyInput: React.Dispatch<React.SetStateAction<string>>;
+  userName: string;
+  setUserName: React.Dispatch<React.SetStateAction<string>>;
+  key: string;
+  setKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
