@@ -22,27 +22,33 @@ const Info = ({ search, setSearch, handleSearch }: Props) => {
 
   return (
     <div className={styles.info}>
-      <input
-        className={styles.input}
-        placeholder="search by name"
-        maxLength={25}
-        onChange={(e) => setSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleSearch();
-          }
-        }}
-        value={search}
-        name="user"
-        type="text"
-        autoComplete="off"
-      />
-      <div className={styles.loginPanel}>
+      <div className={styles.panel}>
+        <input
+          className={styles.input}
+          placeholder="search by name"
+          maxLength={25}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSearch();
+            }
+          }}
+          value={search}
+          name="user"
+          type="text"
+          autoComplete="off"
+        />
+        <button className={styles.searchBtn} onClick={() => handleSearch()}>
+          Search
+        </button>
+      </div>
+
+      <div className={styles.panel}>
+        <div className={styles.name}>{userName}</div>
         <button className={styles.exit} onClick={() => handleExit()}>
           Exit
         </button>
-        <div className={styles.name}>{userName}</div>
       </div>
     </div>
   );
