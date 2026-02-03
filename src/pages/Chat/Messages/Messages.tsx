@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { chatService } from "../../../services/chatService";
@@ -7,34 +7,39 @@ import styles from "./Messages.module.css";
 
 interface Props {
   messagesRef: React.RefObject<HTMLDivElement | null>;
+  canLoadHistoryRef: React.RefObject<boolean>;
   messagesState: MessageType[];
+  search: string;
 }
 
-const Messages = ({ messagesRef, messagesState }: Props) => {
+const Messages = ({
+  messagesRef,
+  canLoadHistoryRef,
+  messagesState,
+  search,
+}: Props) => {
   const { userName, key } = useAppContext();
 
   // on scroll to top
-  const loadingRef = useRef(true);
   useEffect(() => {
-    const messagesEl = messagesRef.current;
-    if (!messagesEl) return;
+    const messagesCurrent = messagesRef.current;
+    if (!messagesCurrent) return;
 
     const handleScroll = () => {
       if (
-        messagesEl.scrollTop < 100 &&
+        messagesCurrent.scrollTop < 200 &&
         messagesState.length > 0 &&
-        !loadingRef.current
+        canLoadHistoryRef.current
       ) {
-        loadingRef.current = true;
-        chatService.getHistory(messagesState[0].id);
+        canLoadHistoryRef.current = false;
+        chatService.getHistory(messagesState[0].id, search);
       }
     };
-    setTimeout(() => {
-      loadingRef.current = false;
-    }, 1000);
-    messagesEl.addEventListener("scroll", handleScroll);
-    return () => messagesEl.removeEventListener("scroll", handleScroll);
-  }, [messagesState, messagesRef]);
+    setTimeout(() => (canLoadHistoryRef.current = true), 500);
+    messagesCurrent.addEventListener("scroll", handleScroll);
+
+    return () => messagesCurrent.removeEventListener("scroll", handleScroll);
+  }, [messagesState, messagesRef, search, canLoadHistoryRef]);
 
   return (
     <div className={styles.messages}>

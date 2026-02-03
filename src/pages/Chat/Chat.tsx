@@ -8,7 +8,25 @@ import Messages from "./Messages/Messages";
 
 const Chat = () => {
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
+  const [search, setSearch] = useState("");
+  const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = () => {
+    canLoadHistoryRef.current = false;
+    setTimeout(() => {
+      messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+      setTimeout(() => {
+        canLoadHistoryRef.current = true;
+      }, 250);
+    }, 250);
+  };
+
+  const handleSearch = () => {
+    setMessagesState([]);
+    chatService.getHistory(undefined, search);
+    scrollToBottom(); // scroll to bottom on search initial render
+  };
 
   useEffect(() => {
     chatService.connect({
@@ -16,29 +34,25 @@ const Chat = () => {
         setMessagesState((prev) => [...messages, ...prev]),
       onChat: (messages) => {
         setMessagesState((prev) => [...prev, ...messages]);
-
-        // scroll to bottom on new message
-        setTimeout(() => {
-          messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-        }, 250);
+        scrollToBottom(); // scroll to bottom on new message
       },
       onOpen: () => console.log("WS connected"),
       onClose: () => console.log("WS disconnected"),
     });
+
+    scrollToBottom(); // scroll to bottom on initial render
     return () => chatService.disconnect();
   }, [setMessagesState]);
 
-  // scroll to bottom on initial render
-  useEffect(() => {
-    setTimeout(() => {
-      messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-    }, 500);
-  }, []);
-
   return (
     <div className={styles.chat}>
-      <Info />
-      <Messages messagesRef={messagesRef} messagesState={messagesState} />
+      <Info search={search} setSearch={setSearch} handleSearch={handleSearch} />
+      <Messages
+        messagesRef={messagesRef}
+        canLoadHistoryRef={canLoadHistoryRef}
+        messagesState={messagesState}
+        search={search}
+      />
       <Inputs />
     </div>
   );

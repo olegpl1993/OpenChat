@@ -51,19 +51,28 @@ createConnection();
 
 export async function getMessages(
   beforeId?: number,
+  search?: string,
   limit = 20,
 ): Promise<MessageType[]> {
   return new Promise((resolve, reject) => {
-    let sql: string;
-    let params: number[] = [];
+    let sql = "SELECT * FROM messages";
+    const conditions: string[] = [];
+    const params: (number | string)[] = [];
 
-    if (beforeId && beforeId > 1) {
-      sql = "SELECT * FROM messages WHERE id < ? ORDER BY id DESC LIMIT ?";
-      params = [beforeId, limit];
-    } else {
-      sql = "SELECT * FROM messages ORDER BY id DESC LIMIT ?";
-      params = [limit];
+    if (beforeId !== undefined) {
+      conditions.push("id < ?");
+      params.push(beforeId);
     }
+    if (search) {
+      conditions.push("user = ?");
+      params.push(search);
+    }
+    if (conditions.length) {
+      sql += " WHERE " + conditions.join(" AND ");
+    }
+
+    sql += " ORDER BY id DESC LIMIT ?";
+    params.push(limit);
 
     if (!connection) {
       return reject(new Error("MySQL connection is not established"));
@@ -71,6 +80,7 @@ export async function getMessages(
 
     connection.query<DBrequestType[]>(sql, params, (err, rows) => {
       if (err) return reject(err);
+
       resolve(rows.reverse());
     });
   });
