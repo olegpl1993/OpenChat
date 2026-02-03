@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
-import Inputs from "../../components/Inputs/Inputs";
-import Messages from "../../components/Messages/Messages";
 import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
-import Info from "../../components/Info/Info";
+import Info from "./Info/Info";
+import Inputs from "./Inputs/Inputs";
+import Messages from "./Messages/Messages";
 
 const Chat = () => {
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);

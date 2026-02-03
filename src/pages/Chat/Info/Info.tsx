@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../app/context/AppContext";
+import { useAppContext } from "../../../app/context/AppContext";
 import styles from "./Info.module.css";
 
 const Info = () => {

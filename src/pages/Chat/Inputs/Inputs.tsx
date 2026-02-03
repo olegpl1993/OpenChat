@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
-import { chatService } from "../../services/chatService";
-import { encrypt } from "../../utils/crypt";
+import type { MessageType } from "../../../../types/types";
+import { useAppContext } from "../../../app/context/AppContext";
+import { chatService } from "../../../services/chatService";
+import { encrypt } from "../../../utils/crypt";
 import styles from "./Inputs.module.css";
 
 const Inputs = () => {

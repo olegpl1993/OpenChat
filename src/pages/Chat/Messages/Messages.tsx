@@ -1,8 +1,8 @@
 import { memo, useEffect, useRef } from "react";
-import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
-import { chatService } from "../../services/chatService";
-import Message from "../Message/Message";
+import type { MessageType } from "../../../../types/types";
+import { useAppContext } from "../../../app/context/AppContext";
+import { chatService } from "../../../services/chatService";
+import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 
 interface Props {
