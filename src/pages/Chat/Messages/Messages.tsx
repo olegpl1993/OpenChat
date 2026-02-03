@@ -35,7 +35,7 @@ const Messages = ({
         chatService.getHistory(messagesState[0].id, search);
       }
     };
-    setTimeout(() => (canLoadHistoryRef.current = true), 500);
+    setTimeout(() => (canLoadHistoryRef.current = true), 800);
     messagesCurrent.addEventListener("scroll", handleScroll);
 
     return () => messagesCurrent.removeEventListener("scroll", handleScroll);

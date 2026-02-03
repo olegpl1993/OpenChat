@@ -18,8 +18,8 @@ const Chat = () => {
       messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
       setTimeout(() => {
         canLoadHistoryRef.current = true;
-      }, 300);
-    }, 300);
+      }, 400);
+    }, 400);
   };
 
   const handleSearch = () => {

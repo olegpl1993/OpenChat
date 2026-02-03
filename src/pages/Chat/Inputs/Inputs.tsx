@@ -37,12 +37,14 @@ const Inputs = () => {
             value={messageTextInput}
             onChange={(e) => setMessageTextInput(e.target.value)}
             onKeyDown={(e) => {
-              const isMobile = window.matchMedia("(pointer: coarse)").matches;
-              if (e.key !== "Enter") return;
+              const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
+                navigator.userAgent,
+              );
               if (isMobile) return;
-              if (e.shiftKey) return;
-              e.preventDefault();
-              handleSend();
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
             }}
             name="message"
             autoComplete="off"
