@@ -47,8 +47,8 @@ class ChatService {
     this.sendRaw({ type: "chat", messages: [message] });
   }
 
-  getHistory(beforeId: number) {
-    if (beforeId > 1) this.sendRaw({ type: "getHistory", beforeId });
+  getHistory(beforeId?: number, search?: string) {
+    this.sendRaw({ type: "getHistory", beforeId, search });
   }
 
   disconnect() {

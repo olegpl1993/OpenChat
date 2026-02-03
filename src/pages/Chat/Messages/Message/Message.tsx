@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import { decrypt } from "../../utils/crypt";
+import { decrypt } from "../../../../utils/crypt";
 import styles from "./Message.module.css";
 
 interface Props {

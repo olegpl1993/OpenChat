@@ -47,6 +47,6 @@
     border-radius: 0px;
   }
   .messagesBox::-webkit-scrollbar {
-    width: 4px;
+    width: 2px;
   }
 }

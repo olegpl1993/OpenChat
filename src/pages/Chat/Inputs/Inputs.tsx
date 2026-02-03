@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
-import { chatService } from "../../services/chatService";
-import { encrypt } from "../../utils/crypt";
+import type { MessageType } from "../../../../types/types";
+import { useAppContext } from "../../../app/context/AppContext";
+import { chatService } from "../../../services/chatService";
+import { encrypt } from "../../../utils/crypt";
 import styles from "./Inputs.module.css";
 
 const Inputs = () => {
@@ -37,6 +37,10 @@ const Inputs = () => {
             value={messageTextInput}
             onChange={(e) => setMessageTextInput(e.target.value)}
             onKeyDown={(e) => {
+              const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
+                navigator.userAgent,
+              );
+              if (isMobile) return;
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();

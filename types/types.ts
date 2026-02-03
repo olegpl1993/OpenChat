@@ -15,4 +15,4 @@ export type WSData =
   | { type: "error" }
   | { type: "history"; messages: MessageType[] }
   | { type: "chat"; messages: MessageType[] }
-  | { type: "getHistory", beforeId: number };
+  | { type: "getHistory", beforeId?: number, search?: string };

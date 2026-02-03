@@ -55,7 +55,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
 
       if (wsData.type === "getHistory") {
         try {
-          const history = await getMessages(wsData.beforeId);
+          const history = await getMessages(wsData.beforeId, wsData.search);
           ws.send(JSON.stringify({ type: "history", messages: history }));
         } catch (err) {
           console.error("DB error:", err);

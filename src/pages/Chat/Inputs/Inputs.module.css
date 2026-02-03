@@ -3,12 +3,12 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100px;
+  height: 90px;
   gap: 10px;
 }
 @media screen and (max-width: 768px) {
   .inputs {
-    height: 80px;
+    height: 70px;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -38,7 +38,7 @@
 
 .input {
   width: 100%;
-  height: 56px;
+  height: 54px;
   padding: 15px 20px;
   border-radius: 25px;
   border: 1px solid #ccc;
@@ -70,17 +70,17 @@
 @media screen and (max-width: 768px) {
   .input {
     font-size: 14px;
-    border-radius: 4px;
-      height: 50px;
+    border-radius: 10px;
+    height: 50px;
   }
 }
 
 .buttonSend {
   border: none;
-  border-radius: 15px;
-  min-width: 60px;
-  min-height: 60px;
-  background: linear-gradient(135deg, #37aee2, #1e96fc);
+  border-radius: 25px;
+  min-width: 54px;
+  min-height: 54px;
+  background-color: #1e90ff;
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -91,12 +91,6 @@
   justify-content: center;
   user-select: none;
   transition: all 0.2s ease;
-}
-.buttonSend:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-.buttonSend:active {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 .buttonSend:disabled {
   background: #b5b5b5;
