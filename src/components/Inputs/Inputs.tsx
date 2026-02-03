@@ -30,20 +30,19 @@ const Inputs = () => {
     <div className={styles.inputs}>
       <div className={styles.inputBox}>
         <div className={styles.inputContainer}>
-          <input
+          <textarea
             className={styles.input}
             placeholder="message"
-            maxLength={300}
+            maxLength={500}
+            value={messageTextInput}
             onChange={(e) => setMessageTextInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
             }}
-            value={messageTextInput}
             name="message"
-            type="text"
             autoComplete="off"
           />
         </div>

@@ -38,6 +38,7 @@
 
 .input {
   width: 100%;
+  height: 56px;
   padding: 15px 20px;
   border-radius: 25px;
   border: 1px solid #ccc;
@@ -45,6 +46,11 @@
   font-size: 18px;
   transition: all 0.2s ease;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  resize: none;
+  white-space: pre-wrap;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .input:hover {
   border-color: #1e90ff;
@@ -54,6 +60,9 @@
   border-color: #1e90ff;
   box-shadow: 0 0 5px rgba(30, 144, 255, 0.5);
 }
+.input::-webkit-scrollbar {
+  display: none;
+}
 .input::placeholder {
   color: #aaa;
   font-style: italic;
@@ -62,6 +71,7 @@
   .input {
     font-size: 14px;
     border-radius: 4px;
+      height: 50px;
   }
 }
 

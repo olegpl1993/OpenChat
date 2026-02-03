@@ -11,10 +11,10 @@ const Auth = () => {
   const [formKeyInput, setFormKeyInput] = useState("");
 
   const handleEnter = () => {
-    localStorage.setItem("name", formUserNameInput);
-    localStorage.setItem("key", formKeyInput);
-    setUserName(formUserNameInput);
-    setKey(formKeyInput);
+    localStorage.setItem("name", formUserNameInput.trim());
+    localStorage.setItem("key", formKeyInput.trim());
+    setUserName(formUserNameInput.trim());
+    setKey(formKeyInput.trim());
     navigate("/chat");
   };
 
