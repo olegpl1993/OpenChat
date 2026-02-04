@@ -16,7 +16,7 @@ const Chat = () => {
     canLoadHistoryRef.current = false;
     setTimeout(() => {
       messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-    }, 50);
+    }, 200);
     setTimeout(() => {
       canLoadHistoryRef.current = true;
     }, 500);
