@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../app/context/AppContext";
 import styles from "./Info.module.css";
@@ -54,4 +55,4 @@ const Info = ({ search, setSearch, handleSearch }: Props) => {
   );
 };
 
-export default Info;
+export default memo(Info);
