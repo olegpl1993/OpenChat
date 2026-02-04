@@ -16,6 +16,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
         JSON.stringify({
           type: "history",
           messages: history,
+          initial: true,
         }),
       );
     } catch (err) {
@@ -54,9 +55,20 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       }
 
       if (wsData.type === "getHistory") {
+        console.log("User requested history");
         try {
           const history = await getMessages(wsData.beforeId, wsData.search);
-          ws.send(JSON.stringify({ type: "history", messages: history }));
+          if (wsData.beforeId) {
+            ws.send(JSON.stringify({ type: "history", messages: history }));
+          } else {
+            ws.send(
+              JSON.stringify({
+                type: "history",
+                messages: history,
+                initial: true,
+              }),
+            );
+          }
         } catch (err) {
           console.error("DB error:", err);
           ws.send(JSON.stringify({ type: "error" }));

@@ -16,22 +16,25 @@ const Chat = () => {
     canLoadHistoryRef.current = false;
     setTimeout(() => {
       messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-      setTimeout(() => {
-        canLoadHistoryRef.current = true;
-      }, 400);
-    }, 400);
+    }, 50);
+    setTimeout(() => {
+      canLoadHistoryRef.current = true;
+    }, 500);
   };
 
   const handleSearch = () => {
     setMessagesState([]);
-    chatService.getHistory(undefined, search);
-    scrollToBottom(); // scroll to bottom on search initial render
+    chatService.getHistory(undefined, search.trim());
   };
 
   useEffect(() => {
     chatService.connect({
-      onHistory: (messages) =>
-        setMessagesState((prev) => [...messages, ...prev]),
+      onHistory: (messages, initial) => {
+        setMessagesState((prev) => [...messages, ...prev]);
+        if (initial)
+          scrollToBottom(); // scroll to bottom on initial render
+        else canLoadHistoryRef.current = true;
+      },
       onChat: (messages) => {
         setMessagesState((prev) => [...prev, ...messages]);
         scrollToBottom(); // scroll to bottom on new message
@@ -40,7 +43,6 @@ const Chat = () => {
       onClose: () => console.log("WS disconnected"),
     });
 
-    scrollToBottom(); // scroll to bottom on initial render
     return () => chatService.disconnect();
   }, [setMessagesState]);
 

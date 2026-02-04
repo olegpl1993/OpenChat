@@ -13,6 +13,6 @@ export type WSData =
   | { type: "ping" }
   | { type: "pong" }
   | { type: "error" }
-  | { type: "history"; messages: MessageType[] }
+  | { type: "history"; messages: MessageType[], initial?: boolean }
   | { type: "chat"; messages: MessageType[] }
   | { type: "getHistory", beforeId?: number, search?: string };

@@ -24,7 +24,7 @@ const Auth = () => {
         <input
           className={styles.input}
           placeholder="name"
-          maxLength={25}
+          maxLength={15}
           onChange={(e) => setFormUserNameInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -40,7 +40,7 @@ const Auth = () => {
         <input
           className={styles.input}
           placeholder="crypto key"
-          maxLength={25}
+          maxLength={15}
           onChange={(e) => setFormKeyInput(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

@@ -26,6 +26,7 @@ const Messages = ({
     if (!messagesCurrent) return;
 
     const handleScroll = () => {
+      console.log(canLoadHistoryRef.current);
       if (
         messagesCurrent.scrollTop < 200 &&
         messagesState.length > 0 &&
@@ -35,7 +36,6 @@ const Messages = ({
         chatService.getHistory(messagesState[0].id, search);
       }
     };
-    setTimeout(() => (canLoadHistoryRef.current = true), 800);
     messagesCurrent.addEventListener("scroll", handleScroll);
 
     return () => messagesCurrent.removeEventListener("scroll", handleScroll);
