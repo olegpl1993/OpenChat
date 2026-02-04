@@ -24,7 +24,7 @@ const Chat = () => {
 
   const handleSearch = () => {
     setMessagesState([]);
-    chatService.getHistory(undefined, search);
+    chatService.getHistory(undefined, search.trim());
     scrollToBottom(); // scroll to bottom on search initial render
   };
 

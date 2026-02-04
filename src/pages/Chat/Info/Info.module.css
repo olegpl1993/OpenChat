@@ -14,8 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  max-height: 40px;
+  max-height: 34px;
 }
 
 .input {
@@ -54,23 +53,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0px 15px;
+  padding: 0px 10px;
   height: 100%;
   width: fit-content;
   border-bottom-right-radius: 25px;
   border-top-right-radius: 25px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
   color: white;
   background-color: #1e90ff;
   user-select: none;
 }
 @media screen and (max-width: 768px) {
   .searchBtn {
-    font-size: 16px;
+    font-size: 12px;
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
-    padding: 0px 10px;
+    padding: 0px 7px;
   }
 }
 
@@ -78,13 +77,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0px 15px;
+  padding: 0px 10px;
   height: 100%;
   width: fit-content;
   border-bottom-left-radius: 25px;
   border-top-left-radius: 25px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
   color: #1e90ff;
   background-color: white;
   border: 2px solid #1e90ff;
@@ -92,10 +91,10 @@
 }
 @media screen and (max-width: 768px) {
   .name {
-    font-size: 16px;
+    font-size: 14px;
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
-    padding: 0px 10px;
+    padding: 0px 7px;
   }
 }
 
@@ -103,9 +102,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0px 15px;
+  padding: 0px 10px;
   height: 100%;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   color: white;
   background-color: #1e90ff;
@@ -119,6 +118,6 @@
     font-size: 12px;
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
-    padding: 0px 10px;
+    padding: 0px 7px;
   }
 }
