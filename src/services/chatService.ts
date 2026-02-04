@@ -1,7 +1,7 @@
 import type { MessageType, WSData } from "../../types/types";
 
 type Handlers = {
-  onHistory: (messages: MessageType[]) => void;
+  onHistory: (messages: MessageType[], initial?: boolean) => void;
   onChat: (messages: MessageType[]) => void;
   onOpen?: () => void;
   onClose?: () => void;
@@ -32,7 +32,7 @@ class ChatService {
       const data: WSData = JSON.parse(event.data);
 
       if (data.type === "history" && data.messages)
-        handlers.onHistory(data.messages);
+        handlers.onHistory(data.messages, data.initial);
 
       if (data.type === "chat" && data.messages) handlers.onChat(data.messages);
     };
