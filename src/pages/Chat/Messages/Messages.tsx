@@ -26,11 +26,13 @@ const Messages = ({
     if (!messagesCurrent) return;
 
     const handleScroll = () => {
+      console.log(canLoadHistoryRef.current);
       if (
         messagesCurrent.scrollTop < 200 &&
         messagesState.length > 0 &&
         canLoadHistoryRef.current
       ) {
+        canLoadHistoryRef.current = false;
         chatService.getHistory(messagesState[0].id, search);
       }
     };

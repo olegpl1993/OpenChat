@@ -31,7 +31,9 @@ const Chat = () => {
     chatService.connect({
       onHistory: (messages, initial) => {
         setMessagesState((prev) => [...messages, ...prev]);
-        if (initial) scrollToBottom(); // scroll to bottom on initial render
+        if (initial)
+          scrollToBottom(); // scroll to bottom on initial render
+        else canLoadHistoryRef.current = true;
       },
       onChat: (messages) => {
         setMessagesState((prev) => [...prev, ...messages]);
