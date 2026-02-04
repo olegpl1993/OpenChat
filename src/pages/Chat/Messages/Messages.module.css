@@ -50,3 +50,28 @@
     width: 2px;
   }
 }
+
+.dateSeparator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dateSeparatorText {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  font-size: 10px;
+  color: #888;
+  background-color: white;
+  margin: 10px 0;
+  border-radius: 15px;
+  padding: 7px 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+@media screen and (max-width: 768px) {
+  .dateSeparatorText {
+    border-radius: 5px;
+  }
+}

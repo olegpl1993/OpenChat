@@ -3,6 +3,7 @@
   padding: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   max-width: 80%;
+  min-width: 10%;
 }
 
 .userName {
@@ -17,6 +18,14 @@
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  line-height: 1.2;
+}
+
+.messageDate {
+  text-align: right;
+  font-size: 10px;
+  color: #888;
+  margin-top: 5px;
 }
 
 .user {

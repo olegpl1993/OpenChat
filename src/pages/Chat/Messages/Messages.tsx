@@ -2,6 +2,7 @@ import { memo, useEffect } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { chatService } from "../../../services/chatService";
+import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 
@@ -19,6 +20,7 @@ const Messages = ({
   search,
 }: Props) => {
   const { userName, key } = useAppContext();
+  const messagesRenderList = buildMessagesRenderList(messagesState);
 
   // on scroll to top
   useEffect(() => {
@@ -26,9 +28,8 @@ const Messages = ({
     if (!messagesCurrent) return;
 
     const handleScroll = () => {
-      console.log(canLoadHistoryRef.current);
       if (
-        messagesCurrent.scrollTop < 300 &&
+        messagesCurrent.scrollTop < 400 &&
         messagesState.length > 0 &&
         canLoadHistoryRef.current
       ) {
@@ -44,15 +45,29 @@ const Messages = ({
   return (
     <div className={styles.messages}>
       <div className={styles.messagesBox} ref={messagesRef}>
-        {messagesState.map((msg) => (
-          <Message
-            key={msg.id}
-            name={msg.user}
-            text={msg.text}
-            currentUser={userName}
-            cryptoKey={key}
-          />
-        ))}
+        {messagesRenderList.map((item, i) => {
+          if (item.type === "date") {
+            return (
+              <div
+                key={`date-${item.date}-${i}`}
+                className={styles.dateSeparator}
+              >
+                <div className={styles.dateSeparatorText}>
+                  {new Date(item.date).toLocaleDateString()}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <Message
+              key={item.message.id}
+              message={item.message}
+              currentUser={userName}
+              cryptoKey={key}
+            />
+          );
+        })}
       </div>
     </div>
   );
