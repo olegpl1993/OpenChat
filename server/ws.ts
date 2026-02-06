@@ -4,14 +4,24 @@ import { WSData } from "../types/types";
 import { getMessages, saveMessage } from "./db";
 
 export function setupWebSocket(server: http.Server): WebSocketServer {
+  const clients = new Map<WebSocket, string>();
   const wss = new WebSocketServer({ server });
+
+  function broadcastUsers() {
+    const users = [...clients.values()];
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: "users", users }));
+      }
+    });
+  }
 
   wss.on("connection", async (ws: WebSocket) => {
     console.log("User connected");
 
     try {
       const history = await getMessages();
-
       ws.send(
         JSON.stringify({
           type: "history",
@@ -38,18 +48,28 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
         return;
       }
 
+      if (wsData.type === "auth") {
+        clients.set(ws, wsData.user);
+        broadcastUsers();
+        return;
+      }
+
       if (wsData.type === "chat") {
+        const user = clients.get(ws);
+        if (!user) return;
+
         try {
-          await saveMessage(wsData.messages[0].user, wsData.messages[0].text);
+          await saveMessage(user, wsData.messages[0].text);
         } catch (err) {
           console.error("DB error:", err);
           ws.send(JSON.stringify({ type: "error" }));
           return;
         }
 
+        const message = { ...wsData.messages[0], user };
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(wsData));
+            client.send(JSON.stringify({ type: "chat", messages: [message] }));
           }
         });
       }
@@ -79,6 +99,8 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
 
     ws.on("close", () => {
       console.log("User disconnected");
+      clients.delete(ws);
+      broadcastUsers();
     });
   });
 

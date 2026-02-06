@@ -7,9 +7,17 @@ type Props = {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   handleSearch: () => void;
+  isOpenUsersPanel: boolean;
+  setIsOpenUsersPanel: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Info = ({ search, setSearch, handleSearch }: Props) => {
+const Info = ({
+  search,
+  setSearch,
+  handleSearch,
+  isOpenUsersPanel,
+  setIsOpenUsersPanel,
+}: Props) => {
   const { userName, setUserName, setKey } = useAppContext();
   const navigate = useNavigate();
 
@@ -23,33 +31,48 @@ const Info = ({ search, setSearch, handleSearch }: Props) => {
 
   return (
     <div className={styles.info}>
-      <div className={styles.panel}>
-        <input
-          className={styles.input}
-          placeholder="search by name"
-          maxLength={25}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleSearch();
-            }
-          }}
-          value={search}
-          name="user"
-          type="text"
-          autoComplete="off"
-        />
-        <button className={styles.searchBtn} onClick={() => handleSearch()}>
-          Search
-        </button>
-      </div>
+      <div className={styles.panelBox}>
+        <div className={styles.panel}>
+          <button
+            className={styles.usersToggle1}
+            onClick={() => setIsOpenUsersPanel(!isOpenUsersPanel)}
+          >
+            Users
+          </button>
 
-      <div className={styles.panel}>
-        <div className={styles.name}>{userName}</div>
-        <button className={styles.exit} onClick={() => handleExit()}>
-          Exit
-        </button>
+          <input
+            className={styles.input}
+            placeholder="search by name"
+            maxLength={25}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch();
+              }
+            }}
+            value={search}
+            name="user"
+            type="text"
+            autoComplete="off"
+          />
+          <button className={styles.searchBtn} onClick={() => handleSearch()}>
+            Search
+          </button>
+        </div>
+
+        <div className={styles.panel}>
+          <button
+            className={styles.usersToggle2}
+            onClick={() => setIsOpenUsersPanel(!isOpenUsersPanel)}
+          >
+            Users
+          </button>
+          <div className={styles.name}>{userName}</div>
+          <button className={styles.exit} onClick={() => handleExit()}>
+            Exit
+          </button>
+        </div>
       </div>
     </div>
   );

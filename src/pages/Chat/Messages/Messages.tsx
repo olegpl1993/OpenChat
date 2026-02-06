@@ -11,6 +11,8 @@ interface Props {
   canLoadHistoryRef: React.RefObject<boolean>;
   messagesState: MessageType[];
   search: string;
+  isOpenUsersPanel: boolean;
+  onlineUsers: string[];
 }
 
 const Messages = ({
@@ -18,6 +20,8 @@ const Messages = ({
   canLoadHistoryRef,
   messagesState,
   search,
+  isOpenUsersPanel,
+  onlineUsers,
 }: Props) => {
   const { userName, key } = useAppContext();
   const messagesRenderList = buildMessagesRenderList(messagesState);
@@ -44,6 +48,17 @@ const Messages = ({
 
   return (
     <div className={styles.messages}>
+      {isOpenUsersPanel && (
+        <div className={styles.usersPanel}>
+          <div className={styles.usersList}>
+            {onlineUsers.map((user) => (
+              <div key={user} className={styles.userItem}>
+                {user}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className={styles.messagesBox} ref={messagesRef}>
         {messagesRenderList.map((item, i) => {
           if (item.type === "date") {
