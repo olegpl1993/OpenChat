@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
+import { useAppContext } from "../../app/context/AppContext";
 import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
 import Info from "./Info/Info";
@@ -7,16 +8,21 @@ import Inputs from "./Inputs/Inputs";
 import Messages from "./Messages/Messages";
 
 const Chat = () => {
+  const { userName } = useAppContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [isOpenUsersPanel, setIsOpenUsersPanel] = useState(false);
   const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+
+  console.log(onlineUsers);
 
   const scrollToBottom = () => {
     canLoadHistoryRef.current = false;
     setTimeout(() => {
       messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
-    }, 50);
+    }, 200);
     setTimeout(() => {
       canLoadHistoryRef.current = true;
     }, 500);
@@ -29,6 +35,10 @@ const Chat = () => {
 
   useEffect(() => {
     chatService.connect({
+      onOpen: () => {
+        console.log("WS connected");
+        chatService.sendAuth(userName);
+      },
       onHistory: (messages, initial) => {
         setMessagesState((prev) => [...messages, ...prev]);
         if (initial)
@@ -39,22 +49,32 @@ const Chat = () => {
         setMessagesState((prev) => [...prev, ...messages]);
         scrollToBottom(); // scroll to bottom on new message
       },
-      onOpen: () => console.log("WS connected"),
+      onUsers: (users) => setOnlineUsers(users),
       onClose: () => console.log("WS disconnected"),
     });
 
     return () => chatService.disconnect();
-  }, [setMessagesState]);
+  }, [setMessagesState, userName]);
 
   return (
     <div className={styles.chat}>
-      <Info search={search} setSearch={setSearch} handleSearch={handleSearch} />
+      <Info
+        search={search}
+        setSearch={setSearch}
+        handleSearch={handleSearch}
+        isOpenUsersPanel={isOpenUsersPanel}
+        setIsOpenUsersPanel={setIsOpenUsersPanel}
+      />
+
       <Messages
         messagesRef={messagesRef}
         canLoadHistoryRef={canLoadHistoryRef}
         messagesState={messagesState}
         search={search}
+        isOpenUsersPanel={isOpenUsersPanel}
+        onlineUsers={onlineUsers}
       />
+
       <Inputs />
     </div>
   );

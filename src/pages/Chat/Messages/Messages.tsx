@@ -2,6 +2,7 @@ import { memo, useEffect } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { chatService } from "../../../services/chatService";
+import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 
@@ -10,6 +11,8 @@ interface Props {
   canLoadHistoryRef: React.RefObject<boolean>;
   messagesState: MessageType[];
   search: string;
+  isOpenUsersPanel: boolean;
+  onlineUsers: string[];
 }
 
 const Messages = ({
@@ -17,8 +20,11 @@ const Messages = ({
   canLoadHistoryRef,
   messagesState,
   search,
+  isOpenUsersPanel,
+  onlineUsers,
 }: Props) => {
   const { userName, key } = useAppContext();
+  const messagesRenderList = buildMessagesRenderList(messagesState);
 
   // on scroll to top
   useEffect(() => {
@@ -26,9 +32,8 @@ const Messages = ({
     if (!messagesCurrent) return;
 
     const handleScroll = () => {
-      console.log(canLoadHistoryRef.current);
       if (
-        messagesCurrent.scrollTop < 200 &&
+        messagesCurrent.scrollTop < 400 &&
         messagesState.length > 0 &&
         canLoadHistoryRef.current
       ) {
@@ -43,16 +48,41 @@ const Messages = ({
 
   return (
     <div className={styles.messages}>
+      {isOpenUsersPanel && (
+        <div className={styles.usersPanel}>
+          <div className={styles.usersList}>
+            {onlineUsers.map((user) => (
+              <div key={user} className={styles.userItem}>
+                {user}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className={styles.messagesBox} ref={messagesRef}>
-        {messagesState.map((msg) => (
-          <Message
-            key={msg.id}
-            name={msg.user}
-            text={msg.text}
-            currentUser={userName}
-            cryptoKey={key}
-          />
-        ))}
+        {messagesRenderList.map((item, i) => {
+          if (item.type === "date") {
+            return (
+              <div
+                key={`date-${item.date}-${i}`}
+                className={styles.dateSeparator}
+              >
+                <div className={styles.dateSeparatorText}>
+                  {new Date(item.date).toLocaleDateString()}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <Message
+              key={item.message.id}
+              message={item.message}
+              currentUser={userName}
+              cryptoKey={key}
+            />
+          );
+        })}
       </div>
     </div>
   );
