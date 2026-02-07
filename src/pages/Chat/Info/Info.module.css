@@ -115,8 +115,8 @@
 }
 
 .searchIcon {
-  height: 30px;
-  width: 30px;
+  height: 20px;
+  width: 20px;
   filter: brightness(0) invert(1);
 }
 
@@ -170,7 +170,7 @@
 }
 
 .exitIcon {
-  height: 15px;
-  width: 15px;
+  height: 17px;
+  width: 17px;
   filter: brightness(0) invert(1);
 }
