@@ -5,6 +5,7 @@ import { chatService } from "../../../services/chatService";
 import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
+import UsersPanel from "./UsersPanel/UsersPanel";
 
 interface Props {
   messagesRef: React.RefObject<HTMLDivElement | null>;
@@ -48,17 +49,7 @@ const Messages = ({
 
   return (
     <div className={styles.messages}>
-      {isOpenUsersPanel && (
-        <div className={styles.usersPanel}>
-          <div className={styles.usersList}>
-            {onlineUsers.map((user) => (
-              <div key={user} className={styles.userItem}>
-                {user}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {isOpenUsersPanel && <UsersPanel onlineUsers={onlineUsers} />}
       <div className={styles.messagesBox} ref={messagesRef}>
         {messagesRenderList.map((item, i) => {
           if (item.type === "date") {

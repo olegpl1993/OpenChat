@@ -1,5 +1,8 @@
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
+import exitIcon from "../../../../public/exit.svg";
+import searchIcon from "../../../../public/search.svg";
+import usersIcon from "../../../../public/users.svg";
 import { useAppContext } from "../../../app/context/AppContext";
 import styles from "./Info.module.css";
 
@@ -34,10 +37,10 @@ const Info = ({
       <div className={styles.panelBox}>
         <div className={styles.panel}>
           <button
-            className={styles.usersToggle1}
+            className={styles.usersToggle}
             onClick={() => setIsOpenUsersPanel(!isOpenUsersPanel)}
           >
-            Users
+            <img src={usersIcon} className={styles.usersIcon} />
           </button>
 
           <input
@@ -57,20 +60,14 @@ const Info = ({
             autoComplete="off"
           />
           <button className={styles.searchBtn} onClick={() => handleSearch()}>
-            Search
+            <img src={searchIcon} className={styles.searchIcon} />
           </button>
         </div>
 
         <div className={styles.panel}>
-          <button
-            className={styles.usersToggle2}
-            onClick={() => setIsOpenUsersPanel(!isOpenUsersPanel)}
-          >
-            Users
-          </button>
           <div className={styles.name}>{userName}</div>
           <button className={styles.exit} onClick={() => handleExit()}>
-            Exit
+            <img src={exitIcon} className={styles.exitIcon} />
           </button>
         </div>
       </div>

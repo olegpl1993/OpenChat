@@ -1,0 +1,83 @@
+.usersPanel {
+  display: flex;
+  flex-direction: column;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 15px;
+  border: 1px solid #ccc;
+  background-color: white;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 5px;
+  padding-right: 65px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 1;
+  left: 0px;
+  top: 0px;
+  height: 200px;
+  width: 200px;
+}
+.usersPanel::-webkit-scrollbar {
+  width: 8px;
+}
+.usersPanel::-webkit-scrollbar-thumb {
+  background-color: rgba(30, 144, 255, 0.5);
+  border-radius: 4px;
+}
+.usersPanel::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+@media screen and (max-width: 768px) {
+  .usersPanel {
+    flex-direction: row;
+    border-bottom-right-radius: 10px;
+    border-top-left-radius: 0px;
+  }
+  .usersPanel::-webkit-scrollbar {
+    width: 2px;
+  }
+}
+
+.title {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  font-size: 14px;
+  color: black;
+}
+
+.usersList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: fit-content;
+  justify-items: center;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px 10px;
+  height: 100%;
+  width: 180px;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 10px;
+  color: black;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  height: auto;
+  gap: 5px;
+}
+
+.userAvatarIcon {
+  height: 20px;
+  width: 20px;
+}
