@@ -25,7 +25,7 @@ const Chat = () => {
     }, 200);
     setTimeout(() => {
       canLoadHistoryRef.current = true;
-    }, 500);
+    }, 700);
   };
 
   const handleSearch = () => {

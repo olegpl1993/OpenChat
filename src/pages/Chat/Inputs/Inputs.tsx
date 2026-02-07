@@ -1,5 +1,5 @@
 import { useState } from "react";
-import messageIcon from "../../../../public/message.svg";
+import messageIcon from "../../../assets/message.svg";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { chatService } from "../../../services/chatService";

@@ -1,9 +1,9 @@
 import { memo } from "react";
 import { useNavigate } from "react-router-dom";
-import exitIcon from "../../../../public/exit.svg";
-import searchIcon from "../../../../public/search.svg";
-import usersIcon from "../../../../public/users.svg";
 import { useAppContext } from "../../../app/context/AppContext";
+import exitIcon from "../../../assets/exit.svg";
+import searchIcon from "../../../assets/search.svg";
+import usersIcon from "../../../assets/users.svg";
 import styles from "./Info.module.css";
 
 type Props = {
