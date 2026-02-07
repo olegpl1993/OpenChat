@@ -1,5 +1,5 @@
 import { memo } from "react";
-import userAvatarIcon from "../../../../../public/userAvatar.svg";
+import userAvatarIcon from "../../../../assets/userAvatar.svg";
 import styles from "./UsersPanel.module.css";
 
 interface Props {
