@@ -1,13 +1,13 @@
 .usersPanel {
   display: flex;
   flex-direction: column;
-  border-bottom-right-radius: 15px;
-  border-top-left-radius: 15px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
   border: 1px solid #ccc;
   background-color: white;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
   padding: 5px;
-  padding-right: 65px;
+  padding-bottom: 10px;
   overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
@@ -16,6 +16,15 @@
   top: 0px;
   height: 200px;
   width: 200px;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
+  animation: usersPanelIn 0.5s ease forwards;
+}
+@keyframes usersPanelIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 .usersPanel::-webkit-scrollbar {
   width: 8px;
@@ -30,8 +39,7 @@
 }
 @media screen and (max-width: 768px) {
   .usersPanel {
-    flex-direction: row;
-    border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 8px;
     border-top-left-radius: 0px;
   }
   .usersPanel::-webkit-scrollbar {
@@ -43,8 +51,7 @@
   font-weight: bold;
   width: 100%;
   text-align: center;
-  margin-bottom: 5px;
-  margin-top: 5px;
+  margin: 5px 0px;
   font-size: 14px;
   color: black;
 }
@@ -70,9 +77,7 @@
   color: black;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
   transition: all 0.2s ease;
-  user-select: none;
   height: auto;
   gap: 5px;
 }
@@ -80,4 +85,5 @@
 .userAvatarIcon {
   height: 20px;
   width: 20px;
+  user-select: none;
 }

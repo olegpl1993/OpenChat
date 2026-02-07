@@ -34,7 +34,7 @@ const Messages = ({
 
     const handleScroll = () => {
       if (
-        messagesCurrent.scrollTop < 400 &&
+        messagesCurrent.scrollTop < 600 &&
         messagesState.length > 0 &&
         canLoadHistoryRef.current
       ) {
