@@ -5,7 +5,7 @@ import { getMessages, saveMessage } from "./db";
 
 export function setupWebSocket(server: http.Server): WebSocketServer {
   const clients = new Map<WebSocket, string>();
-  const wss = new WebSocketServer({ server });
+  const wss = new WebSocketServer({ noServer: true });
 
   function broadcastUsers() {
     const users = [...clients.values()];
@@ -16,6 +16,16 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       }
     });
   }
+
+  server.on("upgrade", (req, socket, head) => {
+    if (req.url?.startsWith("/ws")) {
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit("connection", ws, req);
+      });
+    } else {
+      socket.destroy();
+    }
+  });
 
   wss.on("connection", async (ws: WebSocket) => {
     console.log("User connected");
@@ -56,7 +66,10 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
 
       if (wsData.type === "chat") {
         const user = clients.get(ws);
-        if (!user) return;
+        if (!user) {
+          ws.close(1008, "Unauthorized");
+          return;
+        }
 
         try {
           await saveMessage(user, wsData.messages[0].text);
@@ -75,7 +88,6 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       }
 
       if (wsData.type === "getHistory") {
-        console.log("User requested history");
         try {
           const history = await getMessages(wsData.beforeId, wsData.search);
           if (wsData.beforeId) {

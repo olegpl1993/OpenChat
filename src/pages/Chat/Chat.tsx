@@ -16,8 +16,6 @@ const Chat = () => {
   const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
-  console.log(onlineUsers);
-
   const scrollToBottom = () => {
     canLoadHistoryRef.current = false;
     setTimeout(() => {
@@ -40,10 +38,13 @@ const Chat = () => {
         chatService.sendAuth(userName);
       },
       onHistory: (messages, initial) => {
-        setMessagesState((prev) => [...messages, ...prev]);
-        if (initial)
+        if (initial) {
+          setMessagesState(messages);
           scrollToBottom(); // scroll to bottom on initial render
-        else canLoadHistoryRef.current = true;
+        } else {
+          setMessagesState((prev) => [...messages, ...prev]);
+          canLoadHistoryRef.current = true;
+        }
       },
       onChat: (messages) => {
         setMessagesState((prev) => [...prev, ...messages]);
