@@ -10,12 +10,16 @@ type Handlers = {
 
 class ChatService {
   private socket: WebSocket | null = null;
+  private reconnectAttempts = 0;
+  private maxDelay = 30000;
+  private handlers: Handlers | null = null;
 
   private sendRaw(data: WSData) {
     this.socket?.send(JSON.stringify(data));
   }
 
   connect(handlers: Handlers) {
+    this.handlers = handlers;
     if (this.socket) return;
     const protocol = location.protocol === "https:" ? "wss" : "ws";
 
@@ -23,20 +27,24 @@ class ChatService {
 
     this.socket.onopen = () => {
       this.sendRaw({ type: "ping" });
-      handlers.onOpen?.();
+      this.handlers?.onOpen?.();
+      this.reconnectAttempts = 0;
     };
 
     this.socket.onmessage = (event) => {
       const data: WSData = JSON.parse(event.data);
       if (data.type === "history" && data.messages)
-        handlers.onHistory(data.messages, data.initial);
-      if (data.type === "chat" && data.messages) handlers.onChat(data.messages);
-      if (data.type === "users" && data.users) handlers.onUsers(data.users);
+        this.handlers?.onHistory(data.messages, data.initial);
+      if (data.type === "chat" && data.messages)
+        this.handlers?.onChat(data.messages);
+      if (data.type === "users" && data.users)
+        this.handlers?.onUsers(data.users);
     };
 
     this.socket.onclose = () => {
-      handlers.onClose?.();
+      this.handlers?.onClose?.();
       this.socket = null;
+      this.scheduleReconnect();
     };
   }
 
@@ -55,6 +63,17 @@ class ChatService {
   disconnect() {
     this.socket?.close();
     this.socket = null;
+  }
+
+  private scheduleReconnect() {
+    const delay = Math.min(1000 * 2 ** this.reconnectAttempts, this.maxDelay);
+    console.log(`Reconnect in ${delay} ms`);
+
+    setTimeout(() => {
+      if (!this.handlers) return;
+      this.reconnectAttempts++;
+      this.connect(this.handlers);
+    }, delay);
   }
 }
 
