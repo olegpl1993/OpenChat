@@ -13,16 +13,17 @@ class ChatService {
   private reconnectAttempts = 0;
   private maxDelay = 30000;
   private handlers: Handlers | null = null;
+  private manuallyClosed = false;
 
   private sendRaw(data: WSData) {
     this.socket?.send(JSON.stringify(data));
   }
 
   connect(handlers: Handlers) {
+    this.manuallyClosed = false;
     this.handlers = handlers;
-    if (this.socket) return;
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
     const protocol = location.protocol === "https:" ? "wss" : "ws";
-
     this.socket = new WebSocket(`${protocol}://${location.host}/ws`);
 
     this.socket.onopen = () => {
@@ -44,7 +45,7 @@ class ChatService {
     this.socket.onclose = () => {
       this.handlers?.onClose?.();
       this.socket = null;
-      this.scheduleReconnect();
+      if (!this.manuallyClosed) this.scheduleReconnect();
     };
   }
 
@@ -61,6 +62,7 @@ class ChatService {
   }
 
   disconnect() {
+    this.manuallyClosed = true;
     this.socket?.close();
     this.socket = null;
   }
@@ -68,7 +70,6 @@ class ChatService {
   private scheduleReconnect() {
     const delay = Math.min(1000 * 2 ** this.reconnectAttempts, this.maxDelay);
     console.log(`Reconnect in ${delay} ms`);
-
     setTimeout(() => {
       if (!this.handlers) return;
       this.reconnectAttempts++;

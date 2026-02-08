@@ -68,20 +68,10 @@
   transition: all 0.2s ease;
   border-radius: 45px;
 }
-.buttonEnter:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-.buttonEnter:active {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-}
 .buttonEnter:disabled {
   background: #b5b5b5;
   color: #eee;
   cursor: default;
-  box-shadow: none;
-}
-.buttonEnter:disabled:hover,
-.buttonEnter:disabled:active {
   box-shadow: none;
 }
 @media screen and (max-width: 768px) {
