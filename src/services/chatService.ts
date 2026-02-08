@@ -17,12 +17,9 @@ class ChatService {
 
   connect(handlers: Handlers) {
     if (this.socket) return;
-    const WS_PORT = import.meta.env.DEV ? 4000 : location.port;
     const protocol = location.protocol === "https:" ? "wss" : "ws";
 
-    this.socket = new WebSocket(
-      `${protocol}://${location.hostname}:${WS_PORT}`,
-    );
+    this.socket = new WebSocket(`${protocol}://${location.host}/ws`);
 
     this.socket.onopen = () => {
       this.sendRaw({ type: "ping" });
