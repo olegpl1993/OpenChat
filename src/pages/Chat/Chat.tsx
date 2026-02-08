@@ -32,6 +32,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
+    if (!userName) return;
     chatService.connect({
       onOpen: () => {
         console.log("WS connected");
@@ -40,7 +41,7 @@ const Chat = () => {
       onHistory: (messages, initial) => {
         if (initial) {
           setMessagesState(messages);
-          scrollToBottom(); // scroll to bottom on initial render
+          scrollToBottom();
         } else {
           setMessagesState((prev) => [...messages, ...prev]);
           canLoadHistoryRef.current = true;
@@ -48,14 +49,14 @@ const Chat = () => {
       },
       onChat: (messages) => {
         setMessagesState((prev) => [...prev, ...messages]);
-        scrollToBottom(); // scroll to bottom on new message
+        scrollToBottom();
       },
       onUsers: (users) => setOnlineUsers(users),
       onClose: () => console.log("WS disconnected"),
     });
 
     return () => chatService.disconnect();
-  }, [setMessagesState, userName]);
+  }, [userName]);
 
   return (
     <div className={styles.chat}>
