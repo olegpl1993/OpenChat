@@ -12,20 +12,38 @@ export const AppContextProvider = ({ children }: Props) => {
     () => localStorage.getItem("name") ?? "",
   );
   const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
+  const [token, setToken] = useState(() => localStorage.getItem("token") ?? "");
 
   useEffect(() => {
-    if (userName) {
+    if (userName && token) {
       navigate("/chat");
     } else {
       navigate("/");
     }
-  }, [userName, navigate]);
+  }, [userName, token, navigate]);
+
+  useEffect(() => {
+    if (userName) localStorage.setItem("name", userName);
+    else localStorage.removeItem("name");
+  }, [userName]);
+
+  useEffect(() => {
+    if (key) localStorage.setItem("key", key);
+    else localStorage.removeItem("key");
+  }, [key]);
+
+  useEffect(() => {
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [token]);
 
   return (
     <AppContext.Provider
       value={{
         userName,
         setUserName,
+        token,
+        setToken,
         key,
         setKey,
       }}

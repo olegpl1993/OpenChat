@@ -1,9 +1,11 @@
 .auth {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100dvh;
+  gap: 15px;
 }
 @media screen and (max-width: 768px) {
   .auth {
@@ -12,72 +14,39 @@
   }
 }
 
-.form {
+.formContainer {
+  height: 300px;
+  width: 260px;
+}
+
+.toggle {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-@media screen and (max-width: 768px) {
-  .form {
-    gap: 10px;
-  }
-}
-
-.input {
-  width: 100%;
-  padding: 10px 15px;
-  border-radius: 25px;
+  border-radius: 8px;
+  overflow: hidden;
   border: 1px solid #ccc;
-  outline: none;
-  font-size: 16px;
-  transition: all 0.2s ease;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-.input:hover {
-  border-color: #1e90ff;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-.input:focus {
-  border-color: #1e90ff;
-  box-shadow: 0 0 5px rgba(30, 144, 255, 0.5);
-}
-.input::placeholder {
-  color: #aaa;
-  font-style: italic;
-}
-@media screen and (max-width: 768px) {
-  .input {
-    font-size: 12px;
-    border-radius: 4px;
-  }
 }
 
-.buttonEnter {
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  cursor: pointer;
   border: none;
-  width: 100%;
-  min-height: 60px;
+  background: #eee;
+  font-weight: 600;
+  padding: 5px;
+  width: 100px;
+  user-select: none;
+}
+
+.tab:hover {
+  background: #ddd;
+}
+
+.active {
   background: linear-gradient(135deg, #37aee2, #1e96fc);
   color: white;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  transition: all 0.2s ease;
-  border-radius: 45px;
 }
-.buttonEnter:disabled {
-  background: #b5b5b5;
-  color: #eee;
-  cursor: default;
-  box-shadow: none;
-}
-@media screen and (max-width: 768px) {
-  .buttonEnter {
-    font-size: 14px;
-    min-height: 50px;
-    border-radius: 8px;
-  }
+.active:hover {
+  background: linear-gradient(135deg, #37aee2, #1e96fc);
+  cursor: auto;
 }

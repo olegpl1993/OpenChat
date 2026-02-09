@@ -3,6 +3,8 @@ import { createContext, useContext } from "react";
 export interface AppContextType {
   userName: string;
   setUserName: React.Dispatch<React.SetStateAction<string>>;
+  token: string;
+  setToken: React.Dispatch<React.SetStateAction<string>>;
   key: string;
   setKey: React.Dispatch<React.SetStateAction<string>>;
 }

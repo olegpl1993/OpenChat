@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../app/context/AppContext";
 import exitIcon from "../../../assets/exit.svg";
 import searchIcon from "../../../assets/search.svg";
@@ -21,15 +20,15 @@ const Info = ({
   isOpenUsersPanel,
   setIsOpenUsersPanel,
 }: Props) => {
-  const { userName, setUserName, setKey } = useAppContext();
-  const navigate = useNavigate();
+  const { userName, setUserName, setKey, setToken } = useAppContext();
 
   const handleExit = () => {
     setUserName("");
+    setToken("");
     setKey("");
     localStorage.removeItem("name");
+    localStorage.removeItem("token");
     localStorage.removeItem("key");
-    navigate("/");
   };
 
   return (
