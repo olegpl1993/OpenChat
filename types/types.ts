@@ -18,3 +18,13 @@ export type WSData =
   | { type: "getHistory"; beforeId?: number; search?: string }
   | { type: "auth"; user: string }
   | { type: "users"; users: string[] };
+
+export type AuthBody = {
+  username: string;
+  password: string;
+};
+
+export type UserRow = RowDataPacket & {
+  id?: number;
+  password_hash?: string;
+};

@@ -1,7 +1,8 @@
 import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
 import { WSData } from "../types/types";
-import { getMessages, saveMessage } from "./db";
+import { getMessages } from "./db/getMessages";
+import { saveMessage } from "./db/saveMessage";
 
 export function setupWebSocket(server: http.Server): WebSocketServer {
   const clients = new Map<WebSocket, string>();

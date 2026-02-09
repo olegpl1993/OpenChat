@@ -1,65 +1,30 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAppContext } from "../../app/context/AppContext";
 import styles from "./Auth.module.css";
+import Login from "./Login/Login";
+import Register from "./Register/Register";
 
 const Auth = () => {
-  const { setUserName, setKey } = useAppContext();
-  const navigate = useNavigate();
-
-  const [formUserNameInput, setFormUserNameInput] = useState("");
-  const [formKeyInput, setFormKeyInput] = useState("");
-
-  const handleEnter = () => {
-    localStorage.setItem("name", formUserNameInput.trim());
-    localStorage.setItem("key", formKeyInput.trim());
-    setUserName(formUserNameInput.trim());
-    setKey(formKeyInput.trim());
-    navigate("/chat");
-  };
+  const [loginToggle, setLoginToggle] = useState(true);
 
   return (
     <div className={styles.auth}>
-      <div className={styles.form}>
-        <input
-          className={styles.input}
-          placeholder="name"
-          maxLength={15}
-          onChange={(e) => setFormUserNameInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleEnter();
-            }
-          }}
-          value={formUserNameInput}
-          name="user"
-          type="text"
-          autoComplete="off"
-        />
-        <input
-          className={styles.input}
-          placeholder="crypto key"
-          maxLength={15}
-          onChange={(e) => setFormKeyInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleEnter();
-            }
-          }}
-          value={formKeyInput}
-          name="key"
-          type="text"
-          autoComplete="off"
-        />
+      <div className={styles.toggle}>
         <button
-          className={styles.buttonEnter}
-          onClick={() => handleEnter()}
-          disabled={formUserNameInput.length < 3}
+          className={`${styles.tab} ${loginToggle ? styles.active : ""}`}
+          onClick={() => setLoginToggle(true)}
         >
-          Enter
+          Login
         </button>
+        <button
+          className={`${styles.tab} ${!loginToggle ? styles.active : ""}`}
+          onClick={() => setLoginToggle(false)}
+        >
+          Registration
+        </button>
+      </div>
+
+      <div className={styles.formContainer}>
+        {loginToggle ? <Login /> : <Register />}
       </div>
     </div>
   );
