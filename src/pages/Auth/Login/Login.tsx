@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useAppContext } from "../../../app/context/AppContext";
+import eyeHideIcon from "../../../assets/eyeHide.svg";
+import eyeShowIcon from "../../../assets/eyeShow.svg";
 import styles from "./Login.module.css";
 
 const Login = () => {
@@ -9,6 +11,7 @@ const Login = () => {
   const [formKeyInput, setFormKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     setError(null);
@@ -67,16 +70,30 @@ const Login = () => {
         autoComplete="off"
       />
 
-      <input
-        className={styles.input}
-        placeholder="password"
-        maxLength={15}
-        onChange={(e) => setFormPasswordInput(e.target.value)}
-        value={formPasswordInput}
-        name="password"
-        type="password"
-        autoComplete="off"
-      />
+      <div className={styles.passwordWrapper}>
+        <input
+          className={styles.input}
+          placeholder="password"
+          maxLength={15}
+          onChange={(e) => setFormPasswordInput(e.target.value)}
+          value={formPasswordInput}
+          name="password"
+          type={showPassword ? "text" : "password"}
+          autoComplete="off"
+        />
+
+        <button
+          type="button"
+          className={styles.eyeButton}
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? (
+            <img src={eyeHideIcon} alt="eyeHide" className={styles.eyeIcon} />
+          ) : (
+            <img src={eyeShowIcon} alt="eyeShow" className={styles.eyeIcon} />
+          )}
+        </button>
+      </div>
 
       <button
         className={styles.buttonEnter}

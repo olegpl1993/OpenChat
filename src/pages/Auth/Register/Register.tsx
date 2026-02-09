@@ -1,4 +1,6 @@
 import { useState } from "react";
+import eyeHideIcon from "../../../assets/eyeHide.svg";
+import eyeShowIcon from "../../../assets/eyeShow.svg";
 import styles from "./Register.module.css";
 
 const Register = () => {
@@ -7,6 +9,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async () => {
     setError(null);
@@ -63,16 +66,30 @@ const Register = () => {
         autoComplete="off"
       />
 
-      <input
-        className={styles.input}
-        placeholder="password"
-        maxLength={15}
-        onChange={(e) => setFormPasswordInput(e.target.value)}
-        value={formPasswordInput}
-        name="password"
-        type="password"
-        autoComplete="off"
-      />
+      <div className={styles.passwordWrapper}>
+        <input
+          className={styles.input}
+          placeholder="password"
+          maxLength={15}
+          onChange={(e) => setFormPasswordInput(e.target.value)}
+          value={formPasswordInput}
+          name="password"
+          type={showPassword ? "text" : "password"}
+          autoComplete="off"
+        />
+
+        <button
+          type="button"
+          className={styles.eyeButton}
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? (
+            <img src={eyeHideIcon} alt="eyeHide" className={styles.eyeIcon} />
+          ) : (
+            <img src={eyeShowIcon} alt="eyeShow" className={styles.eyeIcon} />
+          )}
+        </button>
+      </div>
 
       <button
         className={styles.buttonEnter}

@@ -38,6 +38,27 @@
   }
 }
 
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.eyeIcon {
+  height: 18px;
+  width: 18px;
+}
+
 .buttonEnter {
   border: none;
   width: 100%;
