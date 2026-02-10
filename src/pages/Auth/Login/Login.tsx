@@ -5,7 +5,7 @@ import eyeShowIcon from "../../../assets/eyeShow.svg";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const { setUserName, setToken, setKey } = useAppContext();
+  const { setUserName, setKey } = useAppContext();
   const [formUserNameInput, setFormUserNameInput] = useState("");
   const [formPasswordInput, setFormPasswordInput] = useState("");
   const [formKeyInput, setFormKeyInput] = useState("");
@@ -25,6 +25,7 @@ const Login = () => {
     try {
       const response = await fetch("/api/login", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: formUserNameInput,
@@ -39,7 +40,6 @@ const Login = () => {
 
       const data = await response.json();
       setUserName(data.username);
-      setToken(data.token);
       setKey(formKeyInput);
 
       setFormUserNameInput("");

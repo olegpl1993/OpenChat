@@ -20,15 +20,17 @@ const Info = ({
   isOpenUsersPanel,
   setIsOpenUsersPanel,
 }: Props) => {
-  const { userName, setUserName, setKey, setToken } = useAppContext();
+  const { userName, setUserName, setKey } = useAppContext();
 
-  const handleExit = () => {
+  const handleExit = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST", credentials: "include" });
+    } catch (err) {
+      console.error(err);
+    }
+
     setUserName("");
-    setToken("");
     setKey("");
-    localStorage.removeItem("name");
-    localStorage.removeItem("token");
-    localStorage.removeItem("key");
   };
 
   return (
