@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../../services/authService";
 import { AppContext } from "./AppContext";
 
 interface Props {
@@ -8,24 +9,17 @@ interface Props {
 
 export const AppContextProvider = ({ children }: Props) => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState(
-    () => localStorage.getItem("name") ?? "",
-  );
+  const [userName, setUserName] = useState("");
   const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
-  const [token, setToken] = useState(() => localStorage.getItem("token") ?? "");
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (userName && token) {
+    if (userName && loggedIn) {
       navigate("/chat");
     } else {
       navigate("/");
     }
-  }, [userName, token, navigate]);
-
-  useEffect(() => {
-    if (userName) localStorage.setItem("name", userName);
-    else localStorage.removeItem("name");
-  }, [userName]);
+  }, [userName, loggedIn, navigate]);
 
   useEffect(() => {
     if (key) localStorage.setItem("key", key);
@@ -33,17 +27,16 @@ export const AppContextProvider = ({ children }: Props) => {
   }, [key]);
 
   useEffect(() => {
-    if (token) localStorage.setItem("token", token);
-    else localStorage.removeItem("token");
-  }, [token]);
+    checkAuth(setUserName, setLoggedIn);
+  }, [userName]);
 
   return (
     <AppContext.Provider
       value={{
         userName,
         setUserName,
-        token,
-        setToken,
+        loggedIn,
+        setLoggedIn,
         key,
         setKey,
       }}
