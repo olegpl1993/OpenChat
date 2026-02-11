@@ -1,10 +1,10 @@
 import { useState } from "react";
-import messageIcon from "../../../assets/message.svg";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
+import messageIcon from "../../../assets/message.svg";
 import { chatService } from "../../../services/chatService";
-import { encrypt } from "../../../utils/crypt";
 import styles from "./Inputs.module.css";
+import { encrypt } from "../../../utils/encrypt";
 
 const Inputs = () => {
   const { userName, key } = useAppContext();

@@ -1,14 +1,14 @@
 import fs from "fs";
 import http from "http";
 import path from "path";
-import { api } from "./api/api";
-import { setupWebSocket } from "./ws";
+import { authRoutes } from "./api/auth.routes";
+import { setupWebSocket } from "./ws/ws";
 
 const __dirname = path.dirname(process.argv[1]);
 export const PORT = process.env.PORT || 4000;
 
 const server = http.createServer(async (req, res) => {
-  const handled = await api(req, res);
+  const handled = await authRoutes(req, res);
   if (handled) return;
 
   const filePath =

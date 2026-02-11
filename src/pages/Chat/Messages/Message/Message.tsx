@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../../types/types";
-import { decrypt } from "../../../../utils/crypt";
+import { decrypt } from "../../../../utils/decrypt";
 import styles from "./Message.module.css";
 
 interface Props {

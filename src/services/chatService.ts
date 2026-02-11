@@ -4,8 +4,8 @@ type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
   onChat: (messages: MessageType[]) => void;
   onUsers: (users: string[]) => void;
-  onOpen?: () => void;
-  onClose?: () => void;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
 class ChatService {
