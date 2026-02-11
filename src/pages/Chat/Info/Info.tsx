@@ -3,6 +3,7 @@ import { useAppContext } from "../../../app/context/AppContext";
 import exitIcon from "../../../assets/exit.svg";
 import searchIcon from "../../../assets/search.svg";
 import usersIcon from "../../../assets/users.svg";
+import { authService } from "../../../services/authService";
 import styles from "./Info.module.css";
 
 type Props = {
@@ -20,18 +21,8 @@ const Info = ({
   isOpenUsersPanel,
   setIsOpenUsersPanel,
 }: Props) => {
-  const { userName, setUserName, setKey } = useAppContext();
-
-  const handleExit = async () => {
-    try {
-      await fetch("/api/logout", { method: "POST", credentials: "include" });
-    } catch (err) {
-      console.error(err);
-    }
-
-    setUserName("");
-    setKey("");
-  };
+  const { userName } = useAppContext();
+  const handleExit = () => authService.logout();
 
   return (
     <div className={styles.info}>

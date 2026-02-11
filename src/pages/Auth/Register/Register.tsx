@@ -1,6 +1,7 @@
 import { useState } from "react";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
+import { authService } from "../../../services/authService";
 import styles from "./Register.module.css";
 
 const Register = () => {
@@ -22,22 +23,12 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formUserNameInput,
-          password: formPasswordInput,
-        }),
-      });
+      const username = await authService.register(
+        formUserNameInput,
+        formPasswordInput,
+      );
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Register error");
-      }
-
-      const data = await response.json();
-      setSuccess(`${data.username} registered successfully`);
+      setSuccess(`${username} registered successfully`);
       setFormUserNameInput("");
       setFormPasswordInput("");
     } catch (err: unknown) {
