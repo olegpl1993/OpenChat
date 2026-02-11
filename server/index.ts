@@ -1,8 +1,8 @@
 import fs from "fs";
 import http from "http";
 import path from "path";
-import { setupWebSocket } from "./ws";
 import { authRoutes } from "./api/auth.routes";
+import { setupWebSocket } from "./ws/ws";
 
 const __dirname = path.dirname(process.argv[1]);
 export const PORT = process.env.PORT || 4000;
