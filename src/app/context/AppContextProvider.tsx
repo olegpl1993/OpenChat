@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkAuth } from "../../services/authService";
+import { authService } from "../../services/authService";
 import { AppContext } from "./AppContext";
 
 interface Props {
@@ -10,25 +10,32 @@ interface Props {
 export const AppContextProvider = ({ children }: Props) => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
-  const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    if (userName && loggedIn) {
-      navigate("/chat");
-    } else {
-      navigate("/");
-    }
-  }, [userName, loggedIn, navigate]);
+    const unsub = authService.subscribe((user, loggedIn) => {
+      setUserName(user?.username ?? "");
+      setLoggedIn(loggedIn);
+      setAuthReady(true);
+    });
+
+    authService.checkAuth();
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (!authReady) return;
+
+    if (loggedIn) navigate("/chat");
+    else navigate("/");
+  }, [loggedIn, authReady, navigate]);
 
   useEffect(() => {
     if (key) localStorage.setItem("key", key);
     else localStorage.removeItem("key");
   }, [key]);
-
-  useEffect(() => {
-    checkAuth(setUserName, setLoggedIn);
-  }, [userName]);
 
   return (
     <AppContext.Provider

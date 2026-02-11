@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useAppContext } from "../../../app/context/AppContext";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
+import { authService } from "../../../services/authService";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const { setUserName, setKey } = useAppContext();
+  const { setKey } = useAppContext();
+
   const [formUserNameInput, setFormUserNameInput] = useState("");
   const [formPasswordInput, setFormPasswordInput] = useState("");
   const [formKeyInput, setFormKeyInput] = useState("");
@@ -23,23 +25,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formUserNameInput,
-          password: formPasswordInput,
-        }),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Login error");
-      }
-
-      const data = await response.json();
-      setUserName(data.username);
+      await authService.login(formUserNameInput, formPasswordInput);
       setKey(formKeyInput);
 
       setFormUserNameInput("");
