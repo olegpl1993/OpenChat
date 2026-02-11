@@ -1,8 +1,7 @@
 import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
 import { WSData } from "../types/types";
-import { getMessages } from "./db/getMessages";
-import { saveMessage } from "./db/saveMessage";
+import { messageRepository } from "./db/message.repository";
 
 export function setupWebSocket(server: http.Server): WebSocketServer {
   const clients = new Map<WebSocket, string>();
@@ -32,7 +31,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
     console.log("User connected");
 
     try {
-      const history = await getMessages();
+      const history = await messageRepository.getHistory();
       ws.send(
         JSON.stringify({
           type: "history",
@@ -73,7 +72,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
         }
 
         try {
-          await saveMessage(user, wsData.messages[0].text);
+          await messageRepository.save(user, wsData.messages[0].text);
         } catch (err) {
           console.error("DB error:", err);
           ws.send(JSON.stringify({ type: "error" }));
@@ -90,7 +89,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
 
       if (wsData.type === "getHistory") {
         try {
-          const history = await getMessages(wsData.beforeId, wsData.search);
+          const history = await messageRepository.getHistory(wsData.beforeId, wsData.search);
           if (wsData.beforeId) {
             ws.send(JSON.stringify({ type: "history", messages: history }));
           } else {
