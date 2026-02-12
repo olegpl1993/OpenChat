@@ -42,15 +42,15 @@ class ChatService {
         this.handlers?.onUsers(data.users);
     };
 
-    this.socket.onclose = () => {
+    this.socket.onclose = (event) => {
       this.handlers?.onClose?.();
       this.socket = null;
+      if (event.code === 4001) {
+        console.log("Another tab took the session. Stop reconnecting.");
+        return;
+      }
       if (!this.manuallyClosed) this.scheduleReconnect();
     };
-  }
-
-  sendAuth(user: string) {
-    this.sendRaw({ type: "auth", user });
   }
 
   sendMessage(message: MessageType) {

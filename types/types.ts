@@ -16,7 +16,6 @@ export type WSData =
   | { type: "history"; messages: MessageType[]; initial?: boolean }
   | { type: "chat"; messages: MessageType[] }
   | { type: "getHistory"; beforeId?: number; search?: string }
-  | { type: "auth"; user: string }
   | { type: "users"; users: string[] };
 
 export type AuthBody = {
