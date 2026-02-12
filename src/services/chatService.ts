@@ -4,6 +4,7 @@ type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
   onChat: (message: MessageType) => void;
   onUsers: (users: string[]) => void;
+  onDeleteMessage: (id: number) => void;
   onOpen: () => void;
   onClose: () => void;
 };
@@ -40,6 +41,8 @@ class ChatService {
         this.handlers?.onChat(data.message);
       if (data.type === "users" && data.users)
         this.handlers?.onUsers(data.users);
+      if (data.type === "deleteMessage")
+        this.handlers?.onDeleteMessage(data.id);
     };
 
     this.socket.onclose = () => {
@@ -47,6 +50,10 @@ class ChatService {
       this.socket = null;
       if (!this.manuallyClosed) this.scheduleReconnect();
     };
+  }
+
+  deleteMessage(id: number) {
+    this.sendRaw({ type: "deleteMessage", id: id });
   }
 
   sendMessage(message: MessageType) {

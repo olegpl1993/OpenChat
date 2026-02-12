@@ -6,11 +6,45 @@
   min-width: 10%;
 }
 
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
 .userName {
   font-weight: bold;
   margin-bottom: 5px;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+.deletButton {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.deletButton::before,
+.deletButton::after {
+  content: "";
+  position: absolute;
+  left: 70%;
+  top: 30%;
+  width: 2px;
+  height: 12px;
+  background-color: white;
+  transform-origin: center;
+}
+.deletButton::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.deletButton::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .messageText {
@@ -34,6 +68,7 @@
   color: #fff;
   border-bottom-right-radius: 0;
 }
+
 .other {
   align-self: flex-start;
   background-color: #fff;

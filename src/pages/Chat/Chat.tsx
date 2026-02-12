@@ -50,6 +50,9 @@ const Chat = () => {
         setMessagesState((prev) => [...prev, message]);
         scrollToBottom();
       },
+      onDeleteMessage: (id) => {
+        setMessagesState((prev) => prev.filter((m) => m.id !== id));
+      },
       onUsers: (users) => setOnlineUsers(users),
       onClose: () => console.log("WS disconnected"),
     });

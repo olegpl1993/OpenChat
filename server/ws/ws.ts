@@ -73,6 +73,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
         ws.send(JSON.stringify({ type: "error" }));
         return;
       }
+
       try {
         if (wsData.type === "ping") {
           ws.send(JSON.stringify({ type: "pong" }));
@@ -82,12 +83,11 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
           const message = await chatService.saveMessage(ws, wsData.message);
           wss.clients.forEach((c) => {
             if (c.readyState === WebSocket.OPEN) {
-              c.send(JSON.stringify({ type: "chat", messages: [message] }));
+              c.send(JSON.stringify({ type: "chat", message: message }));
             }
           });
           return;
         }
-
         if (wsData.type === "getHistory") {
           const history = await chatService.getHistory(
             wsData.beforeId,
@@ -100,6 +100,14 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
               initial: !wsData.beforeId,
             }),
           );
+        }
+        if (wsData.type === "deleteMessage") {
+          await chatService.deleteMessage(ws, wsData.id);
+          wss.clients.forEach((c) => {
+            if (c.readyState === WebSocket.OPEN) {
+              c.send(JSON.stringify({ type: "deleteMessage", id: wsData.id }));
+            }
+          });
         }
       } catch {
         ws.send(JSON.stringify({ type: "error" }));

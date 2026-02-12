@@ -54,6 +54,16 @@ export class ChatService {
     if (!savedMessage) throw new Error("Message not found after insert");
     return savedMessage;
   }
+
+  async deleteMessage(ws: WebSocket, id: number) {
+    const username = this.getUser(ws);
+    if (!username) throw new Error("Unauthorized");
+    const message = await messageRepository.getMessageById(id);
+    if (!message) throw new Error("Message not found");
+    if (message.user !== username)
+      throw new Error("You can delete only your own messages");
+    await messageRepository.delete(id);
+  }
 }
 
 export const chatService = new ChatService();

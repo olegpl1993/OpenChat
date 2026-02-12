@@ -13,9 +13,10 @@ export type WSData =
   | { type: "ping" }
   | { type: "pong" }
   | { type: "error" }
-  | { type: "history"; messages: MessageType[]; initial?: boolean }
-  | { type: "chat"; message: MessageType }
   | { type: "getHistory"; beforeId?: number; search?: string }
+  | { type: "history"; messages: MessageType[]; initial?: boolean }
+  | { type: "deleteMessage"; id: number }
+  | { type: "chat"; message: MessageType }
   | { type: "users"; users: string[] };
 
 export type AuthBody = {
