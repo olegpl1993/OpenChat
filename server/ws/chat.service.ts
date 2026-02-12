@@ -16,11 +16,9 @@ export class ChatService {
 
   auth(ws: WebSocket, username: string) {
     const existing = this.clients.get(username);
-
     if (existing && existing.ws !== ws) {
       existing.ws.close(4001, "SESSION_REPLACED");
     }
-
     this.clients.set(username, { ws, username });
   }
 
@@ -51,9 +49,10 @@ export class ChatService {
   async saveMessage(ws: WebSocket, message: MessageType) {
     const username = this.getUser(ws);
     if (!username) throw new Error("Unauthorized");
-
-    await messageRepository.save(username, message.text);
-    return { ...message, user: username };
+    const id = await messageRepository.saveMessage(username, message.text);
+    const savedMessage = await messageRepository.getMessageById(id);
+    if (!savedMessage) throw new Error("Message not found after insert");
+    return savedMessage;
   }
 }
 

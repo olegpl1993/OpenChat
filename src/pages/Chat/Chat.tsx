@@ -16,6 +16,8 @@ const Chat = () => {
   const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
+  console.log(messagesState);
+
   const scrollToBottom = () => {
     canLoadHistoryRef.current = false;
     setTimeout(() => {
