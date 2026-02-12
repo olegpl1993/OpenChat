@@ -15,6 +15,12 @@ export class ChatService {
   }
 
   auth(ws: WebSocket, username: string) {
+    const existing = this.clients.get(username);
+
+    if (existing && existing.ws !== ws) {
+      existing.ws.close(4001, "SESSION_REPLACED");
+    }
+
     this.clients.set(username, { ws, username });
   }
 

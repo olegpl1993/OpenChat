@@ -36,7 +36,6 @@ const Chat = () => {
     chatService.connect({
       onOpen: () => {
         console.log("WS connected");
-        chatService.sendAuth(userName);
       },
       onHistory: (messages, initial) => {
         if (initial) {
