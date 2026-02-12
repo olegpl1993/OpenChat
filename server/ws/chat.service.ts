@@ -9,6 +9,7 @@ type Client = {
 
 export class ChatService {
   private clients = new Map<string, Client>();
+  private lastMessageTime = new Map<string, number>();
 
   getOnlineUsers() {
     return [...this.clients.keys()];
@@ -16,11 +17,9 @@ export class ChatService {
 
   auth(ws: WebSocket, username: string) {
     const existing = this.clients.get(username);
-
     if (existing && existing.ws !== ws) {
       existing.ws.close(4001, "SESSION_REPLACED");
     }
-
     this.clients.set(username, { ws, username });
   }
 
@@ -51,9 +50,28 @@ export class ChatService {
   async saveMessage(ws: WebSocket, message: MessageType) {
     const username = this.getUser(ws);
     if (!username) throw new Error("Unauthorized");
+    this.checkSpam(username);
+    const id = await messageRepository.saveMessage(username, message.text);
+    const savedMessage = await messageRepository.getMessageById(id);
+    if (!savedMessage) throw new Error("Message not found after insert");
+    return savedMessage;
+  }
 
-    await messageRepository.save(username, message.text);
-    return { ...message, user: username };
+  async deleteMessage(ws: WebSocket, id: number) {
+    const username = this.getUser(ws);
+    if (!username) throw new Error("Unauthorized");
+    const message = await messageRepository.getMessageById(id);
+    if (!message) throw new Error("Message not found");
+    if (message.user !== username)
+      throw new Error("You can delete only your own messages");
+    await messageRepository.delete(id);
+  }
+
+  private checkSpam(username: string) {
+    const now = Date.now();
+    const last = this.lastMessageTime.get(username) ?? 0;
+    if (now - last < 1000) throw new Error("You're sending messages too fast.");
+    this.lastMessageTime.set(username, now);
   }
 }
 

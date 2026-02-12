@@ -3,8 +3,8 @@ import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import messageIcon from "../../../assets/message.svg";
 import { chatService } from "../../../services/chatService";
-import styles from "./Inputs.module.css";
 import { encrypt } from "../../../utils/encrypt";
+import styles from "./Inputs.module.css";
 
 const Inputs = () => {
   const { userName, key } = useAppContext();
@@ -16,10 +16,7 @@ const Inputs = () => {
     if (!cryptoMessageText) return;
 
     const createdMessage: MessageType = {
-      id: Date.now(),
-      user: userName,
       text: cryptoMessageText,
-      created_at: new Date().toISOString(),
     };
 
     chatService.sendMessage(createdMessage);

@@ -46,9 +46,12 @@ const Chat = () => {
           canLoadHistoryRef.current = true;
         }
       },
-      onChat: (messages) => {
-        setMessagesState((prev) => [...prev, ...messages]);
+      onChat: (message) => {
+        setMessagesState((prev) => [...prev, message]);
         scrollToBottom();
+      },
+      onDeleteMessage: (id) => {
+        setMessagesState((prev) => prev.filter((m) => m.id !== id));
       },
       onUsers: (users) => setOnlineUsers(users),
       onClose: () => console.log("WS disconnected"),

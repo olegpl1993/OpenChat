@@ -10,8 +10,8 @@ export const buildMessagesRenderList = (
   const items: ListItem[] = [];
   let lastDate = "";
   for (const msg of messages) {
-    const date = new Date(msg.created_at).toDateString();
-    if (date !== lastDate) {
+    const date = msg.created_at && new Date(msg.created_at).toDateString();
+    if (date && date !== lastDate) {
       items.push({ type: "date", date });
       lastDate = date;
     }

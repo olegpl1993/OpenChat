@@ -1,10 +1,10 @@
 import type { RowDataPacket } from "mysql2";
 
 export interface MessageType {
-  id: number;
-  user: string;
+  id?: number;
+  user?: string;
   text: string;
-  created_at: string;
+  created_at?: string;
 }
 
 export interface DBrequestType extends RowDataPacket, MessageType {}
@@ -13,9 +13,10 @@ export type WSData =
   | { type: "ping" }
   | { type: "pong" }
   | { type: "error" }
-  | { type: "history"; messages: MessageType[]; initial?: boolean }
-  | { type: "chat"; messages: MessageType[] }
   | { type: "getHistory"; beforeId?: number; search?: string }
+  | { type: "history"; messages: MessageType[]; initial?: boolean }
+  | { type: "deleteMessage"; id: number }
+  | { type: "chat"; message: MessageType }
   | { type: "users"; users: string[] };
 
 export type AuthBody = {

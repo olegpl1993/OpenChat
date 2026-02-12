@@ -2,8 +2,9 @@ import type { MessageType, WSData } from "../../types/types";
 
 type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
-  onChat: (messages: MessageType[]) => void;
+  onChat: (message: MessageType) => void;
   onUsers: (users: string[]) => void;
+  onDeleteMessage: (id: number) => void;
   onOpen: () => void;
   onClose: () => void;
 };
@@ -36,25 +37,27 @@ class ChatService {
       const data: WSData = JSON.parse(event.data);
       if (data.type === "history" && data.messages)
         this.handlers?.onHistory(data.messages, data.initial);
-      if (data.type === "chat" && data.messages)
-        this.handlers?.onChat(data.messages);
+      if (data.type === "chat" && data.message)
+        this.handlers?.onChat(data.message);
       if (data.type === "users" && data.users)
         this.handlers?.onUsers(data.users);
+      if (data.type === "deleteMessage")
+        this.handlers?.onDeleteMessage(data.id);
     };
 
-    this.socket.onclose = (event) => {
+    this.socket.onclose = () => {
       this.handlers?.onClose?.();
       this.socket = null;
-      if (event.code === 4001) {
-        console.log("Another tab took the session. Stop reconnecting.");
-        return;
-      }
       if (!this.manuallyClosed) this.scheduleReconnect();
     };
   }
 
+  deleteMessage(id: number) {
+    this.sendRaw({ type: "deleteMessage", id: id });
+  }
+
   sendMessage(message: MessageType) {
-    this.sendRaw({ type: "chat", messages: [message] });
+    this.sendRaw({ type: "chat", message: message });
   }
 
   getHistory(beforeId?: number, search?: string) {
