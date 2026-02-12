@@ -79,7 +79,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
           return;
         }
         if (wsData.type === "chat") {
-          const message = await chatService.saveMessage(ws, wsData.messages[0]);
+          const message = await chatService.saveMessage(ws, wsData.message);
           wss.clients.forEach((c) => {
             if (c.readyState === WebSocket.OPEN) {
               c.send(JSON.stringify({ type: "chat", messages: [message] }));
