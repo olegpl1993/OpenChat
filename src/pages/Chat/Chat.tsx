@@ -15,6 +15,18 @@ const Chat = () => {
   const [isOpenUsersPanel, setIsOpenUsersPanel] = useState(false);
   const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
+  const [editedMessage, setEditedMessage] = useState<MessageType | null>(null);
+  const [messageTextInput, setMessageTextInput] = useState("");
+
+  const startEdit = (message: MessageType) => {
+    setEditedMessage(message);
+    setMessageTextInput(message.text);
+  };
+
+  const cancelEdit = () => {
+    setEditedMessage(null);
+    setMessageTextInput("");
+  };
 
   const scrollToBottom = () => {
     canLoadHistoryRef.current = false;
@@ -53,6 +65,11 @@ const Chat = () => {
       onDeleteMessage: (id) => {
         setMessagesState((prev) => prev.filter((m) => m.id !== id));
       },
+      onEditMessage: (message) => {
+        setMessagesState((prev) =>
+          prev.map((m) => (m.id === message.id ? message : m)),
+        );
+      },
       onUsers: (users) => setOnlineUsers(users),
       onClose: () => console.log("WS disconnected"),
     });
@@ -77,9 +94,16 @@ const Chat = () => {
         search={search}
         isOpenUsersPanel={isOpenUsersPanel}
         onlineUsers={onlineUsers}
+        startEdit={startEdit}
       />
 
-      <Inputs />
+      <Inputs
+        messageTextInput={messageTextInput}
+        setMessageTextInput={setMessageTextInput}
+        editedMessage={editedMessage}
+        setEditedMessage={setEditedMessage}
+        cancelEdit={cancelEdit}
+      />
     </div>
   );
 };

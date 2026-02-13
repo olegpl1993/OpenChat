@@ -23,6 +23,13 @@ export const messageRepository = {
     await db.query("DELETE FROM messages WHERE id = ?", [id]);
   },
 
+  async update(id: number, text: string) {
+    await db.query("UPDATE messages SET text = ?, edited = 1 WHERE id = ?", [
+      text,
+      id,
+    ]);
+  },
+
   async getHistory(
     beforeId?: number,
     search?: string,

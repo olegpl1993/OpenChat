@@ -14,6 +14,7 @@ interface Props {
   search: string;
   isOpenUsersPanel: boolean;
   onlineUsers: string[];
+  startEdit: (message: MessageType) => void;
 }
 
 const Messages = ({
@@ -23,6 +24,7 @@ const Messages = ({
   search,
   isOpenUsersPanel,
   onlineUsers,
+  startEdit,
 }: Props) => {
   const { userName, key } = useAppContext();
   const messagesRenderList = buildMessagesRenderList(messagesState);
@@ -71,6 +73,7 @@ const Messages = ({
               message={item.message}
               currentUser={userName}
               cryptoKey={key}
+              startEdit={startEdit}
             />
           );
         })}
