@@ -1,8 +1,8 @@
 import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../../types/types";
 import editIcon from "../../../../assets/edit.svg";
-import { chatService } from "../../../../services/chatService";
 import { decrypt } from "../../../../utils/decrypt";
+import { chatService } from "../../chatService";
 import styles from "./Message.module.css";
 
 interface Props {

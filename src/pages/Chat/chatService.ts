@@ -1,4 +1,8 @@
-import type { MessageType, WSData } from "../../types/types";
+import type {
+  ClientWSData,
+  MessageType,
+  ServerWSData,
+} from "../../../types/types";
 
 type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
@@ -34,18 +38,35 @@ class ChatService {
     };
 
     this.socket.onmessage = (event) => {
-      const data: WSData = JSON.parse(event.data);
-      if (data.type === "server_history" && data.messages)
-        this.handlers?.onHistory(data.messages, data.initial);
-      if (data.type === "server_chat" && data.message)
-        this.handlers?.onChat(data.message);
-      if (data.type === "server_users" && data.users)
-        this.handlers?.onUsers(data.users);
-      if (data.type === "server_deleteMessage")
-        this.handlers?.onDeleteMessage(data.id);
-      if (data.type === "server_editMessage")
-        this.handlers?.onEditMessage(data.message);
-      if (data.type === "server_error") console.error(data.message, data.error);
+      let data: ServerWSData;
+
+      try {
+        data = JSON.parse(event.data);
+      } catch {
+        console.error("Invalid WS message", event.data);
+        return;
+      }
+
+      switch (data.type) {
+        case "server_history":
+          this.handlers?.onHistory(data.messages, data.initial);
+          break;
+        case "server_chat":
+          this.handlers?.onChat(data.message);
+          break;
+        case "server_users":
+          this.handlers?.onUsers(data.users);
+          break;
+        case "server_deleteMessage":
+          this.handlers?.onDeleteMessage(data.id);
+          break;
+        case "server_editMessage":
+          this.handlers?.onEditMessage(data.message);
+          break;
+        case "server_error":
+          console.error(data.message);
+          break;
+      }
     };
   }
 
@@ -71,7 +92,7 @@ class ChatService {
     this.socket = null;
   }
 
-  private sendRaw(data: WSData) {
+  private sendRaw(data: ClientWSData) {
     this.socket?.send(JSON.stringify(data));
   }
 

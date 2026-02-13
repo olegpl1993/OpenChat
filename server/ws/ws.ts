@@ -1,6 +1,6 @@
 import http from "http";
 import { WebSocket, WebSocketServer } from "ws";
-import { WSData } from "../../types/types";
+import { ClientWSData } from "../../types/types";
 import { authService } from "../api/auth.service";
 import { chatService } from "./chat.service";
 
@@ -67,7 +67,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
     }
 
     ws.on("message", async (data: Buffer) => {
-      let wsData: WSData;
+      let wsData: ClientWSData;
       try {
         wsData = JSON.parse(data.toString());
       } catch (err: unknown) {

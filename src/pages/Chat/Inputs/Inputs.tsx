@@ -2,8 +2,8 @@ import { memo } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import messageIcon from "../../../assets/message.svg";
-import { chatService } from "../../../services/chatService";
 import { encrypt } from "../../../utils/encrypt";
+import { chatService } from "../chatService";
 import styles from "./Inputs.module.css";
 
 type Props = {

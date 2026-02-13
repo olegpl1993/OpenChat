@@ -1,8 +1,8 @@
 import { memo, useEffect } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
-import { chatService } from "../../../services/chatService";
 import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
+import { chatService } from "../chatService";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 import UsersPanel from "./UsersPanel/UsersPanel";

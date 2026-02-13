@@ -10,17 +10,19 @@ export interface MessageType {
 
 export interface DBrequestType extends RowDataPacket, MessageType {}
 
-export type WSData =
+export type ClientWSData =
+  | { type: "client_history"; beforeId?: number; search?: string }
+  | { type: "client_deleteMessage"; id: number }
+  | { type: "client_editMessage"; id: number; text: string }
+  | { type: "client_chat"; messageText: string };
+
+export type ServerWSData =
   | { type: "server_error"; message?: string; error?: Error }
   | { type: "server_history"; messages: MessageType[]; initial?: boolean }
   | { type: "server_deleteMessage"; id: number }
   | { type: "server_editMessage"; message: MessageType }
   | { type: "server_chat"; message: MessageType }
-  | { type: "server_users"; users: string[] }
-  | { type: "client_history"; beforeId?: number; search?: string }
-  | { type: "client_deleteMessage"; id: number }
-  | { type: "client_editMessage"; id: number; text: string }
-  | { type: "client_chat"; messageText: string };
+  | { type: "server_users"; users: string[] };
 
 export type AuthBody = {
   username: string;

@@ -3,7 +3,7 @@ import { useAppContext } from "../../../app/context/AppContext";
 import exitIcon from "../../../assets/exit.svg";
 import searchIcon from "../../../assets/search.svg";
 import usersIcon from "../../../assets/users.svg";
-import { authService } from "../../../services/authService";
+import { authService } from "../../Auth/authService";
 import styles from "./Info.module.css";
 
 type Props = {

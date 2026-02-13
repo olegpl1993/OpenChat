@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
 import { useAppContext } from "../../app/context/AppContext";
-import { chatService } from "../../services/chatService";
 import styles from "./Chat.module.css";
+import { chatService } from "./chatService";
 import Info from "./Info/Info";
 import Inputs from "./Inputs/Inputs";
 import Messages from "./Messages/Messages";
