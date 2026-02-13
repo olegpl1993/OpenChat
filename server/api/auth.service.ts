@@ -1,9 +1,12 @@
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import type { AuthBody } from "../../types/types";
 import { userRepository } from "../db/user.repository";
-import { SECRET } from "./config";
 
+dotenv.config();
+
+const SECRET = process.env.JWT_SECRET!;
 const TOKEN_AGE = 7 * 24 * 60 * 60;
 
 export class AuthService {
