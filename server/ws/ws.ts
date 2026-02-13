@@ -88,6 +88,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
           });
           return;
         }
+
         if (wsData.type === "getHistory") {
           const history = await chatService.getHistory(
             wsData.beforeId,
@@ -101,6 +102,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
             }),
           );
         }
+
         if (wsData.type === "deleteMessage") {
           await chatService.deleteMessage(ws, wsData.id);
           wss.clients.forEach((c) => {
@@ -108,6 +110,26 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
               c.send(JSON.stringify({ type: "deleteMessage", id: wsData.id }));
             }
           });
+          return;
+        }
+        
+        if (wsData.type === "sendEditMessage") {
+          const updated = await chatService.editMessage(
+            ws,
+            wsData.id,
+            wsData.text,
+          );
+          wss.clients.forEach((c) => {
+            if (c.readyState === WebSocket.OPEN) {
+              c.send(
+                JSON.stringify({
+                  type: "editMessage",
+                  message: updated,
+                }),
+              );
+            }
+          });
+          return;
         }
       } catch {
         ws.send(JSON.stringify({ type: "error" }));

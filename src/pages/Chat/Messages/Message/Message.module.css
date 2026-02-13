@@ -1,4 +1,7 @@
 .message {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   border-radius: 15px;
   padding: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -10,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .userName {
@@ -20,10 +23,15 @@
   overflow-wrap: break-word;
 }
 
+.buttons {
+  display: flex;
+  gap: 5px;
+}
+
 .deletButton {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -33,10 +41,8 @@
 .deletButton::after {
   content: "";
   position: absolute;
-  left: 70%;
-  top: 30%;
-  width: 2px;
-  height: 12px;
+  width: 1px;
+  height: 16px;
   background-color: white;
   transform-origin: center;
 }
@@ -47,12 +53,37 @@
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+.editButton {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.editIcon {
+  height: 20px;
+  width: 20px;
+  filter: brightness(0) invert(1);
+}
+
 .messageText {
+  width: 100%;
+  text-align: left;
   margin: 0;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: pre-wrap;
   line-height: 1.2;
+}
+
+.messageFooter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
 }
 
 .messageDate {

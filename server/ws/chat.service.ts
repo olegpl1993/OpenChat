@@ -67,6 +67,26 @@ export class ChatService {
     await messageRepository.delete(id);
   }
 
+  async editMessage(ws: WebSocket, id: number, text: string) {
+  const username = this.getUser(ws);
+  if (!username) throw new Error("Unauthorized");
+
+  const message = await messageRepository.getMessageById(id);
+  if (!message) throw new Error("Message not found");
+
+  if (message.user !== username) {
+    throw new Error("You can edit only your own messages");
+  }
+
+  await messageRepository.update(id, text);
+
+  return {
+    ...message,
+    text,
+    edited: true,
+  };
+}
+
   private checkSpam(username: string) {
     const now = Date.now();
     const last = this.lastMessageTime.get(username) ?? 0;
