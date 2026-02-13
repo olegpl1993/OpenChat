@@ -1,13 +1,15 @@
-import type { MessageType, WSData } from "../../types/types";
+import type {
+  ClientWSData,
+  MessageType,
+  ServerWSData,
+} from "../../../types/types";
 
 type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
   onChat: (message: MessageType) => void;
-  onUsers: (users: string[]) => void;
   onDeleteMessage: (id: number) => void;
   onEditMessage: (message: MessageType) => void;
-  onOpen: () => void;
-  onClose: () => void;
+  onUsers: (users: string[]) => void;
 };
 
 class ChatService {
@@ -17,10 +19,6 @@ class ChatService {
   private handlers: Handlers | null = null;
   private manuallyClosed = false;
 
-  private sendRaw(data: WSData) {
-    this.socket?.send(JSON.stringify(data));
-  }
-
   connect(handlers: Handlers) {
     this.manuallyClosed = false;
     this.handlers = handlers;
@@ -29,52 +27,73 @@ class ChatService {
     this.socket = new WebSocket(`${protocol}://${location.host}/ws`);
 
     this.socket.onopen = () => {
-      this.sendRaw({ type: "ping" });
-      this.handlers?.onOpen?.();
+      console.log("WS connected");
       this.reconnectAttempts = 0;
     };
 
-    this.socket.onmessage = (event) => {
-      const data: WSData = JSON.parse(event.data);
-      if (data.type === "history" && data.messages)
-        this.handlers?.onHistory(data.messages, data.initial);
-      if (data.type === "chat" && data.message)
-        this.handlers?.onChat(data.message);
-      if (data.type === "users" && data.users)
-        this.handlers?.onUsers(data.users);
-      if (data.type === "deleteMessage")
-        this.handlers?.onDeleteMessage(data.id);
-      if (data.type === "editMessage")
-        this.handlers?.onEditMessage(data.message);
-    };
-
     this.socket.onclose = () => {
-      this.handlers?.onClose?.();
+      console.log("WS disconnected");
       this.socket = null;
       if (!this.manuallyClosed) this.scheduleReconnect();
+    };
+
+    this.socket.onmessage = (event) => {
+      let data: ServerWSData;
+
+      try {
+        data = JSON.parse(event.data);
+      } catch {
+        console.error("Invalid WS message", event.data);
+        return;
+      }
+
+      switch (data.type) {
+        case "server_history":
+          this.handlers?.onHistory(data.messages, data.initial);
+          break;
+        case "server_chat":
+          this.handlers?.onChat(data.message);
+          break;
+        case "server_users":
+          this.handlers?.onUsers(data.users);
+          break;
+        case "server_deleteMessage":
+          this.handlers?.onDeleteMessage(data.id);
+          break;
+        case "server_editMessage":
+          this.handlers?.onEditMessage(data.message);
+          break;
+        case "server_error":
+          console.error(data.message);
+          break;
+      }
     };
   }
 
   editMessage(id: number, text: string) {
-    this.sendRaw({ type: "sendEditMessage", id: id, text: text });
+    this.sendRaw({ type: "client_editMessage", id: id, text: text });
   }
 
   deleteMessage(id: number) {
-    this.sendRaw({ type: "deleteMessage", id: id });
+    this.sendRaw({ type: "client_deleteMessage", id: id });
   }
 
-  sendMessage(message: MessageType) {
-    this.sendRaw({ type: "chat", message: message });
+  sendMessage(messageText: string) {
+    this.sendRaw({ type: "client_chat", messageText: messageText });
   }
 
   getHistory(beforeId?: number, search?: string) {
-    this.sendRaw({ type: "getHistory", beforeId, search });
+    this.sendRaw({ type: "client_history", beforeId, search });
   }
 
   disconnect() {
     this.manuallyClosed = true;
     this.socket?.close();
     this.socket = null;
+  }
+
+  private sendRaw(data: ClientWSData) {
+    this.socket?.send(JSON.stringify(data));
   }
 
   private scheduleReconnect() {

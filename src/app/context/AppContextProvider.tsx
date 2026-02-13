@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { authService } from "../../services/authService";
+import { authService } from "../../pages/Auth/authService";
 import { AppContext } from "./AppContext";
 
 interface Props {

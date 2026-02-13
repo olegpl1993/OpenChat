@@ -1,7 +1,7 @@
 import { useState } from "react";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
-import { authService } from "../../../services/authService";
+import { authService } from "../authService";
 import styles from "./Register.module.css";
 
 const Register = () => {
