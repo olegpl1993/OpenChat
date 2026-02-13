@@ -46,9 +46,6 @@ const Chat = () => {
   useEffect(() => {
     if (!userName) return;
     chatService.connect({
-      onOpen: () => {
-        console.log("WS connected");
-      },
       onHistory: (messages, initial) => {
         if (initial) {
           setMessagesState(messages);
@@ -71,7 +68,6 @@ const Chat = () => {
         );
       },
       onUsers: (users) => setOnlineUsers(users),
-      onClose: () => console.log("WS disconnected"),
     });
 
     return () => chatService.disconnect();

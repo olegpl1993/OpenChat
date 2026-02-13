@@ -26,15 +26,11 @@ const Inputs = ({
     if (!messageTextInput || !userName) return;
     const cryptoMessageText = await encrypt(messageTextInput, key);
     if (!cryptoMessageText) return;
-
-    const createdMessage: MessageType = {
-      text: cryptoMessageText,
-    };
     if (editedMessage && editedMessage.id) {
       chatService.editMessage(editedMessage.id, messageTextInput);
       cancelEdit();
     } else {
-      chatService.sendMessage(createdMessage);
+      chatService.sendMessage(cryptoMessageText);
     }
 
     setMessageTextInput("");

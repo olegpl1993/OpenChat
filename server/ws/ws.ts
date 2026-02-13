@@ -11,7 +11,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
     const users = chatService.getOnlineUsers();
     wss.clients.forEach((c) => {
       if (c.readyState === WebSocket.OPEN) {
-        c.send(JSON.stringify({ type: "users", users }));
+        c.send(JSON.stringify({ type: "server_users", users }));
       }
     });
   };
@@ -46,19 +46,20 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "history",
+            type: "server_history",
             messages: history,
             initial: true,
           }),
         );
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("History load failed:", err);
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "error",
-            code: "HISTORY_LOAD_FAILED",
+            type: "server_error",
+            message: "History load failed",
+            error: err,
           }),
         );
         ws.close(1011, "Server error");
@@ -69,51 +70,55 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
       let wsData: WSData;
       try {
         wsData = JSON.parse(data.toString());
-      } catch {
-        ws.send(JSON.stringify({ type: "error" }));
+      } catch (err: unknown) {
+        ws.send(
+          JSON.stringify({
+            type: "server_error",
+            message: "Invalid data",
+            error: err,
+          }),
+        );
         return;
       }
 
       try {
-        if (wsData.type === "ping") {
-          ws.send(JSON.stringify({ type: "pong" }));
-          return;
-        }
-        if (wsData.type === "chat") {
-          const message = await chatService.saveMessage(ws, wsData.message);
+        if (wsData.type === "client_chat") {
+          const message = await chatService.saveMessage(ws, wsData.messageText);
           wss.clients.forEach((c) => {
             if (c.readyState === WebSocket.OPEN) {
-              c.send(JSON.stringify({ type: "chat", message: message }));
+              c.send(JSON.stringify({ type: "server_chat", message: message }));
             }
           });
           return;
         }
 
-        if (wsData.type === "getHistory") {
+        if (wsData.type === "client_history") {
           const history = await chatService.getHistory(
             wsData.beforeId,
             wsData.search,
           );
           ws.send(
             JSON.stringify({
-              type: "history",
+              type: "server_history",
               messages: history,
               initial: !wsData.beforeId,
             }),
           );
         }
 
-        if (wsData.type === "deleteMessage") {
+        if (wsData.type === "client_deleteMessage") {
           await chatService.deleteMessage(ws, wsData.id);
           wss.clients.forEach((c) => {
             if (c.readyState === WebSocket.OPEN) {
-              c.send(JSON.stringify({ type: "deleteMessage", id: wsData.id }));
+              c.send(
+                JSON.stringify({ type: "server_deleteMessage", id: wsData.id }),
+              );
             }
           });
           return;
         }
-        
-        if (wsData.type === "sendEditMessage") {
+
+        if (wsData.type === "client_editMessage") {
           const updated = await chatService.editMessage(
             ws,
             wsData.id,
@@ -123,7 +128,7 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
             if (c.readyState === WebSocket.OPEN) {
               c.send(
                 JSON.stringify({
-                  type: "editMessage",
+                  type: "server_editMessage",
                   message: updated,
                 }),
               );
@@ -131,8 +136,14 @@ export function setupWebSocket(server: http.Server): WebSocketServer {
           });
           return;
         }
-      } catch {
-        ws.send(JSON.stringify({ type: "error" }));
+      } catch (err: unknown) {
+        ws.send(
+          JSON.stringify({
+            type: "server_error",
+            message: "Server error",
+            error: err,
+          }),
+        );
       }
     });
 

@@ -1,5 +1,4 @@
 import { WebSocket } from "ws";
-import { MessageType } from "../../types/types";
 import { messageRepository } from "../db/message.repository";
 
 type Client = {
@@ -47,11 +46,11 @@ export class ChatService {
     return messageRepository.getHistory(beforeId, search);
   }
 
-  async saveMessage(ws: WebSocket, message: MessageType) {
+  async saveMessage(ws: WebSocket, messageText: string) {
     const username = this.getUser(ws);
     if (!username) throw new Error("Unauthorized");
     this.checkSpam(username);
-    const id = await messageRepository.saveMessage(username, message.text);
+    const id = await messageRepository.saveMessage(username, messageText);
     const savedMessage = await messageRepository.getMessageById(id);
     if (!savedMessage) throw new Error("Message not found after insert");
     return savedMessage;
@@ -68,24 +67,24 @@ export class ChatService {
   }
 
   async editMessage(ws: WebSocket, id: number, text: string) {
-  const username = this.getUser(ws);
-  if (!username) throw new Error("Unauthorized");
+    const username = this.getUser(ws);
+    if (!username) throw new Error("Unauthorized");
 
-  const message = await messageRepository.getMessageById(id);
-  if (!message) throw new Error("Message not found");
+    const message = await messageRepository.getMessageById(id);
+    if (!message) throw new Error("Message not found");
 
-  if (message.user !== username) {
-    throw new Error("You can edit only your own messages");
+    if (message.user !== username) {
+      throw new Error("You can edit only your own messages");
+    }
+
+    await messageRepository.update(id, text);
+
+    return {
+      ...message,
+      text,
+      edited: true,
+    };
   }
-
-  await messageRepository.update(id, text);
-
-  return {
-    ...message,
-    text,
-    edited: true,
-  };
-}
 
   private checkSpam(username: string) {
     const now = Date.now();
