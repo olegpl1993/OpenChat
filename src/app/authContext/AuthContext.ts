@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-export interface AppContextType {
+export interface AuthContextType {
   userName: string;
   setUserName: React.Dispatch<React.SetStateAction<string>>;
   loggedIn: boolean;
@@ -9,9 +9,9 @@ export interface AppContextType {
   setKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const AppContext = createContext<AppContextType | undefined>(undefined);
-export const useAppContext = () => {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("AppContext missing");
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const useAuthContext = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("AuthContext missing");
   return ctx;
 };

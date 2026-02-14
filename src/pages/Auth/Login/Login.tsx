@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useAppContext } from "../../../app/context/AppContext";
+import { useAuthContext } from "../../../app/authContext/AuthContext";
+import { authService } from "../../../app/authContext/authService";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
-import { authService } from "../authService";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const { setKey } = useAppContext();
+  const { setKey } = useAuthContext();
 
   const [formUserNameInput, setFormUserNameInput] = useState("");
   const [formPasswordInput, setFormPasswordInput] = useState("");

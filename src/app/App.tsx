@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
 import styles from "./App.module.css";
-import { AppContextProvider } from "./context/AppContextProvider";
+import { AuthContextProvider } from "./authContext/AuthContextProvider";
 
 const App = () => {
   return (
-    <AppContextProvider>
+    <AuthContextProvider>
       <div className={styles.app}>
         <Outlet />
       </div>
-    </AppContextProvider>
+    </AuthContextProvider>
   );
 };
 

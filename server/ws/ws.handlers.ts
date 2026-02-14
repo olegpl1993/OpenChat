@@ -1,0 +1,51 @@
+import { WebSocket, WebSocketServer } from "ws";
+import type { ClientWSData } from "../../types/types";
+import { chatService } from "./chat.service";
+
+export function wsHandlers(wss: WebSocketServer) {
+  return {
+    client_chat: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_chat") return;
+      const message = await chatService.saveMessage(ws, data.messageText);
+      wss.clients.forEach((c) => {
+        if (c.readyState === WebSocket.OPEN) {
+          c.send(JSON.stringify({ type: "server_chat", message }));
+        }
+      });
+    },
+
+    client_deleteMessage: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_deleteMessage") return;
+      await chatService.deleteMessage(ws, data.id);
+      wss.clients.forEach((c) => {
+        if (c.readyState === WebSocket.OPEN) {
+          c.send(JSON.stringify({ type: "server_deleteMessage", id: data.id }));
+        }
+      });
+    },
+
+    client_editMessage: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_editMessage") return;
+      const updated = await chatService.editMessage(ws, data.id, data.text);
+      wss.clients.forEach((c) => {
+        if (c.readyState === WebSocket.OPEN) {
+          c.send(
+            JSON.stringify({ type: "server_editMessage", message: updated }),
+          );
+        }
+      });
+    },
+
+    client_history: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_history") return;
+      const history = await chatService.getHistory(data.beforeId, data.search);
+      ws.send(
+        JSON.stringify({
+          type: "server_history",
+          messages: history,
+          initial: !data.beforeId,
+        }),
+      );
+    },
+  };
+}

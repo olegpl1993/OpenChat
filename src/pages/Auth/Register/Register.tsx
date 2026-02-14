@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { authService } from "../../../app/authContext/authService";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
-import { authService } from "../authService";
 import styles from "./Register.module.css";
 
 const Register = () => {

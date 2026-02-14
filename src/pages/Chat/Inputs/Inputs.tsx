@@ -1,6 +1,6 @@
 import { memo } from "react";
 import type { MessageType } from "../../../../types/types";
-import { useAppContext } from "../../../app/context/AppContext";
+import { useAuthContext } from "../../../app/authContext/AuthContext";
 import messageIcon from "../../../assets/message.svg";
 import { encrypt } from "../utils/encrypt";
 
@@ -24,7 +24,7 @@ const Inputs = ({
   editMessage,
   sendMessage,
 }: Props) => {
-  const { userName, key } = useAppContext();
+  const { userName, key } = useAuthContext();
 
   const handleSend = async () => {
     if (!messageTextInput || !userName) return;

@@ -9,9 +9,7 @@ class AuthService {
 
   subscribe(listener: Listener) {
     this.listeners.add(listener);
-
     listener(this.user, this.loggedIn);
-
     return () => {
       this.listeners.delete(listener);
     };
@@ -28,14 +26,11 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
-
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || "Login error");
     }
-
     const data: { username: string } = await res.json();
-
     this.user = { username: data.username };
     this.loggedIn = true;
     this.notify();
@@ -47,12 +42,10 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
-
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || "Register error");
     }
-
     const data = await res.json();
     return data.username;
   }
@@ -66,7 +59,6 @@ class AuthService {
     } catch (err) {
       console.warn("Logout request failed", err);
     }
-
     this.user = null;
     this.loggedIn = false;
     this.notify();
@@ -79,9 +71,7 @@ class AuthService {
     try {
       const res = await fetch("/api/me", { credentials: "include" });
       if (!res.ok) throw new Error();
-
       const data: { loggedIn: boolean; username?: string } = await res.json();
-
       if (data.loggedIn && data.username) {
         this.user = { username: data.username };
         this.loggedIn = true;
@@ -93,7 +83,6 @@ class AuthService {
       this.user = null;
       this.loggedIn = false;
     }
-
     this.checkingAuth = false;
     this.notify();
   }

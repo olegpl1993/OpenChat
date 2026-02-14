@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { useAppContext } from "../../../app/context/AppContext";
+import { useAuthContext } from "../../../app/authContext/AuthContext";
+import { authService } from "../../../app/authContext/authService";
 import exitIcon from "../../../assets/exit.svg";
 import searchIcon from "../../../assets/search.svg";
 import usersIcon from "../../../assets/users.svg";
-import { authService } from "../../Auth/authService";
 import styles from "./Info.module.css";
 
 type Props = {
@@ -21,7 +21,7 @@ const Info = ({
   isOpenUsersPanel,
   setIsOpenUsersPanel,
 }: Props) => {
-  const { userName } = useAppContext();
+  const { userName } = useAuthContext();
   const handleExit = () => authService.logout();
 
   return (
