@@ -36,7 +36,6 @@ export function useChat(handlers: Handlers) {
   };
 
   const connect = useCallback(() => {
-    // manuallyClosed.current = false;
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
     const protocol = location.protocol === "https:" ? "wss" : "ws";
