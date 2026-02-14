@@ -2,7 +2,7 @@ import fs from "fs";
 import http from "http";
 import path from "path";
 import { authRoutes } from "./api/auth.routes";
-import { setupWebSocket } from "./ws/ws";
+import { wsServer } from "./ws/wsServer";
 
 const __dirname = path.dirname(process.argv[1]);
 export const PORT = process.env.PORT || 4000;
@@ -57,6 +57,6 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-setupWebSocket(server);
+wsServer(server);
 
 server.listen(PORT, () => console.log(`🚀 Server on http://localhost:${PORT}`));
