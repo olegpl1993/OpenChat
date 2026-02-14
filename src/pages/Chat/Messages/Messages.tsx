@@ -1,8 +1,8 @@
 import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
-import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
-import { decrypt } from "../../../utils/decrypt";
+import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
+import { decrypt } from "../utils/decrypt";
 import { chatService } from "../chatService";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";

@@ -2,7 +2,7 @@ import { memo } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import messageIcon from "../../../assets/message.svg";
-import { encrypt } from "../../../utils/encrypt";
+import { encrypt } from "../utils/encrypt";
 import { chatService } from "../chatService";
 import styles from "./Inputs.module.css";
 
