@@ -1,7 +1,8 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
+import { decrypt } from "../../../utils/decrypt";
 import { chatService } from "../chatService";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
@@ -27,7 +28,23 @@ const Messages = ({
   startEdit,
 }: Props) => {
   const { userName, key } = useAppContext();
-  const messagesRenderList = buildMessagesRenderList(messagesState);
+  const [decryptedMessagesState, setDecryptedMessagesState] = useState<
+    MessageType[]
+  >([]);
+  const messagesRenderList = buildMessagesRenderList(decryptedMessagesState);
+
+  useEffect(() => {
+    async function decryptMessages() {
+      const decrypted = await Promise.all(
+        messagesState.map(async (message) => ({
+          ...message,
+          text: await decrypt(message.text, key),
+        })),
+      );
+      setDecryptedMessagesState(decrypted);
+    }
+    decryptMessages();
+  }, [messagesState, key]);
 
   // on scroll to top
   useEffect(() => {
@@ -72,7 +89,6 @@ const Messages = ({
               key={item.message.id}
               message={item.message}
               currentUser={userName}
-              cryptoKey={key}
               startEdit={startEdit}
             />
           );
