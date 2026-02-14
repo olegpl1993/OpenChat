@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
-import { useAppContext } from "../../app/context/AppContext";
 import styles from "./Chat.module.css";
-import { chatService } from "./chatService";
 import Info from "./Info/Info";
 import Inputs from "./Inputs/Inputs";
 import Messages from "./Messages/Messages";
+import { useChat } from "./useChat.hook";
 
 const Chat = () => {
-  const { userName } = useAppContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
@@ -40,38 +38,34 @@ const Chat = () => {
 
   const handleSearch = () => {
     setMessagesState([]);
-    chatService.getHistory(undefined, search.trim());
+    chat.getHistory(undefined, search.trim());
   };
-
-  useEffect(() => {
-    if (!userName) return;
-    chatService.connect({
-      onHistory: (messages, initial) => {
-        if (initial) {
-          setMessagesState(messages);
-          scrollToBottom();
-        } else {
-          setMessagesState((prev) => [...messages, ...prev]);
-          canLoadHistoryRef.current = true;
-        }
-      },
-      onChat: (message) => {
-        setMessagesState((prev) => [...prev, message]);
+  const chat = useChat({
+    onHistory: useCallback((messages, initial) => {
+      if (initial) {
+        setMessagesState(messages);
         scrollToBottom();
-      },
-      onDeleteMessage: (id) => {
-        setMessagesState((prev) => prev.filter((m) => m.id !== id));
-      },
-      onEditMessage: (message) => {
-        setMessagesState((prev) =>
-          prev.map((m) => (m.id === message.id ? message : m)),
-        );
-      },
-      onUsers: (users) => setOnlineUsers(users),
-    });
-
-    return () => chatService.disconnect();
-  }, [userName]);
+      } else {
+        setMessagesState((prev) => [...messages, ...prev]);
+        setTimeout(() => {
+          canLoadHistoryRef.current = true;
+        }, 700);
+      }
+    }, []),
+    onChat: useCallback((message) => {
+      setMessagesState((prev) => [...prev, message]);
+      scrollToBottom();
+    }, []),
+    onDeleteMessage: useCallback((id) => {
+      setMessagesState((prev) => prev.filter((m) => m.id !== id));
+    }, []),
+    onEditMessage: useCallback((message) => {
+      setMessagesState((prev) =>
+        prev.map((m) => (m.id === message.id ? message : m)),
+      );
+    }, []),
+    onUsers: useCallback((users) => setOnlineUsers(users), []),
+  });
 
   return (
     <div className={styles.chat}>
@@ -91,6 +85,8 @@ const Chat = () => {
         isOpenUsersPanel={isOpenUsersPanel}
         onlineUsers={onlineUsers}
         startEdit={startEdit}
+        getHistory={chat.getHistory}
+        deleteMessage={chat.deleteMessage}
       />
 
       <Inputs
@@ -99,6 +95,8 @@ const Chat = () => {
         editedMessage={editedMessage}
         setEditedMessage={setEditedMessage}
         cancelEdit={cancelEdit}
+        editMessage={chat.editMessage}
+        sendMessage={chat.sendMessage}
       />
     </div>
   );

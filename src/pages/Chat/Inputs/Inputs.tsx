@@ -2,8 +2,8 @@ import { memo } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import messageIcon from "../../../assets/message.svg";
-import { encrypt } from "../../../utils/encrypt";
-import { chatService } from "../chatService";
+import { encrypt } from "../utils/encrypt";
+
 import styles from "./Inputs.module.css";
 
 type Props = {
@@ -12,6 +12,8 @@ type Props = {
   editedMessage: MessageType | null;
   setEditedMessage: React.Dispatch<React.SetStateAction<MessageType | null>>;
   cancelEdit: () => void;
+  editMessage: (id: number, text: string) => void;
+  sendMessage: (text: string) => void;
 };
 
 const Inputs = ({
@@ -19,6 +21,8 @@ const Inputs = ({
   setMessageTextInput,
   editedMessage,
   cancelEdit,
+  editMessage,
+  sendMessage,
 }: Props) => {
   const { userName, key } = useAppContext();
 
@@ -27,10 +31,10 @@ const Inputs = ({
     const cryptoMessageText = await encrypt(messageTextInput, key);
     if (!cryptoMessageText) return;
     if (editedMessage && editedMessage.id) {
-      chatService.editMessage(editedMessage.id, messageTextInput);
+      editMessage(editedMessage.id, messageTextInput);
       cancelEdit();
     } else {
-      chatService.sendMessage(cryptoMessageText);
+      sendMessage(cryptoMessageText);
     }
 
     setMessageTextInput("");

@@ -1,8 +1,8 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
-import { buildMessagesRenderList } from "../../../utils/buildMessagesRenderList";
-import { chatService } from "../chatService";
+import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
+import { decrypt } from "../utils/decrypt";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 import UsersPanel from "./UsersPanel/UsersPanel";
@@ -15,6 +15,8 @@ interface Props {
   isOpenUsersPanel: boolean;
   onlineUsers: string[];
   startEdit: (message: MessageType) => void;
+  getHistory: (beforeId?: number, search?: string) => void;
+  deleteMessage: (id: number) => void;
 }
 
 const Messages = ({
@@ -25,9 +27,27 @@ const Messages = ({
   isOpenUsersPanel,
   onlineUsers,
   startEdit,
+  getHistory,
+  deleteMessage,
 }: Props) => {
   const { userName, key } = useAppContext();
-  const messagesRenderList = buildMessagesRenderList(messagesState);
+  const [decryptedMessagesState, setDecryptedMessagesState] = useState<
+    MessageType[]
+  >([]);
+  const messagesRenderList = buildMessagesRenderList(decryptedMessagesState);
+
+  useEffect(() => {
+    async function decryptMessages() {
+      const decrypted = await Promise.all(
+        messagesState.map(async (message) => ({
+          ...message,
+          text: await decrypt(message.text, key),
+        })),
+      );
+      setDecryptedMessagesState(decrypted);
+    }
+    decryptMessages();
+  }, [messagesState, key]);
 
   // on scroll to top
   useEffect(() => {
@@ -41,13 +61,13 @@ const Messages = ({
         canLoadHistoryRef.current
       ) {
         canLoadHistoryRef.current = false;
-        chatService.getHistory(messagesState[0].id, search);
+        getHistory(messagesState[0].id, search);
       }
     };
     messagesCurrent.addEventListener("scroll", handleScroll);
 
     return () => messagesCurrent.removeEventListener("scroll", handleScroll);
-  }, [messagesState, messagesRef, search, canLoadHistoryRef]);
+  }, [messagesState, messagesRef, search, canLoadHistoryRef, getHistory]);
 
   return (
     <div className={styles.messages}>
@@ -72,8 +92,8 @@ const Messages = ({
               key={item.message.id}
               message={item.message}
               currentUser={userName}
-              cryptoKey={key}
               startEdit={startEdit}
+              deleteMessage={deleteMessage}
             />
           );
         })}

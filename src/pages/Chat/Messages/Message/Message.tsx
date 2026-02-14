@@ -1,20 +1,16 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import type { MessageType } from "../../../../../types/types";
 import editIcon from "../../../../assets/edit.svg";
-import { decrypt } from "../../../../utils/decrypt";
-import { chatService } from "../../chatService";
 import styles from "./Message.module.css";
 
 interface Props {
   message: MessageType;
   currentUser: string;
-  cryptoKey: string;
   startEdit: (message: MessageType) => void;
+  deleteMessage: (id: number) => void;
 }
 
-const Message = ({ message, currentUser, cryptoKey, startEdit }: Props) => {
-  const [decryptedText, setDecryptedText] = useState("");
-
+const Message = ({ message, currentUser, startEdit, deleteMessage }: Props) => {
   const isUser = message.user === currentUser;
   const roleClass = isUser ? styles.user : styles.other;
   const date =
@@ -23,17 +19,6 @@ const Message = ({ message, currentUser, cryptoKey, startEdit }: Props) => {
       hour: "2-digit",
       minute: "2-digit",
     });
-
-  useEffect(() => {
-    async function decryptText() {
-      const decryptedText = await decrypt(message.text, cryptoKey);
-      setDecryptedText(decryptedText);
-    }
-    decryptText();
-  }, [message.text, cryptoKey]);
-
-  const deleteMessage = () =>
-    message.id && chatService.deleteMessage(message.id);
 
   return (
     <div className={`${styles.message} ${roleClass}`}>
@@ -49,12 +34,12 @@ const Message = ({ message, currentUser, cryptoKey, startEdit }: Props) => {
             </button>
             <button
               className={`${styles.deletButton}`}
-              onClick={deleteMessage}
+              onClick={() => message.id && deleteMessage(message.id)}
             />
           </div>
         )}
       </div>
-      <p className={`${styles.messageText} ${roleClass}`}>{decryptedText}</p>
+      <p className={`${styles.messageText} ${roleClass}`}>{message.text}</p>
       <div className={styles.messageFooter}>
         <p className={`${styles.messageDate} ${roleClass}`}>
           {message.edited ? "edited" : ""}
