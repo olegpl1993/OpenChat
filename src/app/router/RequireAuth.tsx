@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppContext } from "../context/AppContext";
+import { useAuthContext } from "../authContext/AuthContext";
 
 export function RequireAuth() {
-  const { loggedIn } = useAppContext();
+  const { loggedIn } = useAuthContext();
 
   if (!loggedIn) {
     return <Navigate to="/" replace />;

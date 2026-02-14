@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import type { MessageType } from "../../../../types/types";
-import { useAppContext } from "../../../app/context/AppContext";
+import { useAuthContext } from "../../../app/authContext/AuthContext";
 import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
 import { decrypt } from "../utils/decrypt";
 import Message from "./Message/Message";
@@ -30,7 +30,7 @@ const Messages = ({
   getHistory,
   deleteMessage,
 }: Props) => {
-  const { userName, key } = useAppContext();
+  const { userName, key } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
     MessageType[]
   >([]);

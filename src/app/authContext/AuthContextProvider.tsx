@@ -1,12 +1,12 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { authService } from "../../pages/Auth/authService";
-import { AppContext } from "./AppContext";
+import { AuthContext } from "./AuthContext";
+import { authService } from "./authService";
 
 interface Props {
   children: ReactNode;
 }
 
-export const AppContextProvider = ({ children }: Props) => {
+export const AuthContextProvider = ({ children }: Props) => {
   const [userName, setUserName] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
@@ -27,7 +27,7 @@ export const AppContextProvider = ({ children }: Props) => {
   }, [key]);
 
   return (
-    <AppContext.Provider
+    <AuthContext.Provider
       value={{
         userName,
         setUserName,
@@ -38,6 +38,6 @@ export const AppContextProvider = ({ children }: Props) => {
       }}
     >
       {children}
-    </AppContext.Provider>
+    </AuthContext.Provider>
   );
 };
