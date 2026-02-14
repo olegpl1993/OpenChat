@@ -3,7 +3,6 @@ import type { MessageType } from "../../../../types/types";
 import { useAppContext } from "../../../app/context/AppContext";
 import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
 import { decrypt } from "../utils/decrypt";
-import { chatService } from "../chatService";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 import UsersPanel from "./UsersPanel/UsersPanel";
@@ -16,6 +15,8 @@ interface Props {
   isOpenUsersPanel: boolean;
   onlineUsers: string[];
   startEdit: (message: MessageType) => void;
+  getHistory: (beforeId?: number, search?: string) => void;
+  deleteMessage: (id: number) => void;
 }
 
 const Messages = ({
@@ -26,6 +27,8 @@ const Messages = ({
   isOpenUsersPanel,
   onlineUsers,
   startEdit,
+  getHistory,
+  deleteMessage,
 }: Props) => {
   const { userName, key } = useAppContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
@@ -58,13 +61,13 @@ const Messages = ({
         canLoadHistoryRef.current
       ) {
         canLoadHistoryRef.current = false;
-        chatService.getHistory(messagesState[0].id, search);
+        getHistory(messagesState[0].id, search);
       }
     };
     messagesCurrent.addEventListener("scroll", handleScroll);
 
     return () => messagesCurrent.removeEventListener("scroll", handleScroll);
-  }, [messagesState, messagesRef, search, canLoadHistoryRef]);
+  }, [messagesState, messagesRef, search, canLoadHistoryRef, getHistory]);
 
   return (
     <div className={styles.messages}>
@@ -90,6 +93,7 @@ const Messages = ({
               message={item.message}
               currentUser={userName}
               startEdit={startEdit}
+              deleteMessage={deleteMessage}
             />
           );
         })}

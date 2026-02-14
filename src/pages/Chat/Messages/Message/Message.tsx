@@ -1,16 +1,16 @@
 import { memo } from "react";
 import type { MessageType } from "../../../../../types/types";
 import editIcon from "../../../../assets/edit.svg";
-import { chatService } from "../../chatService";
 import styles from "./Message.module.css";
 
 interface Props {
   message: MessageType;
   currentUser: string;
   startEdit: (message: MessageType) => void;
+  deleteMessage: (id: number) => void;
 }
 
-const Message = ({ message, currentUser, startEdit }: Props) => {
+const Message = ({ message, currentUser, startEdit, deleteMessage }: Props) => {
   const isUser = message.user === currentUser;
   const roleClass = isUser ? styles.user : styles.other;
   const date =
@@ -19,9 +19,6 @@ const Message = ({ message, currentUser, startEdit }: Props) => {
       hour: "2-digit",
       minute: "2-digit",
     });
-
-  const deleteMessage = () =>
-    message.id && chatService.deleteMessage(message.id);
 
   return (
     <div className={`${styles.message} ${roleClass}`}>
@@ -37,7 +34,7 @@ const Message = ({ message, currentUser, startEdit }: Props) => {
             </button>
             <button
               className={`${styles.deletButton}`}
-              onClick={deleteMessage}
+              onClick={() => message.id && deleteMessage(message.id)}
             />
           </div>
         )}
