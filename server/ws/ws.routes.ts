@@ -23,8 +23,7 @@ export function wsRoutes(wss: WebSocketServer, broadcastUsers: () => void) {
       ws.send(
         JSON.stringify({
           type: "server_error",
-          message: "History load failed",
-          error: err,
+          message: err instanceof Error ? err.message : "History load failed",
         }),
       );
       ws.close(1011, "Server error");
@@ -40,8 +39,7 @@ export function wsRoutes(wss: WebSocketServer, broadcastUsers: () => void) {
         ws.send(
           JSON.stringify({
             type: "server_error",
-            message: "Invalid data",
-            error: err,
+            message: err instanceof Error ? err.message : "Invalid data",
           }),
         );
         return;
@@ -64,8 +62,8 @@ export function wsRoutes(wss: WebSocketServer, broadcastUsers: () => void) {
         ws.send(
           JSON.stringify({
             type: "server_error",
-            message: "Server error",
-            error: err,
+            message:
+              err instanceof Error ? err.message : "Message handler failed",
           }),
         );
       }

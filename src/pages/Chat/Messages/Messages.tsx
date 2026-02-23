@@ -5,6 +5,7 @@ import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
 import { decrypt } from "../utils/decrypt";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
+import ScrollButton from "./ScrollButton/ScrollButton";
 import UsersPanel from "./UsersPanel/UsersPanel";
 
 interface Props {
@@ -17,6 +18,7 @@ interface Props {
   startEdit: (message: MessageType) => void;
   getHistory: (beforeId?: number, search?: string) => void;
   deleteMessage: (id: number) => void;
+  scrollToBottom: () => void;
 }
 
 const Messages = ({
@@ -29,6 +31,7 @@ const Messages = ({
   startEdit,
   getHistory,
   deleteMessage,
+  scrollToBottom,
 }: Props) => {
   const { userName, key } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
@@ -98,6 +101,8 @@ const Messages = ({
           );
         })}
       </div>
+
+      <ScrollButton messagesRef={messagesRef} scrollToBottom={scrollToBottom} />
     </div>
   );
 };

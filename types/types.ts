@@ -17,7 +17,7 @@ export type ClientWSData =
   | { type: "client_chat"; messageText: string };
 
 export type ServerWSData =
-  | { type: "server_error"; message?: string; error?: Error }
+  | { type: "server_error"; message?: string }
   | { type: "server_history"; messages: MessageType[]; initial?: boolean }
   | { type: "server_deleteMessage"; id: number }
   | { type: "server_editMessage"; message: MessageType }

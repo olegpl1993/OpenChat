@@ -1,0 +1,35 @@
+.scrollButton {
+  position: absolute;
+  right: 3%;
+  bottom: 3%;
+  height: 40px;
+  width: 40px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #1e90ff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 2px;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+.border {
+  border: 2px solid #1e90ff;
+  border-radius: 50%;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(90deg);
+}
+
+.arrow {
+  font-size: 27px;
+  transform: scale(0.6, 1.5) translate(1px, 0px);
+}
