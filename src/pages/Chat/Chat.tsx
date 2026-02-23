@@ -87,6 +87,7 @@ const Chat = () => {
         startEdit={startEdit}
         getHistory={chat.getHistory}
         deleteMessage={chat.deleteMessage}
+        scrollToBottom={scrollToBottom}
       />
 
       <Inputs
