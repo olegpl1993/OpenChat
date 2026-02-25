@@ -18,29 +18,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
-.arrowBox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  right: 13px;
-  top: 8px;
-  justify-content: center;
-  transform: rotate(90deg);
-}
-
-.arrow {
-  color: white;
-  font-size: 28px;
-  transform: scale(0.6, 1.5) translate(1px, 0px);
+.downArrowIcon {
+  height: 13px;
+  width: 13px;
+  filter: invert(1);
 }
 
 .newMessageIcon {
-  position: absolute;
-  right: 14px;
-  top: 6px;
   height: 13px;
   width: 13px;
   filter: invert(1);

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import downArrowIcon from "../../../../assets/downArrow.svg";
 import newMessageIcon from "../../../../assets/newMessage.svg";
 import styles from "./ScrollButton.module.css";
 
@@ -40,12 +41,10 @@ function ScrollButton({ messagesRef, scrollToBottom, haveNewMessages }: Props) {
         {haveNewMessages && (
           <img src={newMessageIcon} className={styles.newMessageIcon} />
         )}
-        <div className={styles.arrowBox}>
-          <span className={styles.arrow}>{">"}</span>
-        </div>
+        <img src={downArrowIcon} className={styles.downArrowIcon} />
       </div>
     </button>
   );
 }
 
-export default ScrollButton;
+export default memo(ScrollButton);

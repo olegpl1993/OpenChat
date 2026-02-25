@@ -53,7 +53,7 @@
 .usersIcon {
   height: 18px;
   width: 18px;
-  filter: brightness(0) invert(1);
+  filter: invert(1);
 }
 
 .input {
@@ -117,7 +117,7 @@
 .searchIcon {
   height: 20px;
   width: 20px;
-  filter: brightness(0) invert(1);
+  filter: invert(1);
 }
 
 .name {
@@ -172,5 +172,5 @@
 .exitIcon {
   height: 17px;
   width: 17px;
-  filter: brightness(0) invert(1);
+  filter: invert(1);
 }
