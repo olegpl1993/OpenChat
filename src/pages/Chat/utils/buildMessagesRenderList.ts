@@ -1,4 +1,4 @@
-import type { MessageType } from "../../types/types";
+import type { MessageType } from "../../../../types/types";
 
 type ListItem =
   | { type: "date"; date: string }
