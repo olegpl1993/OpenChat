@@ -19,6 +19,8 @@ interface Props {
   getHistory: (beforeId?: number, search?: string) => void;
   deleteMessage: (id: number) => void;
   scrollToBottom: () => void;
+  haveNewMessages: boolean;
+  setHaveNewMessages: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Messages = ({
@@ -32,6 +34,8 @@ const Messages = ({
   getHistory,
   deleteMessage,
   scrollToBottom,
+  haveNewMessages,
+  setHaveNewMessages,
 }: Props) => {
   const { userName, key } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
@@ -52,14 +56,25 @@ const Messages = ({
     decryptMessages();
   }, [messagesState, key]);
 
-  // on scroll to top
+  // on scroll
   useEffect(() => {
     const messagesCurrent = messagesRef.current;
     if (!messagesCurrent) return;
 
     const handleScroll = () => {
+      // on scroll to bottom
+      const distanceFromBottom =
+        messagesCurrent.scrollHeight -
+        messagesCurrent.scrollTop -
+        messagesCurrent.clientHeight;
+      if (distanceFromBottom < 10 && haveNewMessages) {
+        setHaveNewMessages(false);
+      }
+
+      // on scroll to top
+      const distanceFromTop = messagesCurrent.scrollTop;
       if (
-        messagesCurrent.scrollTop < 500 &&
+        distanceFromTop < 500 &&
         messagesState.length > 0 &&
         canLoadHistoryRef.current
       ) {
@@ -67,10 +82,18 @@ const Messages = ({
         getHistory(messagesState[0].id, search);
       }
     };
-    messagesCurrent.addEventListener("scroll", handleScroll);
 
+    messagesCurrent.addEventListener("scroll", handleScroll);
     return () => messagesCurrent.removeEventListener("scroll", handleScroll);
-  }, [messagesState, messagesRef, search, canLoadHistoryRef, getHistory]);
+  }, [
+    messagesState,
+    messagesRef,
+    search,
+    canLoadHistoryRef,
+    getHistory,
+    haveNewMessages,
+    setHaveNewMessages,
+  ]);
 
   return (
     <div className={styles.messages}>
@@ -102,7 +125,11 @@ const Messages = ({
         })}
       </div>
 
-      <ScrollButton messagesRef={messagesRef} scrollToBottom={scrollToBottom} />
+      <ScrollButton
+        messagesRef={messagesRef}
+        scrollToBottom={scrollToBottom}
+        haveNewMessages={haveNewMessages}
+      />
     </div>
   );
 };

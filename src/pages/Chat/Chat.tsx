@@ -17,6 +17,7 @@ const Chat = () => {
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const [editedMessage, setEditedMessage] = useState<MessageType | null>(null);
   const [messageTextInput, setMessageTextInput] = useState("");
+  const [haveNewMessages, setHaveNewMessages] = useState(false);
 
   const startEdit = (message: MessageType) => {
     setEditedMessage(message);
@@ -63,8 +64,11 @@ const Chat = () => {
           messagesCurrent.scrollHeight -
           messagesCurrent.scrollTop -
           messagesCurrent.clientHeight;
-        if (message.user !== userName && distanceFromBottom > 400) return;
-        scrollToBottom();
+        if (message.user !== userName && distanceFromBottom > 400) {
+          setHaveNewMessages(true);
+        } else {
+          scrollToBottom();
+        }
       },
       [userName],
     ),
@@ -100,6 +104,8 @@ const Chat = () => {
         getHistory={chat.getHistory}
         deleteMessage={chat.deleteMessage}
         scrollToBottom={scrollToBottom}
+        haveNewMessages={haveNewMessages}
+        setHaveNewMessages={setHaveNewMessages}
       />
 
       <Inputs

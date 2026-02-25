@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import newMessageIcon from "../../../../assets/newMessage.svg";
 import styles from "./ScrollButton.module.css";
 
 interface Props {
   messagesRef: React.RefObject<HTMLDivElement | null>;
   scrollToBottom: () => void;
+  haveNewMessages: boolean;
 }
 
-function ScrollButton({ messagesRef, scrollToBottom }: Props) {
+function ScrollButton({ messagesRef, scrollToBottom, haveNewMessages }: Props) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -35,6 +37,9 @@ function ScrollButton({ messagesRef, scrollToBottom }: Props) {
       style={{ display: isVisible ? "block" : "none" }}
     >
       <div className={styles.border}>
+        {haveNewMessages && (
+          <img src={newMessageIcon} className={styles.newMessageIcon} />
+        )}
         <div className={styles.arrowBox}>
           <span className={styles.arrow}>{">"}</span>
         </div>
