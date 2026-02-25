@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import type { MessageType } from "../../../types/types";
+import { useAuthContext } from "../../app/authContext/AuthContext";
 import styles from "./Chat.module.css";
 import Info from "./Info/Info";
 import Inputs from "./Inputs/Inputs";
@@ -7,6 +8,7 @@ import Messages from "./Messages/Messages";
 import { useChat } from "./useChat.hook";
 
 const Chat = () => {
+  const { userName } = useAuthContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
@@ -15,6 +17,7 @@ const Chat = () => {
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const [editedMessage, setEditedMessage] = useState<MessageType | null>(null);
   const [messageTextInput, setMessageTextInput] = useState("");
+  const [haveNewMessages, setHaveNewMessages] = useState(false);
 
   const startEdit = (message: MessageType) => {
     setEditedMessage(message);
@@ -52,10 +55,23 @@ const Chat = () => {
         }, 700);
       }
     }, []),
-    onChat: useCallback((message) => {
-      setMessagesState((prev) => [...prev, message]);
-      scrollToBottom();
-    }, []),
+    onChat: useCallback(
+      (message) => {
+        setMessagesState((prev) => [...prev, message]);
+        const messagesCurrent = messagesRef.current;
+        if (!messagesCurrent) return;
+        const distanceFromBottom =
+          messagesCurrent.scrollHeight -
+          messagesCurrent.scrollTop -
+          messagesCurrent.clientHeight;
+        if (message.user !== userName && distanceFromBottom > 400) {
+          setHaveNewMessages(true);
+        } else {
+          scrollToBottom();
+        }
+      },
+      [userName],
+    ),
     onDeleteMessage: useCallback((id) => {
       setMessagesState((prev) => prev.filter((m) => m.id !== id));
     }, []),
@@ -88,6 +104,8 @@ const Chat = () => {
         getHistory={chat.getHistory}
         deleteMessage={chat.deleteMessage}
         scrollToBottom={scrollToBottom}
+        haveNewMessages={haveNewMessages}
+        setHaveNewMessages={setHaveNewMessages}
       />
 
       <Inputs
