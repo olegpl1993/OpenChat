@@ -16,6 +16,31 @@ export function wsHandlers(wss: WebSocketServer) {
       );
     },
 
+    client_createDialog: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_createDialog") return;
+      await dialogService.createDialog(ws, data.user_id);
+      const dialogs = await dialogService.getDialogs(ws);
+      ws.send(
+        JSON.stringify({
+          type: "server_dialogs",
+          dialogs,
+        }),
+      );
+    },
+
+    client_deleteDialog: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_deleteDialog") return;
+      await dialogService.deleteDialog(ws, data.dialog_id);
+      await chatService.deleteMessagesByDialogId(data.dialog_id);
+      const dialogs = await dialogService.getDialogs(ws);
+      ws.send(
+        JSON.stringify({
+          type: "server_dialogs",
+          dialogs,
+        }),
+      );
+    },
+
     client_chat: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_chat") return;
 
@@ -39,11 +64,9 @@ export function wsHandlers(wss: WebSocketServer) {
             );
           }
         });
-
         return;
       }
 
-      // 🔹 ОБЩИЙ ЧАТ
       wss.clients.forEach((c) => {
         if (c.readyState === WebSocket.OPEN) {
           c.send(

@@ -76,6 +76,10 @@ export class ChatService {
     await messageRepository.delete(id);
   }
 
+  async deleteMessagesByDialogId(dialog_id: number) {
+    await messageRepository.deleteByDialogId(dialog_id);
+  }
+
   async editMessage(ws: WebSocket, id: number, text: string) {
     const user = this.getUser(ws);
     if (!user) throw new Error("Unauthorized");

@@ -16,6 +16,10 @@ const UserPanel = ({
   selectedDialog,
   handleSelectDialog,
 }: Props) => {
+  const handleCreateDialog = (username: string) => {
+    console.log("Create dialog with", username);
+  };
+
   return (
     <div className={styles.usersPanel}>
       <div className={styles.usersList}>
@@ -43,10 +47,14 @@ const UserPanel = ({
       <div className={styles.usersList}>
         <div className={styles.title}>Online users</div>
         {onlineUsers.map((user) => (
-          <div key={user} className={styles.userItem}>
+          <button
+            key={user}
+            className={styles.userItem}
+            onClick={() => handleCreateDialog(user)}
+          >
             <img src={userAvatarIcon} className={styles.userAvatarIcon} />
             {user}
-          </div>
+          </button>
         ))}
       </div>
     </div>

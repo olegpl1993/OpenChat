@@ -42,4 +42,24 @@ export const dialogRepository = {
       user2_id: user2Id,
     };
   },
+
+  async deleteDialog(id: number) {
+    await db.query("DELETE FROM dialogs WHERE id = ?", [id]);
+  },
+
+  async findDialogBetweenUsers(user1Id: number, user2Id: number) {
+    const [rows] = await db.query<DialogDBRow[]>(
+      `
+    SELECT * FROM dialogs
+    WHERE 
+      (user1_id = ? AND user2_id = ?)
+      OR
+      (user1_id = ? AND user2_id = ?)
+    LIMIT 1
+    `,
+      [user1Id, user2Id, user2Id, user1Id],
+    );
+
+    return rows[0] ?? null;
+  },
 };

@@ -117,5 +117,11 @@ export function useChat(handlers: Handlers) {
       send({ type: "client_history", beforeId, search, dialog_id }),
 
     getDialogs: () => send({ type: "client_dialogs" }),
+
+    createDialog: (user_id: number) =>
+      send({ type: "client_createDialog", user_id }),
+
+    deleteDialog: (dialog_id: number) =>
+      send({ type: "client_deleteDialog", dialog_id }),
   };
 }

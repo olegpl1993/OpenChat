@@ -16,14 +16,37 @@ export class DialogService {
     return [dialog.user1_id, dialog.user2_id];
   }
 
-  async assertUserInDialog(ws: WebSocket, dialogId: number) {
+  async createDialog(ws: WebSocket, targetUserId: number) {
     const user = chatService.getUser(ws);
     if (!user) throw new Error("Unauthorized");
 
-    const users = await this.getDialogUsers(dialogId);
-    if (!users.includes(user.userId)) {
-      throw new Error("Access denied to dialog");
+    if (user.userId === targetUserId) {
+      throw new Error("Cannot create dialog with yourself");
     }
+
+    const existing = await dialogRepository.findDialogBetweenUsers(
+      user.userId,
+      targetUserId,
+    );
+
+    if (existing) return existing;
+
+    return dialogRepository.createDialog(user.userId, targetUserId);
+  }
+
+  async deleteDialog(ws: WebSocket, dialogId: number) {
+    const user = chatService.getUser(ws);
+    if (!user) throw new Error("Unauthorized");
+
+    const dialog = await dialogRepository.getDialogById(dialogId);
+    if (!dialog) throw new Error("Dialog not found");
+
+    if (dialog.user1_id !== user.userId && dialog.user2_id !== user.userId) {
+      throw new Error("Forbidden");
+    }
+
+    await dialogRepository.deleteDialog(dialogId);
+    return true;
   }
 }
 

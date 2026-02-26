@@ -62,6 +62,15 @@ const Chat = () => {
     chat.getHistory();
   };
 
+  const handleDeleteSelectedDialog = () => {
+    if (selectedDialog) chat.deleteDialog(selectedDialog.dialog_id);
+    setIsOpenUsersPanel(false);
+    setSearch("");
+    setSelectedDialog(null);
+    setMessagesState([]);
+    chat.getHistory();
+  };
+
   const handleSearch = () => {
     setIsOpenUsersPanel(false);
     setSelectedDialog(null);
@@ -124,6 +133,7 @@ const Chat = () => {
         setIsOpenUsersPanel={setIsOpenUsersPanel}
         selectedDialog={selectedDialog}
         handleCloseSelectedDialog={handleCloseSelectedDialog}
+        handleDeleteSelectedDialog={handleDeleteSelectedDialog}
       />
 
       <Messages

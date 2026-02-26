@@ -41,7 +41,9 @@ export type ClientWSData =
   | { type: "client_deleteMessage"; id: number }
   | { type: "client_editMessage"; id: number; text: string }
   | { type: "client_chat"; messageText: string; dialog_id?: number }
-  | { type: "client_dialogs" };
+  | { type: "client_dialogs" }
+  | { type: "client_deleteDialog"; dialog_id: number }
+  | { type: "client_createDialog"; user_id: number };
 
 export type ServerWSData =
   | { type: "server_error"; message?: string }

@@ -29,6 +29,10 @@ export const messageRepository = {
     await db.query("DELETE FROM messages WHERE id = ?", [id]);
   },
 
+  async deleteByDialogId(dialog_id: number): Promise<void> {
+    await db.query("DELETE FROM messages WHERE dialog_id = ?", [dialog_id]);
+  },
+
   async update(id: number, text: string) {
     await db.query("UPDATE messages SET text = ?, edited = 1 WHERE id = ?", [
       text,
