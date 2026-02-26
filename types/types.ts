@@ -31,6 +31,11 @@ export type UserRow = RowDataPacket & {
 
 export type Dialog = { dialog_id: number; user_id: number; username: string };
 
+export type User = {
+  userId: number;
+  username: string;
+};
+
 export type ClientWSData =
   | {
       type: "client_history";
@@ -51,5 +56,5 @@ export type ServerWSData =
   | { type: "server_deleteMessage"; id: number }
   | { type: "server_editMessage"; message: MessageType }
   | { type: "server_chat"; message: MessageType }
-  | { type: "server_users"; users: string[] }
+  | { type: "server_users"; users: User[] }
   | { type: "server_dialogs"; dialogs: Dialog[] };

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Dialog, MessageType } from "../../../types/types";
+import type { Dialog, MessageType, User } from "../../../types/types";
 import { useAuthContext } from "../../app/authContext/AuthContext";
 import styles from "./Chat.module.css";
 import Info from "./Info/Info";
@@ -11,7 +11,7 @@ const Chat = () => {
   const { userName } = useAuthContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
   const [isOpenUsersPanel, setIsOpenUsersPanel] = useState(false);
   const canLoadHistoryRef = useRef(false);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -61,6 +61,11 @@ const Chat = () => {
     setMessagesState([]);
     chat.getHistory();
   };
+
+  const handleCreateDialog = (userId: number) => {
+    chat.createDialog(userId);
+    setSearch("");
+  }
 
   const handleDeleteSelectedDialog = () => {
     if (selectedDialog) chat.deleteDialog(selectedDialog.dialog_id);
@@ -152,6 +157,7 @@ const Chat = () => {
         dialogs={dialogs}
         selectedDialog={selectedDialog}
         handleSelectDialog={handleSelectDialog}
+        handleCreateDialog={handleCreateDialog}
       />
 
       <Inputs

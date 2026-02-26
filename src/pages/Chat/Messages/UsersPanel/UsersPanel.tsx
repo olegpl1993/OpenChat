@@ -1,13 +1,14 @@
 import { memo } from "react";
-import type { Dialog } from "../../../../../types/types";
+import type { Dialog, User } from "../../../../../types/types";
 import userAvatarIcon from "../../../../assets/userAvatar.svg";
 import styles from "./UsersPanel.module.css";
 
 interface Props {
-  onlineUsers: string[];
+  onlineUsers: User[];
   dialogs: Dialog[];
   selectedDialog: Dialog | null;
   handleSelectDialog: (dialog: Dialog) => void;
+  handleCreateDialog: (userId: number) => void;
 }
 
 const UserPanel = ({
@@ -15,11 +16,8 @@ const UserPanel = ({
   dialogs,
   selectedDialog,
   handleSelectDialog,
+  handleCreateDialog,
 }: Props) => {
-  const handleCreateDialog = (username: string) => {
-    console.log("Create dialog with", username);
-  };
-
   return (
     <div className={styles.usersPanel}>
       <div className={styles.usersList}>
@@ -48,12 +46,12 @@ const UserPanel = ({
         <div className={styles.title}>Online users</div>
         {onlineUsers.map((user) => (
           <button
-            key={user}
+            key={user.userId}
             className={styles.userItem}
-            onClick={() => handleCreateDialog(user)}
+            onClick={() => handleCreateDialog(user.userId)}
           >
             <img src={userAvatarIcon} className={styles.userAvatarIcon} />
-            {user}
+            {user.username}
           </button>
         ))}
       </div>

@@ -4,6 +4,7 @@ import type {
   Dialog,
   MessageType,
   ServerWSData,
+  User,
 } from "../../../types/types";
 
 type Handlers = {
@@ -11,7 +12,7 @@ type Handlers = {
   onChat: (message: MessageType) => void;
   onDeleteMessage: (id: number) => void;
   onEditMessage: (message: MessageType) => void;
-  onUsers: (users: string[]) => void;
+  onUsers: (users: User[]) => void;
   onDialogs: (dialogs: Dialog[]) => void;
 };
 

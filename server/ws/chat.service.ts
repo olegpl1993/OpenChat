@@ -11,8 +11,11 @@ export class ChatService {
   private clients = new Map<string, Client>();
   private lastMessageTime = new Map<string, number>();
 
-  getOnlineUsers() {
-    return [...this.clients.keys()];
+  getOnlineUsers(): { userId: number; username: string }[] {
+    return [...this.clients.values()].map((client) => ({
+      userId: client.userId,
+      username: client.username,
+    }));
   }
 
   getClientsByUserIds(userIds: number[]) {
