@@ -16,7 +16,7 @@ interface Props {
   isOpenUsersPanel: boolean;
   onlineUsers: string[];
   startEdit: (message: MessageType) => void;
-  getHistory: (beforeId?: number, search?: string) => void;
+  getHistory: (beforeId?: number, search?: string, dialog_id?: number) => void;
   deleteMessage: (id: number) => void;
   scrollToBottom: () => void;
   haveNewMessages: boolean;
@@ -85,7 +85,7 @@ const Messages = ({
         canLoadHistoryRef.current
       ) {
         canLoadHistoryRef.current = false;
-        getHistory(messagesState[0].id, search);
+        getHistory(messagesState[0].id, search, selectedDialog?.dialog_id);
       }
     };
 
@@ -99,6 +99,7 @@ const Messages = ({
     getHistory,
     haveNewMessages,
     setHaveNewMessages,
+    selectedDialog?.dialog_id,
   ]);
 
   return (
