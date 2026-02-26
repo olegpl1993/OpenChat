@@ -1,4 +1,5 @@
 import { ResultSetHeader } from "mysql2";
+import { DialogDBRow } from "../../types/types";
 import { db } from "./db";
 
 export const dialogRepository = {
@@ -20,13 +21,10 @@ export const dialogRepository = {
     return rows;
   },
 
-  async findDialog(user1Id: number, user2Id: number) {
-    const [rows] = await db.query<ResultSetHeader[]>(
-      `SELECT id, user1_id, user2_id 
-       FROM dialogs 
-       WHERE (user1_id = ? AND user2_id = ?)
-          OR (user1_id = ? AND user2_id = ?)`,
-      [user1Id, user2Id, user2Id, user1Id],
+  async getDialogById(id: number) {
+    const [rows] = await db.query<DialogDBRow[]>(
+      "SELECT * FROM dialogs WHERE id = ?",
+      [id],
     );
 
     return rows[0] ?? null;

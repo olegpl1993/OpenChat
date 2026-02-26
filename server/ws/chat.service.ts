@@ -15,6 +15,10 @@ export class ChatService {
     return [...this.clients.keys()];
   }
 
+  getClientsByUserIds(userIds: number[]) {
+    return [...this.clients.values()].filter((c) => userIds.includes(c.userId));
+  }
+
   auth(ws: WebSocket, user: { userId: number; username: string }) {
     const existing = this.clients.get(user.username);
     if (existing && existing.ws !== ws) {

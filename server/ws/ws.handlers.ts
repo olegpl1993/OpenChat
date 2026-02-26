@@ -18,14 +18,40 @@ export function wsHandlers(wss: WebSocketServer) {
 
     client_chat: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_chat") return;
+
       const message = await chatService.saveMessage(
         ws,
-        data.messageText,
+        data.messageText!,
         data.dialog_id,
       );
+
+      if (data.dialog_id) {
+        const userIds = await dialogService.getDialogUsers(data.dialog_id);
+        const clients = chatService.getClientsByUserIds(userIds);
+
+        clients.forEach((client) => {
+          if (client.ws.readyState === WebSocket.OPEN) {
+            client.ws.send(
+              JSON.stringify({
+                type: "server_chat",
+                message,
+              }),
+            );
+          }
+        });
+
+        return;
+      }
+
+      // 🔹 ОБЩИЙ ЧАТ
       wss.clients.forEach((c) => {
         if (c.readyState === WebSocket.OPEN) {
-          c.send(JSON.stringify({ type: "server_chat", message }));
+          c.send(
+            JSON.stringify({
+              type: "server_chat",
+              message,
+            }),
+          );
         }
       });
     },

@@ -7,6 +7,7 @@ export interface MessageType {
   created_at: string;
   edited: boolean;
   user_id: number;
+  dialog_id: number | null;
 }
 
 export interface DBrequestType extends RowDataPacket, MessageType {}
@@ -14,6 +15,13 @@ export interface DBrequestType extends RowDataPacket, MessageType {}
 export type AuthBody = {
   username: string;
   password: string;
+};
+
+export type DialogDBRow = RowDataPacket & {
+  id: number;
+  user1_id: number;
+  user2_id: number;
+  created_at: string;
 };
 
 export type UserRow = RowDataPacket & {

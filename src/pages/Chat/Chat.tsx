@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Dialog, MessageType } from "../../../types/types";
 import { useAuthContext } from "../../app/authContext/AuthContext";
 import styles from "./Chat.module.css";
@@ -19,7 +19,12 @@ const Chat = () => {
   const [messageTextInput, setMessageTextInput] = useState("");
   const [haveNewMessages, setHaveNewMessages] = useState(false);
   const [dialogs, setDialogs] = useState<Dialog[]>([]);
+
   const [selectedDialog, setSelectedDialog] = useState<Dialog | null>(null);
+  const selectedDialogRef = useRef<Dialog | null>(null);
+  useEffect(() => {
+    selectedDialogRef.current = selectedDialog;
+  }, [selectedDialog]);
 
   const startEdit = (message: MessageType) => {
     setEditedMessage(message);
@@ -42,6 +47,7 @@ const Chat = () => {
   };
 
   const handleSelectDialog = (dialog: Dialog) => {
+    setIsOpenUsersPanel(false);
     setSearch("");
     setSelectedDialog(dialog);
     setMessagesState([]);
@@ -49,6 +55,7 @@ const Chat = () => {
   };
 
   const handleCloseSelectedDialog = () => {
+    setIsOpenUsersPanel(false);
     setSearch("");
     setSelectedDialog(null);
     setMessagesState([]);
@@ -56,10 +63,12 @@ const Chat = () => {
   };
 
   const handleSearch = () => {
+    setIsOpenUsersPanel(false);
     setSelectedDialog(null);
     setMessagesState([]);
     chat.getHistory(undefined, search.trim());
   };
+
   const chat = useChat({
     onHistory: useCallback((messages, initial) => {
       if (initial) {
@@ -74,9 +83,13 @@ const Chat = () => {
     }, []),
     onChat: useCallback(
       (message) => {
+        const dialogId = selectedDialogRef.current?.dialog_id ?? null;
+        if ((message.dialog_id ?? null) !== dialogId) return;
         setMessagesState((prev) => [...prev, message]);
+
         const messagesCurrent = messagesRef.current;
         if (!messagesCurrent) return;
+
         const distanceFromBottom =
           messagesCurrent.scrollHeight -
           messagesCurrent.scrollTop -
