@@ -1,0 +1,47 @@
+import { ResultSetHeader } from "mysql2";
+import { db } from "./db";
+
+export const dialogRepository = {
+  async getUserDialogs(userId: number) {
+    const [rows] = await db.query<[]>(
+      `
+    SELECT 
+      d.id AS dialog_id,
+      u.id AS user_id,
+      u.username
+    FROM dialogs d
+    JOIN users u 
+      ON u.id = IF(d.user1_id = ?, d.user2_id, d.user1_id)
+    WHERE d.user1_id = ? OR d.user2_id = ?
+    `,
+      [userId, userId, userId],
+    );
+
+    return rows;
+  },
+
+  async findDialog(user1Id: number, user2Id: number) {
+    const [rows] = await db.query<ResultSetHeader[]>(
+      `SELECT id, user1_id, user2_id 
+       FROM dialogs 
+       WHERE (user1_id = ? AND user2_id = ?)
+          OR (user1_id = ? AND user2_id = ?)`,
+      [user1Id, user2Id, user2Id, user1Id],
+    );
+
+    return rows[0] ?? null;
+  },
+
+  async createDialog(user1Id: number, user2Id: number) {
+    const [result] = await db.query<ResultSetHeader>(
+      "INSERT INTO dialogs (user1_id, user2_id) VALUES (?, ?)",
+      [user1Id, user2Id],
+    );
+
+    return {
+      id: result.insertId,
+      user1_id: user1Id,
+      user2_id: user2Id,
+    };
+  },
+};

@@ -14,3 +14,7 @@
     padding: 0px;
   }
 }
+
+.dialogs {
+  border: 1px solid red;
+}

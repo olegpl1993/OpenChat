@@ -6,11 +6,14 @@ export const messageRepository = {
   async saveMessage(
     user: { userId: number; username: string },
     text: string,
+    dialog_id?: number,
   ): Promise<number> {
     const [result] = await db.query<ResultSetHeader>(
-      "INSERT INTO messages (user, text, user_id) VALUES (?, ?, ?)",
-      [user.username, text, user.userId],
+      `INSERT INTO messages (user, text, user_id, dialog_id)
+     VALUES (?, ?, ?, ?)`,
+      [user.username, text, user.userId, dialog_id ?? null],
     );
+
     return result.insertId;
   },
 
@@ -36,24 +39,37 @@ export const messageRepository = {
   async getHistory(
     beforeId?: number,
     search?: string,
+    dialog_id?: number,
     limit = 20,
   ): Promise<MessageType[]> {
     let sql = "SELECT * FROM messages";
     const conditions: string[] = [];
     const params: (number | string)[] = [];
+
     if (beforeId !== undefined) {
       conditions.push("id < ?");
       params.push(beforeId);
     }
+
     if (search) {
       conditions.push("user = ?");
       params.push(search);
     }
+
+    if (dialog_id !== undefined) {
+      conditions.push("dialog_id = ?");
+      params.push(dialog_id);
+    } else {
+      conditions.push("dialog_id IS NULL");
+    }
+
     if (conditions.length) {
       sql += " WHERE " + conditions.join(" AND ");
     }
+
     sql += " ORDER BY id DESC LIMIT ?";
     params.push(limit);
+
     const [rows] = await db.query<DBrequestType[]>(sql, params);
     return rows.reverse();
   },

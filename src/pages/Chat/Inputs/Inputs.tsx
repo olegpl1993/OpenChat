@@ -1,5 +1,5 @@
 import { memo } from "react";
-import type { MessageType } from "../../../../types/types";
+import type { Dialog, MessageType } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import messageIcon from "../../../assets/message.svg";
 import { encrypt } from "../utils/encrypt";
@@ -13,7 +13,8 @@ type Props = {
   setEditedMessage: React.Dispatch<React.SetStateAction<MessageType | null>>;
   cancelEdit: () => void;
   editMessage: (id: number, text: string) => void;
-  sendMessage: (text: string) => void;
+  sendMessage: (text: string, dialog_id?: number) => void;
+  selectedDialog: Dialog | null;
 };
 
 const Inputs = ({
@@ -23,6 +24,7 @@ const Inputs = ({
   cancelEdit,
   editMessage,
   sendMessage,
+  selectedDialog,
 }: Props) => {
   const { userName, key } = useAuthContext();
 
@@ -34,7 +36,7 @@ const Inputs = ({
       editMessage(editedMessage.id, messageTextInput);
       cancelEdit();
     } else {
-      sendMessage(cryptoMessageText);
+      sendMessage(cryptoMessageText, selectedDialog?.dialog_id);
     }
 
     setMessageTextInput("");

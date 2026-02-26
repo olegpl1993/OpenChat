@@ -20,7 +20,11 @@ export class ChatService {
     if (existing && existing.ws !== ws) {
       existing.ws.close(4001, "SESSION_REPLACED");
     }
-    this.clients.set(user.username, { ws, userId: user.userId, username: user.username });
+    this.clients.set(user.username, {
+      ws,
+      userId: user.userId,
+      username: user.username,
+    });
   }
 
   disconnect(ws: WebSocket) {
@@ -36,19 +40,23 @@ export class ChatService {
     return [...this.clients.values()].find((c) => c.ws === ws) ?? null;
   }
 
-  async getInitialHistory() {
-    return messageRepository.getHistory();
+  async getInitialHistory(dialog_id?: number) {
+    return messageRepository.getHistory(dialog_id);
   }
 
-  async getHistory(beforeId?: number, search?: string) {
-    return messageRepository.getHistory(beforeId, search);
+  async getHistory(beforeId?: number, search?: string, dialog_id?: number) {
+    return messageRepository.getHistory(beforeId, search, dialog_id);
   }
 
-  async saveMessage(ws: WebSocket, messageText: string) {
+  async saveMessage(ws: WebSocket, messageText: string, dialog_id?: number) {
     const user = this.getUser(ws);
     if (!user) throw new Error("Unauthorized");
     this.checkSpam(user.username);
-    const id = await messageRepository.saveMessage(user, messageText);
+    const id = await messageRepository.saveMessage(
+      user,
+      messageText,
+      dialog_id,
+    );
     const savedMessage = await messageRepository.getMessageById(id);
     if (!savedMessage) throw new Error("Message not found after insert");
     return savedMessage;

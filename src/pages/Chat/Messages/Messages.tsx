@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import type { MessageType } from "../../../../types/types";
+import type { Dialog, MessageType } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
 import { decrypt } from "../utils/decrypt";
@@ -21,6 +21,9 @@ interface Props {
   scrollToBottom: () => void;
   haveNewMessages: boolean;
   setHaveNewMessages: React.Dispatch<React.SetStateAction<boolean>>;
+  dialogs: Dialog[];
+  selectedDialog: Dialog | null;
+  handleSelectDialog: (dialog: Dialog) => void;
 }
 
 const Messages = ({
@@ -36,6 +39,9 @@ const Messages = ({
   scrollToBottom,
   haveNewMessages,
   setHaveNewMessages,
+  dialogs,
+  selectedDialog,
+  handleSelectDialog,
 }: Props) => {
   const { userName, key } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
@@ -97,7 +103,14 @@ const Messages = ({
 
   return (
     <div className={styles.messages}>
-      {isOpenUsersPanel && <UsersPanel onlineUsers={onlineUsers} />}
+      {isOpenUsersPanel && (
+        <UsersPanel
+          onlineUsers={onlineUsers}
+          dialogs={dialogs}
+          selectedDialog={selectedDialog}
+          handleSelectDialog={handleSelectDialog}
+        />
+      )}
       <div className={styles.messagesBox} ref={messagesRef}>
         {messagesRenderList.map((item, i) => {
           if (item.type === "date") {

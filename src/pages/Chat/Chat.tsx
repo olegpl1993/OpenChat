@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import type { MessageType } from "../../../types/types";
+import type { Dialog, MessageType } from "../../../types/types";
 import { useAuthContext } from "../../app/authContext/AuthContext";
 import styles from "./Chat.module.css";
 import Info from "./Info/Info";
@@ -18,6 +18,8 @@ const Chat = () => {
   const [editedMessage, setEditedMessage] = useState<MessageType | null>(null);
   const [messageTextInput, setMessageTextInput] = useState("");
   const [haveNewMessages, setHaveNewMessages] = useState(false);
+  const [dialogs, setDialogs] = useState<Dialog[]>([]);
+  const [selectedDialog, setSelectedDialog] = useState<Dialog | null>(null);
 
   const startEdit = (message: MessageType) => {
     setEditedMessage(message);
@@ -39,7 +41,22 @@ const Chat = () => {
     }, 700);
   };
 
+  const handleSelectDialog = (dialog: Dialog) => {
+    setSearch("");
+    setSelectedDialog(dialog);
+    setMessagesState([]);
+    chat.getHistory(undefined, undefined, dialog.dialog_id);
+  };
+
+  const handleCloseSelectedDialog = () => {
+    setSearch("");
+    setSelectedDialog(null);
+    setMessagesState([]);
+    chat.getHistory();
+  };
+
   const handleSearch = () => {
+    setSelectedDialog(null);
     setMessagesState([]);
     chat.getHistory(undefined, search.trim());
   };
@@ -81,6 +98,7 @@ const Chat = () => {
       );
     }, []),
     onUsers: useCallback((users) => setOnlineUsers(users), []),
+    onDialogs: useCallback((dialogs) => setDialogs(dialogs), []),
   });
 
   return (
@@ -91,6 +109,8 @@ const Chat = () => {
         handleSearch={handleSearch}
         isOpenUsersPanel={isOpenUsersPanel}
         setIsOpenUsersPanel={setIsOpenUsersPanel}
+        selectedDialog={selectedDialog}
+        handleCloseSelectedDialog={handleCloseSelectedDialog}
       />
 
       <Messages
@@ -106,6 +126,9 @@ const Chat = () => {
         scrollToBottom={scrollToBottom}
         haveNewMessages={haveNewMessages}
         setHaveNewMessages={setHaveNewMessages}
+        dialogs={dialogs}
+        selectedDialog={selectedDialog}
+        handleSelectDialog={handleSelectDialog}
       />
 
       <Inputs
@@ -116,6 +139,7 @@ const Chat = () => {
         cancelEdit={cancelEdit}
         editMessage={chat.editMessage}
         sendMessage={chat.sendMessage}
+        selectedDialog={selectedDialog}
       />
     </div>
   );

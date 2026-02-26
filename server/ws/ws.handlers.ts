@@ -1,12 +1,28 @@
 import { WebSocket, WebSocketServer } from "ws";
 import type { ClientWSData } from "../../types/types";
 import { chatService } from "./chat.service";
+import { dialogService } from "./dialog.service";
 
 export function wsHandlers(wss: WebSocketServer) {
   return {
+    client_dialogs: async (ws: WebSocket, data: ClientWSData) => {
+      if (data.type !== "client_dialogs") return;
+      const dialogs = await dialogService.getDialogs(ws);
+      ws.send(
+        JSON.stringify({
+          type: "server_dialogs",
+          dialogs,
+        }),
+      );
+    },
+
     client_chat: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_chat") return;
-      const message = await chatService.saveMessage(ws, data.messageText);
+      const message = await chatService.saveMessage(
+        ws,
+        data.messageText,
+        data.dialog_id,
+      );
       wss.clients.forEach((c) => {
         if (c.readyState === WebSocket.OPEN) {
           c.send(JSON.stringify({ type: "server_chat", message }));
@@ -38,7 +54,11 @@ export function wsHandlers(wss: WebSocketServer) {
 
     client_history: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_history") return;
-      const history = await chatService.getHistory(data.beforeId, data.search);
+      const history = await chatService.getHistory(
+        data.beforeId,
+        data.search,
+        data.dialog_id,
+      );
       ws.send(
         JSON.stringify({
           type: "server_history",
