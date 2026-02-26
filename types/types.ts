@@ -6,6 +6,7 @@ export interface MessageType {
   text: string;
   created_at: string;
   edited: boolean;
+  user_id: number;
 }
 
 export interface DBrequestType extends RowDataPacket, MessageType {}

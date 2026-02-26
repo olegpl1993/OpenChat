@@ -3,10 +3,13 @@ import { DBrequestType, MessageType } from "../../types/types";
 import { db } from "./db";
 
 export const messageRepository = {
-  async saveMessage(user: string, text: string): Promise<number> {
+  async saveMessage(
+    user: { userId: number; username: string },
+    text: string,
+  ): Promise<number> {
     const [result] = await db.query<ResultSetHeader>(
-      "INSERT INTO messages (user, text) VALUES (?, ?)",
-      [user, text],
+      "INSERT INTO messages (user, text, user_id) VALUES (?, ?, ?)",
+      [user.username, text, user.userId],
     );
     return result.insertId;
   },

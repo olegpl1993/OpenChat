@@ -3,6 +3,7 @@ import { messageRepository } from "../db/message.repository";
 
 type Client = {
   ws: WebSocket;
+  userId: number;
   username: string;
 };
 
@@ -14,12 +15,12 @@ export class ChatService {
     return [...this.clients.keys()];
   }
 
-  auth(ws: WebSocket, username: string) {
-    const existing = this.clients.get(username);
+  auth(ws: WebSocket, user: { userId: number; username: string }) {
+    const existing = this.clients.get(user.username);
     if (existing && existing.ws !== ws) {
       existing.ws.close(4001, "SESSION_REPLACED");
     }
-    this.clients.set(username, { ws, username });
+    this.clients.set(user.username, { ws, userId: user.userId, username: user.username });
   }
 
   disconnect(ws: WebSocket) {
@@ -32,10 +33,7 @@ export class ChatService {
   }
 
   getUser(ws: WebSocket) {
-    for (const client of this.clients.values()) {
-      if (client.ws === ws) return client.username;
-    }
-    return null;
+    return [...this.clients.values()].find((c) => c.ws === ws) ?? null;
   }
 
   async getInitialHistory() {
@@ -47,33 +45,33 @@ export class ChatService {
   }
 
   async saveMessage(ws: WebSocket, messageText: string) {
-    const username = this.getUser(ws);
-    if (!username) throw new Error("Unauthorized");
-    this.checkSpam(username);
-    const id = await messageRepository.saveMessage(username, messageText);
+    const user = this.getUser(ws);
+    if (!user) throw new Error("Unauthorized");
+    this.checkSpam(user.username);
+    const id = await messageRepository.saveMessage(user, messageText);
     const savedMessage = await messageRepository.getMessageById(id);
     if (!savedMessage) throw new Error("Message not found after insert");
     return savedMessage;
   }
 
   async deleteMessage(ws: WebSocket, id: number) {
-    const username = this.getUser(ws);
-    if (!username) throw new Error("Unauthorized");
+    const user = this.getUser(ws);
+    if (!user) throw new Error("Unauthorized");
     const message = await messageRepository.getMessageById(id);
     if (!message) throw new Error("Message not found");
-    if (message.user !== username)
+    if (message.user !== user.username)
       throw new Error("You can delete only your own messages");
     await messageRepository.delete(id);
   }
 
   async editMessage(ws: WebSocket, id: number, text: string) {
-    const username = this.getUser(ws);
-    if (!username) throw new Error("Unauthorized");
+    const user = this.getUser(ws);
+    if (!user) throw new Error("Unauthorized");
 
     const message = await messageRepository.getMessageById(id);
     if (!message) throw new Error("Message not found");
 
-    if (message.user !== username) {
+    if (message.user !== user.username) {
       throw new Error("You can edit only your own messages");
     }
 

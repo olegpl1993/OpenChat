@@ -32,14 +32,15 @@ export class AuthService {
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) throw new Error("Invalid credentials");
 
-    const payload = { username: user.username };
+    const payload = { userId: user.id, username: user.username };
+
     const token = jwt.sign(payload, SECRET, { expiresIn: "7d" });
 
     return { user: payload, token };
   }
 
   verifyToken(token: string) {
-    return jwt.verify(token, SECRET) as { username: string };
+    return jwt.verify(token, SECRET) as { userId: number; username: string };
   }
 
   buildAuthCookie(token: string) {

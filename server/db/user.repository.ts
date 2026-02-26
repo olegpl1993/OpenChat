@@ -1,5 +1,5 @@
-import { db } from "./db";
 import { UserRow } from "../../types/types";
+import { db } from "./db";
 
 export const userRepository = {
   async findByUsername(username: string) {
