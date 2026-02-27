@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import type {
   ClientWSData,
+  Dialog,
   MessageType,
   ServerWSData,
+  User,
 } from "../../../types/types";
 
 type Handlers = {
@@ -10,7 +12,8 @@ type Handlers = {
   onChat: (message: MessageType) => void;
   onDeleteMessage: (id: number) => void;
   onEditMessage: (message: MessageType) => void;
-  onUsers: (users: string[]) => void;
+  onUsers: (users: User[]) => void;
+  onDialogs: (dialogs: Dialog[]) => void;
 };
 
 export function useChat(handlers: Handlers) {
@@ -45,6 +48,7 @@ export function useChat(handlers: Handlers) {
     socket.onopen = () => {
       reconnectAttempts.current = 0;
       console.log("WS connected");
+      send({ type: "client_dialogs" });
     };
 
     socket.onclose = (event) => {
@@ -76,11 +80,14 @@ export function useChat(handlers: Handlers) {
         case "server_editMessage":
           handlers.onEditMessage(data.message);
           break;
+        case "server_dialogs":
+          handlers.onDialogs(data.dialogs);
+          break;
         case "server_error":
           console.error(data.message);
       }
     };
-  }, [handlers]);
+  }, [handlers, send]);
 
   useEffect(() => {
     connectRef.current = connect;
@@ -99,15 +106,23 @@ export function useChat(handlers: Handlers) {
   }, []);
 
   return {
-    sendMessage: (text: string) =>
-      send({ type: "client_chat", messageText: text }),
+    sendMessage: (text: string, dialog_id?: number) =>
+      send({ type: "client_chat", messageText: text, dialog_id }),
 
     editMessage: (id: number, text: string) =>
       send({ type: "client_editMessage", id, text }),
 
     deleteMessage: (id: number) => send({ type: "client_deleteMessage", id }),
 
-    getHistory: (beforeId?: number, search?: string) =>
-      send({ type: "client_history", beforeId, search }),
+    getHistory: (beforeId?: number, search?: string, dialog_id?: number) =>
+      send({ type: "client_history", beforeId, search, dialog_id }),
+
+    getDialogs: () => send({ type: "client_dialogs" }),
+
+    createDialog: (user_id: number) =>
+      send({ type: "client_createDialog", user_id }),
+
+    deleteDialog: (dialog_id: number) =>
+      send({ type: "client_deleteDialog", dialog_id }),
   };
 }

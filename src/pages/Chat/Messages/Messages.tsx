@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import type { MessageType } from "../../../../types/types";
+import type { Dialog, MessageType, User } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
 import { decrypt } from "../utils/decrypt";
@@ -14,13 +14,17 @@ interface Props {
   messagesState: MessageType[];
   search: string;
   isOpenUsersPanel: boolean;
-  onlineUsers: string[];
+  onlineUsers: User[];
   startEdit: (message: MessageType) => void;
-  getHistory: (beforeId?: number, search?: string) => void;
+  getHistory: (beforeId?: number, search?: string, dialog_id?: number) => void;
   deleteMessage: (id: number) => void;
   scrollToBottom: () => void;
   haveNewMessages: boolean;
   setHaveNewMessages: React.Dispatch<React.SetStateAction<boolean>>;
+  dialogs: Dialog[];
+  selectedDialog: Dialog | null;
+  handleSelectDialog: (dialog: Dialog) => void;
+  handleCreateDialog: (userId: number) => void;
 }
 
 const Messages = ({
@@ -36,6 +40,10 @@ const Messages = ({
   scrollToBottom,
   haveNewMessages,
   setHaveNewMessages,
+  dialogs,
+  selectedDialog,
+  handleSelectDialog,
+  handleCreateDialog,
 }: Props) => {
   const { userName, key } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
@@ -79,7 +87,7 @@ const Messages = ({
         canLoadHistoryRef.current
       ) {
         canLoadHistoryRef.current = false;
-        getHistory(messagesState[0].id, search);
+        getHistory(messagesState[0].id, search, selectedDialog?.dialog_id);
       }
     };
 
@@ -93,11 +101,20 @@ const Messages = ({
     getHistory,
     haveNewMessages,
     setHaveNewMessages,
+    selectedDialog?.dialog_id,
   ]);
 
   return (
     <div className={styles.messages}>
-      {isOpenUsersPanel && <UsersPanel onlineUsers={onlineUsers} />}
+      {isOpenUsersPanel && (
+        <UsersPanel
+          onlineUsers={onlineUsers}
+          dialogs={dialogs}
+          selectedDialog={selectedDialog}
+          handleSelectDialog={handleSelectDialog}
+          handleCreateDialog={handleCreateDialog}
+        />
+      )}
       <div className={styles.messagesBox} ref={messagesRef}>
         {messagesRenderList.map((item, i) => {
           if (item.type === "date") {

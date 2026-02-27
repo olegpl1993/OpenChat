@@ -31,7 +31,7 @@ export function wsServer(server: http.Server): WebSocketServer {
     try {
       const payload = authService.verifyToken(token);
       wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit("connection", ws, payload.username);
+        wss.emit("connection", ws, payload);
       });
     } catch {
       socket.destroy();
