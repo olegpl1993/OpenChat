@@ -55,6 +55,19 @@
   margin: 5px 0px;
   font-size: 14px;
   color: black;
+  border: 2px solid #1e90ff;
+  color: #1e90ff;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+@media screen and (max-width: 768px) {
+  .title {
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 3px;
+  }
 }
 
 .usersList {
@@ -63,6 +76,7 @@
   gap: 5px;
   width: fit-content;
   justify-items: center;
+  width: 100%;
 }
 
 .dialogItem {
@@ -71,7 +85,7 @@
   justify-content: flex-start;
   padding: 5px 10px;
   height: 100%;
-  width: 180px;
+  width: 100%;
   font-weight: bold;
   font-size: 12px;
   border-radius: 10px;
