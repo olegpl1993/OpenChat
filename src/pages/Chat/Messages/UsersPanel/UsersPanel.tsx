@@ -20,27 +20,23 @@ const UserPanel = ({
 }: Props) => {
   return (
     <div className={styles.usersPanel}>
-      <div className={styles.usersList}>
-        <div className={styles.title}>Dialogs</div>
-        {dialogs.map((dialog) => (
-          <button
-            key={dialog.dialog_id}
-            className={`${styles.dialogItem} ${
-              dialog.dialog_id === selectedDialog?.dialog_id && styles.selected
-            }`}
-            onClick={() => handleSelectDialog(dialog)}
-          >
-            <img
-              src={userAvatarIcon}
-              className={`${styles.userAvatarIcon} ${
+      {dialogs.length > 0 && (
+        <div className={styles.usersList}>
+          <div className={styles.title}>Dialogs</div>
+          {dialogs.map((dialog) => (
+            <button
+              key={dialog.dialog_id}
+              className={`${styles.dialogItem} ${
                 dialog.dialog_id === selectedDialog?.dialog_id &&
-                styles.selectedAvatar
+                styles.selected
               }`}
-            />
-            {dialog.username}
-          </button>
-        ))}
-      </div>
+              onClick={() => handleSelectDialog(dialog)}
+            >
+              {dialog.username}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className={styles.usersList}>
         <div className={styles.title}>Online users</div>

@@ -19,6 +19,14 @@ const Chat = () => {
   const [messageTextInput, setMessageTextInput] = useState("");
   const [haveNewMessages, setHaveNewMessages] = useState(false);
   const [dialogs, setDialogs] = useState<Dialog[]>([]);
+  const getHistoryRef = useRef<
+    | ((
+        beforeId?: number | undefined,
+        search?: string | undefined,
+        dialog_id?: number | undefined,
+      ) => void)
+    | null
+  >(null);
 
   const [selectedDialog, setSelectedDialog] = useState<Dialog | null>(null);
   const selectedDialogRef = useRef<Dialog | null>(null);
@@ -65,7 +73,7 @@ const Chat = () => {
   const handleCreateDialog = (userId: number) => {
     chat.createDialog(userId);
     setSearch("");
-  }
+  };
 
   const handleDeleteSelectedDialog = () => {
     if (selectedDialog) chat.deleteDialog(selectedDialog.dialog_id);
@@ -125,8 +133,24 @@ const Chat = () => {
       );
     }, []),
     onUsers: useCallback((users) => setOnlineUsers(users), []),
-    onDialogs: useCallback((dialogs) => setDialogs(dialogs), []),
+    onDialogs: useCallback((dialogs: Dialog[]) => {
+      setDialogs(dialogs);
+      const selected = selectedDialogRef.current;
+      if (!selected) return;
+      const exists = dialogs.some((d) => d.dialog_id === selected.dialog_id);
+      if (!exists) {
+        selectedDialogRef.current = null;
+        setSelectedDialog(null);
+        setMessagesState([]);
+        setHaveNewMessages(false);
+        if (getHistoryRef.current) getHistoryRef.current();
+      }
+    }, []),
   });
+
+  useEffect(() => {
+    getHistoryRef.current = chat.getHistory;
+  }, [chat.getHistory]);
 
   return (
     <div className={styles.chat}>

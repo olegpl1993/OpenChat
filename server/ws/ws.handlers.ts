@@ -19,30 +19,65 @@ export function wsHandlers(wss: WebSocketServer) {
     client_createDialog: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_createDialog") return;
       await dialogService.createDialog(ws, data.user_id);
-      const dialogs = await dialogService.getDialogs(ws);
+      const initiator = chatService.getUser(ws);
+      if (!initiator) return;
+      const targetClient = chatService.getClientByUserId(data.user_id);
+      // dialogs for user
+      const initiatorDialogs = await dialogService.getDialogs(ws);
       ws.send(
         JSON.stringify({
           type: "server_dialogs",
-          dialogs,
+          dialogs: initiatorDialogs,
         }),
       );
+      // dialogs for target user
+      if (targetClient) {
+        const targetDialogs = await dialogService.getDialogs(targetClient.ws);
+        targetClient.ws.send(
+          JSON.stringify({
+            type: "server_dialogs",
+            dialogs: targetDialogs,
+          }),
+        );
+      }
     },
 
     client_deleteDialog: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_deleteDialog") return;
-      await dialogService.deleteDialog(ws, data.dialog_id);
+      const userIds = await dialogService.getDialogUsers(data.dialog_id);
+      const clients = chatService.getClientsByUserIds(userIds);
       await chatService.deleteMessagesByDialogId(data.dialog_id);
+      await dialogService.deleteDialog(ws, data.dialog_id);
       const dialogs = await dialogService.getDialogs(ws);
-      ws.send(
-        JSON.stringify({
-          type: "server_dialogs",
-          dialogs,
-        }),
-      );
+
+      clients.forEach((client) => {
+        if (client.ws.readyState === WebSocket.OPEN) {
+          client.ws.send(
+            JSON.stringify({
+              type: "server_dialogs",
+              dialogs,
+            }),
+          );
+        }
+      });
     },
 
     client_chat: async (ws: WebSocket, data: ClientWSData) => {
       if (data.type !== "client_chat") return;
+
+      // check if dialog exists
+      if (data.dialog_id) {
+        const dialog = await dialogService.getDialogById(data.dialog_id);
+        if (!dialog) {
+          ws.send(
+            JSON.stringify({
+              type: "server_error",
+              message: "DIALOG_NOT_FOUND",
+            }),
+          );
+          return;
+        }
+      }
 
       const message = await chatService.saveMessage(
         ws,
@@ -50,10 +85,10 @@ export function wsHandlers(wss: WebSocketServer) {
         data.dialog_id,
       );
 
+      // message to dialog
       if (data.dialog_id) {
         const userIds = await dialogService.getDialogUsers(data.dialog_id);
         const clients = chatService.getClientsByUserIds(userIds);
-
         clients.forEach((client) => {
           if (client.ws.readyState === WebSocket.OPEN) {
             client.ws.send(
@@ -66,7 +101,7 @@ export function wsHandlers(wss: WebSocketServer) {
         });
         return;
       }
-
+      // message to public chat
       wss.clients.forEach((c) => {
         if (c.readyState === WebSocket.OPEN) {
           c.send(
