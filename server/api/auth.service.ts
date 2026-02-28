@@ -36,11 +36,16 @@ export class AuthService {
       userId: user.id,
       username: user.username,
       publicKey: user.public_key,
+      createdAt: user.created_at,
     };
 
     const token = jwt.sign(payload, SECRET, { expiresIn: "7d" });
 
     return { user: payload, token };
+  }
+
+  updatePublicKey(userId: number, publicKey: string) {
+    return userRepository.updatePublicKey(userId, publicKey);
   }
 
   verifyToken(token: string) {

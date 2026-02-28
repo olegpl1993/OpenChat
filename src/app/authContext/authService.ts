@@ -1,12 +1,14 @@
 import { cryptoService } from "../../services/crypto.service";
 
 type User = { username: string } | null;
+
 type Listener = (
   user: User,
   loggedIn: boolean,
   publicKey: string | null,
   privateKey: string | null,
 ) => void;
+
 type LocalUserKeys = {
   publicKey: string;
   privateKey: string;
@@ -34,13 +36,38 @@ class AuthService {
     );
   }
 
-  saveLocalKeys(username: string, publicKey: string, privateKey: string) {
+  private async ensureKeys(username: string, userId: number) {
+    const keys = this.loadLocalKeys(username);
+    if (keys) {
+      this.publicKey = keys.publicKey;
+      this.privateKey = keys.privateKey;
+      return;
+    }
+
+    const { publicKey, privateKey } = await cryptoService.generateKeyPair();
+    this.saveLocalKeys(username, publicKey, privateKey);
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+
+    await fetch("/api/update-public-key", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, publicKey }),
+    });
+  }
+
+  private saveLocalKeys(
+    username: string,
+    publicKey: string,
+    privateKey: string,
+  ) {
     const keyName = "userKeys_" + username;
     const newKeys: LocalUserKeys = { publicKey, privateKey };
     localStorage.setItem(keyName, JSON.stringify(newKeys));
   }
 
-  loadLocalKeys(username: string) {
+  private loadLocalKeys(username: string) {
     const keyName = "userKeys_" + username;
     const keys = localStorage.getItem(keyName);
     if (!keys) return null;
@@ -58,14 +85,15 @@ class AuthService {
       const text = await res.text();
       throw new Error(text || "Login error");
     }
-    const data: { username: string } = await res.json();
+    const data: {
+      username: string;
+      publicKey: string;
+      userId: number;
+      createdAt: string;
+    } = await res.json();
     this.user = { username: data.username };
     this.loggedIn = true;
-    const keys = this.loadLocalKeys(data.username);
-    if (keys) {
-      this.publicKey = keys.publicKey;
-      this.privateKey = keys.privateKey;
-    }
+    await this.ensureKeys(data.username, data.userId);
     this.notify();
   }
 

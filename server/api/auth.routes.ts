@@ -54,10 +54,8 @@ export async function authRoutes(
       res.end(JSON.stringify({ loggedIn: false }));
       return true;
     }
-
     try {
       const payload = authService.verifyToken(token);
-
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ loggedIn: true, username: payload.username }));
       return true;
@@ -75,6 +73,22 @@ export async function authRoutes(
     });
     res.end(JSON.stringify({ success: true }));
     return true;
+  }
+
+  if (req.method === "POST" && req.url === "/api/update-public-key") {
+    try {
+      const body = await parseBody<{ userId: number; publicKey: string }>(req);
+      await authService.updatePublicKey(body.userId, body.publicKey);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true }));
+      return true;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+        return true;
+      }
+    }
   }
 
   return false;

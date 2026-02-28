@@ -25,11 +25,6 @@ export type DialogDBRow = RowDataPacket & {
   created_at: string;
 };
 
-export type UserRow = RowDataPacket & {
-  id: number;
-  password_hash: string;
-};
-
 export type Dialog = {
   dialog_id: number;
   user_id: number;
