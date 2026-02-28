@@ -1,5 +1,5 @@
 import { memo } from "react";
-import type { Dialog, MessageType } from "../../../../types/types";
+import type { MessageType } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import messageIcon from "../../../assets/message.svg";
 
@@ -11,9 +11,7 @@ type Props = {
   editedMessage: MessageType | null;
   setEditedMessage: React.Dispatch<React.SetStateAction<MessageType | null>>;
   cancelEdit: () => void;
-  editMessage: (id: number, text: string) => void;
-  handleSendMessage: (text: string, dialog_id?: number) => void;
-  selectedDialog: Dialog | null;
+  handleSendMessage: () => void;
 };
 
 const Inputs = ({
@@ -21,24 +19,9 @@ const Inputs = ({
   setMessageTextInput,
   editedMessage,
   cancelEdit,
-  editMessage,
   handleSendMessage,
-  selectedDialog,
 }: Props) => {
   const { userName } = useAuthContext();
-
-  const handleSend = async () => {
-    if (!messageTextInput || !userName) return;
-    if (editedMessage && editedMessage.id) {
-      editMessage(editedMessage.id, messageTextInput);
-      cancelEdit();
-    } else {
-      handleSendMessage(messageTextInput, selectedDialog?.dialog_id);
-    }
-
-    setMessageTextInput("");
-  };
-
   return (
     <div className={styles.inputs}>
       {editedMessage && (
@@ -66,7 +49,7 @@ const Inputs = ({
                 if (isMobile) return;
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSend();
+                  handleSendMessage();
                 }
               }}
               name="message"
@@ -77,7 +60,7 @@ const Inputs = ({
 
         <button
           className={styles.buttonSend}
-          onClick={() => handleSend()}
+          onClick={() => handleSendMessage()}
           disabled={!messageTextInput || !userName}
         >
           <img src={messageIcon} className={styles.messageIcon} />

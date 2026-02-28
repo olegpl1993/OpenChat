@@ -148,13 +148,27 @@ const Chat = () => {
     }, []),
   });
 
-  const handleSendMessage = async (message: string, dialog_id?: number) => {
-    await chat.sendMessage(
-      message,
-      dialog_id,
-      selectedDialog?.public_key,
-      publicKey,
-    );
+  const handleSendMessage = async () => {
+    if (!messageTextInput || !userName) return;
+    if (editedMessage && editedMessage.id) {
+      chat.editMessage(
+        editedMessage.id,
+        messageTextInput,
+        selectedDialog?.dialog_id,
+        selectedDialog?.public_key,
+        publicKey,
+      );
+      cancelEdit();
+    } else {
+      await chat.sendMessage(
+        messageTextInput,
+        selectedDialog?.dialog_id,
+        selectedDialog?.public_key,
+        publicKey,
+      );
+    }
+
+    setMessageTextInput("");
   };
 
   useEffect(() => {
@@ -199,9 +213,7 @@ const Chat = () => {
         editedMessage={editedMessage}
         setEditedMessage={setEditedMessage}
         cancelEdit={cancelEdit}
-        editMessage={chat.editMessage}
         handleSendMessage={handleSendMessage}
-        selectedDialog={selectedDialog}
       />
     </div>
   );

@@ -140,8 +140,35 @@ export function useChat(handlers: Handlers) {
       });
     },
 
-    editMessage: (id: number, text: string) =>
-      send({ type: "client_editMessage", id, text }),
+    editMessage: async (
+      id: number,
+      text: string,
+      dialog_id?: number,
+      recipientPublicKey?: string,
+      senderPublicKey?: string,
+    ) => {
+      if (!dialog_id || !recipientPublicKey || !senderPublicKey) {
+        send({ type: "client_editMessage", id, text });
+        return;
+      }
+
+      const encryptedForRecipient = await cryptoService.encryptWithPublicKey(
+        text,
+        recipientPublicKey,
+      );
+      const encryptedForSender = await cryptoService.encryptWithPublicKey(
+        text,
+        senderPublicKey,
+      );
+
+      const payload = JSON.stringify({
+        v: 1,
+        for_recipient: encryptedForRecipient,
+        for_sender: encryptedForSender,
+      });
+
+      send({ type: "client_editMessage", id, text: payload });
+    },
 
     deleteMessage: (id: number) => send({ type: "client_deleteMessage", id }),
 
