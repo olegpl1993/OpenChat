@@ -1,10 +1,18 @@
-import { UserRow } from "../../types/types";
+import { RowDataPacket } from "mysql2";
 import { db } from "./db";
+
+export type UserRow = RowDataPacket & {
+  id: number;
+  username: string;
+  password_hash: string;
+  created_at: Date;
+  public_key: string;
+};
 
 export const userRepository = {
   async findByUsername(username: string) {
     const [rows] = await db.query<UserRow[]>(
-      "SELECT id, username, password_hash FROM users WHERE LOWER(username) = LOWER(?)",
+      "SELECT * FROM users WHERE LOWER(username) = LOWER(?)",
       [username],
     );
     return rows[0] ?? null;
@@ -15,5 +23,12 @@ export const userRepository = {
       "INSERT INTO users (username, password_hash, public_key) VALUES (?, ?, ?)",
       [username, passwordHash, publicKey],
     );
+  },
+
+  async updatePublicKey(userId: number, publicKey: string) {
+    await db.query("UPDATE users SET public_key = ? WHERE id = ?", [
+      publicKey,
+      userId,
+    ]);
   },
 };

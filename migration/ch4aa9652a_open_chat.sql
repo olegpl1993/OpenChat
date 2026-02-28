@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Фев 27 2026 г., 09:37
+-- Время создания: Фев 28 2026 г., 16:31
 -- Версия сервера: 8.4.7-cll-lve
 -- Версия PHP: 8.1.34
 
@@ -34,8 +34,6 @@ CREATE TABLE `dialogs` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
 -- Структура таблицы `messages`
 --
@@ -50,6 +48,7 @@ CREATE TABLE `messages` (
   `edited` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 --
 -- Структура таблицы `users`
 --
@@ -58,8 +57,13 @@ CREATE TABLE `users` (
   `id` int NOT NULL,
   `username` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `public_key` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Индексы сохранённых таблиц
+--
 
 --
 -- Индексы таблицы `dialogs`
@@ -93,19 +97,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `dialogs`
 --
 ALTER TABLE `dialogs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
