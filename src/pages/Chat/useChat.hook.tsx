@@ -6,6 +6,7 @@ import type {
   ServerWSData,
   User,
 } from "../../../types/types";
+import { cryptoService } from "../../services/crypto.service";
 
 type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
@@ -106,11 +107,68 @@ export function useChat(handlers: Handlers) {
   }, []);
 
   return {
-    sendMessage: (text: string, dialog_id?: number) =>
-      send({ type: "client_chat", messageText: text, dialog_id }),
+    sendMessage: async (
+      text: string,
+      dialog_id?: number,
+      recipientPublicKey?: string,
+      senderPublicKey?: string,
+    ) => {
+      if (!dialog_id || !recipientPublicKey || !senderPublicKey) {
+        send({ type: "client_chat", messageText: text });
+        return;
+      }
 
-    editMessage: (id: number, text: string) =>
-      send({ type: "client_editMessage", id, text }),
+      const encryptedForRecipient = await cryptoService.encryptWithPublicKey(
+        text,
+        recipientPublicKey,
+      );
+      const encryptedForSender = await cryptoService.encryptWithPublicKey(
+        text,
+        senderPublicKey,
+      );
+
+      const payload = JSON.stringify({
+        v: 1,
+        for_recipient: encryptedForRecipient,
+        for_sender: encryptedForSender,
+      });
+
+      send({
+        type: "client_chat",
+        messageText: payload,
+        dialog_id,
+      });
+    },
+
+    editMessage: async (
+      id: number,
+      text: string,
+      dialog_id?: number,
+      recipientPublicKey?: string,
+      senderPublicKey?: string,
+    ) => {
+      if (!dialog_id || !recipientPublicKey || !senderPublicKey) {
+        send({ type: "client_editMessage", id, text });
+        return;
+      }
+
+      const encryptedForRecipient = await cryptoService.encryptWithPublicKey(
+        text,
+        recipientPublicKey,
+      );
+      const encryptedForSender = await cryptoService.encryptWithPublicKey(
+        text,
+        senderPublicKey,
+      );
+
+      const payload = JSON.stringify({
+        v: 1,
+        for_recipient: encryptedForRecipient,
+        for_sender: encryptedForSender,
+      });
+
+      send({ type: "client_editMessage", id, text: payload });
+    },
 
     deleteMessage: (id: number) => send({ type: "client_deleteMessage", id }),
 

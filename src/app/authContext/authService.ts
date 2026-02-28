@@ -1,22 +1,50 @@
+import { cryptoService } from "../../services/crypto.service";
+
 type User = { username: string } | null;
-type Listener = (user: User, loggedIn: boolean) => void;
+type Listener = (
+  user: User,
+  loggedIn: boolean,
+  publicKey: string | null,
+  privateKey: string | null,
+) => void;
+type LocalUserKeys = {
+  publicKey: string;
+  privateKey: string;
+};
 
 class AuthService {
   private user: User = null;
   private loggedIn = false;
+  private publicKey: string | null = null;
+  private privateKey: string | null = null;
   private listeners = new Set<Listener>();
   private checkingAuth = false;
 
   subscribe(listener: Listener) {
     this.listeners.add(listener);
-    listener(this.user, this.loggedIn);
+    listener(this.user, this.loggedIn, this.publicKey, this.privateKey);
     return () => {
       this.listeners.delete(listener);
     };
   }
 
   private notify() {
-    this.listeners.forEach((l) => l(this.user, this.loggedIn));
+    this.listeners.forEach((l) =>
+      l(this.user, this.loggedIn, this.publicKey, this.privateKey),
+    );
+  }
+
+  saveLocalKeys(username: string, publicKey: string, privateKey: string) {
+    const keyName = "userKeys_" + username;
+    const newKeys: LocalUserKeys = { publicKey, privateKey };
+    localStorage.setItem(keyName, JSON.stringify(newKeys));
+  }
+
+  loadLocalKeys(username: string) {
+    const keyName = "userKeys_" + username;
+    const keys = localStorage.getItem(keyName);
+    if (!keys) return null;
+    return JSON.parse(keys) as LocalUserKeys;
   }
 
   async login(username: string, password: string) {
@@ -33,19 +61,27 @@ class AuthService {
     const data: { username: string } = await res.json();
     this.user = { username: data.username };
     this.loggedIn = true;
+    const keys = this.loadLocalKeys(data.username);
+    if (keys) {
+      this.publicKey = keys.publicKey;
+      this.privateKey = keys.privateKey;
+    }
     this.notify();
   }
 
   async register(username: string, password: string) {
+    const { publicKey, privateKey } = await cryptoService.generateKeyPair();
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, publicKey }),
     });
     if (!res.ok) {
       const text = await res.text();
       throw new Error(text || "Register error");
     }
+
+    this.saveLocalKeys(username, publicKey, privateKey);
     const data = await res.json();
     return data.username;
   }
@@ -71,10 +107,15 @@ class AuthService {
     try {
       const res = await fetch("/api/me", { credentials: "include" });
       if (!res.ok) throw new Error();
-      const data: { loggedIn: boolean; username?: string } = await res.json();
+      const data: { loggedIn: boolean; username: string } = await res.json();
       if (data.loggedIn && data.username) {
         this.user = { username: data.username };
         this.loggedIn = true;
+        const keys = this.loadLocalKeys(data.username);
+        if (keys) {
+          this.publicKey = keys.publicKey;
+          this.privateKey = keys.privateKey;
+        }
       } else {
         this.user = null;
         this.loggedIn = false;

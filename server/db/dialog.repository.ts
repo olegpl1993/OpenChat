@@ -9,7 +9,8 @@ export const dialogRepository = {
     SELECT 
       d.id AS dialog_id,
       u.id AS user_id,
-      u.username
+      u.username,
+      u.public_key
     FROM dialogs d
     JOIN users u 
       ON u.id = IF(d.user1_id = ?, d.user2_id, d.user1_id)

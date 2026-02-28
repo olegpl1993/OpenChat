@@ -8,7 +8,7 @@ import Messages from "./Messages/Messages";
 import { useChat } from "./useChat.hook";
 
 const Chat = () => {
-  const { userName } = useAuthContext();
+  const { userName, publicKey } = useAuthContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
@@ -148,6 +148,29 @@ const Chat = () => {
     }, []),
   });
 
+  const handleSendMessage = async () => {
+    if (!messageTextInput || !userName) return;
+    if (editedMessage && editedMessage.id) {
+      chat.editMessage(
+        editedMessage.id,
+        messageTextInput,
+        selectedDialog?.dialog_id,
+        selectedDialog?.public_key,
+        publicKey,
+      );
+      cancelEdit();
+    } else {
+      await chat.sendMessage(
+        messageTextInput,
+        selectedDialog?.dialog_id,
+        selectedDialog?.public_key,
+        publicKey,
+      );
+    }
+
+    setMessageTextInput("");
+  };
+
   useEffect(() => {
     getHistoryRef.current = chat.getHistory;
   }, [chat.getHistory]);
@@ -190,9 +213,7 @@ const Chat = () => {
         editedMessage={editedMessage}
         setEditedMessage={setEditedMessage}
         cancelEdit={cancelEdit}
-        editMessage={chat.editMessage}
-        sendMessage={chat.sendMessage}
-        selectedDialog={selectedDialog}
+        handleSendMessage={handleSendMessage}
       />
     </div>
   );

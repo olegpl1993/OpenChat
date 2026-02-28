@@ -1,16 +1,12 @@
 import { useState } from "react";
-import { useAuthContext } from "../../../app/authContext/AuthContext";
 import { authService } from "../../../app/authContext/authService";
 import eyeHideIcon from "../../../assets/eyeHide.svg";
 import eyeShowIcon from "../../../assets/eyeShow.svg";
 import styles from "./Login.module.css";
 
 const Login = () => {
-  const { setKey } = useAuthContext();
-
   const [formUserNameInput, setFormUserNameInput] = useState("");
   const [formPasswordInput, setFormPasswordInput] = useState("");
-  const [formKeyInput, setFormKeyInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -26,8 +22,6 @@ const Login = () => {
     setLoading(true);
     try {
       await authService.login(formUserNameInput, formPasswordInput);
-      setKey(formKeyInput);
-
       setFormUserNameInput("");
       setFormPasswordInput("");
     } catch (err: unknown) {
@@ -96,17 +90,6 @@ const Login = () => {
       <div className={styles.info}>
         {error && <p className={styles.error}>{error}</p>}
       </div>
-
-      <input
-        className={styles.input}
-        placeholder="crypto key"
-        maxLength={15}
-        onChange={(e) => setFormKeyInput(e.target.value)}
-        value={formKeyInput}
-        name="key"
-        type="text"
-        autoComplete="off"
-      />
     </form>
   );
 };

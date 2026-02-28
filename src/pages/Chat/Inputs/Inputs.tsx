@@ -1,8 +1,7 @@
 import { memo } from "react";
-import type { Dialog, MessageType } from "../../../../types/types";
+import type { MessageType } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import messageIcon from "../../../assets/message.svg";
-import { encrypt } from "../utils/encrypt";
 
 import styles from "./Inputs.module.css";
 
@@ -12,9 +11,7 @@ type Props = {
   editedMessage: MessageType | null;
   setEditedMessage: React.Dispatch<React.SetStateAction<MessageType | null>>;
   cancelEdit: () => void;
-  editMessage: (id: number, text: string) => void;
-  sendMessage: (text: string, dialog_id?: number) => void;
-  selectedDialog: Dialog | null;
+  handleSendMessage: () => void;
 };
 
 const Inputs = ({
@@ -22,26 +19,9 @@ const Inputs = ({
   setMessageTextInput,
   editedMessage,
   cancelEdit,
-  editMessage,
-  sendMessage,
-  selectedDialog,
+  handleSendMessage,
 }: Props) => {
-  const { userName, key } = useAuthContext();
-
-  const handleSend = async () => {
-    if (!messageTextInput || !userName) return;
-    const cryptoMessageText = await encrypt(messageTextInput, key);
-    if (!cryptoMessageText) return;
-    if (editedMessage && editedMessage.id) {
-      editMessage(editedMessage.id, messageTextInput);
-      cancelEdit();
-    } else {
-      sendMessage(cryptoMessageText, selectedDialog?.dialog_id);
-    }
-
-    setMessageTextInput("");
-  };
-
+  const { userName } = useAuthContext();
   return (
     <div className={styles.inputs}>
       {editedMessage && (
@@ -69,7 +49,7 @@ const Inputs = ({
                 if (isMobile) return;
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  handleSend();
+                  handleSendMessage();
                 }
               }}
               name="message"
@@ -80,7 +60,7 @@ const Inputs = ({
 
         <button
           className={styles.buttonSend}
-          onClick={() => handleSend()}
+          onClick={() => handleSendMessage()}
           disabled={!messageTextInput || !userName}
         >
           <img src={messageIcon} className={styles.messageIcon} />

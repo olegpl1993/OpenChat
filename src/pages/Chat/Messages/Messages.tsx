@@ -1,10 +1,9 @@
 import { memo, useEffect, useState } from "react";
 import type { Dialog, MessageType, User } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
-import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
-import { decrypt } from "../utils/decrypt";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
+import { buildMessagesRenderList, decryptMessages } from "./Messages.utils";
 import ScrollButton from "./ScrollButton/ScrollButton";
 import UsersPanel from "./UsersPanel/UsersPanel";
 
@@ -45,24 +44,18 @@ const Messages = ({
   handleSelectDialog,
   handleCreateDialog,
 }: Props) => {
-  const { userName, key } = useAuthContext();
+  const { userName, privateKey } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
     MessageType[]
   >([]);
   const messagesRenderList = buildMessagesRenderList(decryptedMessagesState);
 
   useEffect(() => {
-    async function decryptMessages() {
-      const decrypted = await Promise.all(
-        messagesState.map(async (message) => ({
-          ...message,
-          text: await decrypt(message.text, key),
-        })),
-      );
+    (async () => {
+      const decrypted = await decryptMessages(messagesState, privateKey);
       setDecryptedMessagesState(decrypted);
-    }
-    decryptMessages();
-  }, [messagesState, key]);
+    })();
+  }, [messagesState, privateKey]);
 
   // on scroll
   useEffect(() => {

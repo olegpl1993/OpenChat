@@ -10,14 +10,14 @@ const SECRET = process.env.JWT_SECRET!;
 const TOKEN_AGE = 7 * 24 * 60 * 60;
 
 export class AuthService {
-  async register({ username, password }: AuthBody) {
+  async register({ username, password, publicKey }: AuthBody) {
     if (!username || !password) throw new Error("Missing fields");
 
     const existing = await userRepository.findByUsername(username);
     if (existing) throw new Error("User exists");
 
     const hash = await bcrypt.hash(password, 10);
-    await userRepository.create(username, hash);
+    await userRepository.create(username, hash, publicKey);
 
     return { username };
   }
@@ -32,7 +32,11 @@ export class AuthService {
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) throw new Error("Invalid credentials");
 
-    const payload = { userId: user.id, username: user.username };
+    const payload = {
+      userId: user.id,
+      username: user.username,
+      publicKey: user.public_key,
+    };
 
     const token = jwt.sign(payload, SECRET, { expiresIn: "7d" });
 
@@ -40,7 +44,11 @@ export class AuthService {
   }
 
   verifyToken(token: string) {
-    return jwt.verify(token, SECRET) as { userId: number; username: string };
+    return jwt.verify(token, SECRET) as {
+      userId: number;
+      username: string;
+      publicKey: string;
+    };
   }
 
   buildAuthCookie(token: string) {

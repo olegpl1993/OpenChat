@@ -10,10 +10,10 @@ export const userRepository = {
     return rows[0] ?? null;
   },
 
-  async create(username: string, passwordHash: string) {
+  async create(username: string, passwordHash: string, publicKey: string) {
     await db.query(
-      "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-      [username, passwordHash],
+      "INSERT INTO users (username, password_hash, public_key) VALUES (?, ?, ?)",
+      [username, passwordHash, publicKey],
     );
   },
 };
