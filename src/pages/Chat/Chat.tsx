@@ -8,7 +8,7 @@ import Messages from "./Messages/Messages";
 import { useChat } from "./useChat.hook";
 
 const Chat = () => {
-  const { userName } = useAuthContext();
+  const { userName, publicKey } = useAuthContext();
   const [messagesState, setMessagesState] = useState<MessageType[]>([]);
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
@@ -149,7 +149,12 @@ const Chat = () => {
   });
 
   const handleSendMessage = async (message: string, dialog_id?: number) => {
-    await chat.sendMessage(message, dialog_id, selectedDialog?.public_key);
+    await chat.sendMessage(
+      message,
+      dialog_id,
+      selectedDialog?.public_key,
+      publicKey,
+    );
   };
 
   useEffect(() => {

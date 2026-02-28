@@ -110,17 +110,34 @@ export function useChat(handlers: Handlers) {
     sendMessage: async (
       text: string,
       dialog_id?: number,
-      public_key?: string,
+      recipientPublicKey?: string,
+      senderPublicKey?: string,
     ) => {
-      if (dialog_id && public_key) {
-        const cryptedText = await cryptoService.encryptWithPublicKey(
-          text,
-          public_key,
-        );
-        send({ type: "client_chat", messageText: cryptedText, dialog_id });
-      } else {
-        send({ type: "client_chat", messageText: text, dialog_id });
+      if (!dialog_id || !recipientPublicKey || !senderPublicKey) {
+        send({ type: "client_chat", messageText: text });
+        return;
       }
+
+      const encryptedForRecipient = await cryptoService.encryptWithPublicKey(
+        text,
+        recipientPublicKey,
+      );
+      const encryptedForSender = await cryptoService.encryptWithPublicKey(
+        text,
+        senderPublicKey,
+      );
+
+      const payload = JSON.stringify({
+        v: 1,
+        for_recipient: encryptedForRecipient,
+        for_sender: encryptedForSender,
+      });
+
+      send({
+        type: "client_chat",
+        messageText: payload,
+        dialog_id,
+      });
     },
 
     editMessage: (id: number, text: string) =>

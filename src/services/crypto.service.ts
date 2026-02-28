@@ -79,41 +79,36 @@ class CryptoService {
     encryptedText: string,
     privateKeyBase64: string,
   ): Promise<string> {
-    try {
-      const payload = JSON.parse(encryptedText);
+    const payload = JSON.parse(encryptedText);
+    const rsaPrivateKey = await crypto.subtle.importKey(
+      "pkcs8",
+      this.base64ToAb(privateKeyBase64),
+      { name: "RSA-OAEP", hash: "SHA-256" },
+      false,
+      ["decrypt"],
+    );
 
-      const rsaPrivateKey = await crypto.subtle.importKey(
-        "pkcs8",
-        this.base64ToAb(privateKeyBase64),
-        { name: "RSA-OAEP", hash: "SHA-256" },
-        false,
-        ["decrypt"],
-      );
+    const rawAesKey = await crypto.subtle.decrypt(
+      { name: "RSA-OAEP" },
+      rsaPrivateKey,
+      this.base64ToAb(payload.k),
+    );
 
-      const rawAesKey = await crypto.subtle.decrypt(
-        { name: "RSA-OAEP" },
-        rsaPrivateKey,
-        this.base64ToAb(payload.k),
-      );
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      rawAesKey,
+      { name: "AES-GCM" },
+      false,
+      ["decrypt"],
+    );
 
-      const aesKey = await crypto.subtle.importKey(
-        "raw",
-        rawAesKey,
-        { name: "AES-GCM" },
-        false,
-        ["decrypt"],
-      );
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: this.base64ToAb(payload.i) },
+      aesKey,
+      this.base64ToAb(payload.d),
+    );
 
-      const decrypted = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: this.base64ToAb(payload.i) },
-        aesKey,
-        this.base64ToAb(payload.d),
-      );
-
-      return new TextDecoder().decode(decrypted);
-    } catch {
-      return encryptedText;
-    }
+    return new TextDecoder().decode(decrypted);
   }
 }
 
