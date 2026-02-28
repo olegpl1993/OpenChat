@@ -57,7 +57,13 @@ export async function authRoutes(
     try {
       const payload = authService.verifyToken(token);
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ loggedIn: true, username: payload.username }));
+      res.end(
+        JSON.stringify({
+          loggedIn: true,
+          username: payload.username,
+          userId: payload.userId,
+        }),
+      );
       return true;
     } catch {
       res.writeHead(401, { "Content-Type": "application/json" });

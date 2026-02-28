@@ -135,15 +135,13 @@ class AuthService {
     try {
       const res = await fetch("/api/me", { credentials: "include" });
       if (!res.ok) throw new Error();
-      const data: { loggedIn: boolean; username: string } = await res.json();
-      if (data.loggedIn && data.username) {
+      const data: { loggedIn: boolean; username: string; userId: number } =
+        await res.json();
+      console.log(data);
+      if (data.loggedIn && data.username && data.userId) {
         this.user = { username: data.username };
         this.loggedIn = true;
-        const keys = this.loadLocalKeys(data.username);
-        if (keys) {
-          this.publicKey = keys.publicKey;
-          this.privateKey = keys.privateKey;
-        }
+        await this.ensureKeys(data.username, data.userId);
       } else {
         this.user = null;
         this.loggedIn = false;
