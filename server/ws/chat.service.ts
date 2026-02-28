@@ -5,6 +5,7 @@ type Client = {
   ws: WebSocket;
   userId: number;
   username: string;
+  publicKey: string;
 };
 
 export class ChatService {
@@ -26,7 +27,10 @@ export class ChatService {
     return [...this.clients.values()].find((c) => c.userId === userId) ?? null;
   }
 
-  auth(ws: WebSocket, user: { userId: number; username: string }) {
+  auth(
+    ws: WebSocket,
+    user: { userId: number; username: string; publicKey: string },
+  ) {
     const existing = this.clients.get(user.username);
     if (existing && existing.ws !== ws) {
       existing.ws.close(4001, "SESSION_REPLACED");
@@ -35,6 +39,7 @@ export class ChatService {
       ws,
       userId: user.userId,
       username: user.username,
+      publicKey: user.publicKey,
     });
   }
 

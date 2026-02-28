@@ -6,7 +6,10 @@ import { wsHandlers } from "./ws.handlers";
 export function wsRoutes(wss: WebSocketServer, broadcastUsers: () => void) {
   wss.on(
     "connection",
-    async (ws: WebSocket, user: { userId: number; username: string }) => {
+    async (
+      ws: WebSocket,
+      user: { userId: number; username: string; publicKey: string },
+    ) => {
       chatService.auth(ws, user);
       broadcastUsers();
 

@@ -148,6 +148,10 @@ const Chat = () => {
     }, []),
   });
 
+  const handleSendMessage = async (message: string, dialog_id?: number) => {
+    await chat.sendMessage(message, dialog_id, selectedDialog?.public_key);
+  };
+
   useEffect(() => {
     getHistoryRef.current = chat.getHistory;
   }, [chat.getHistory]);
@@ -191,7 +195,7 @@ const Chat = () => {
         setEditedMessage={setEditedMessage}
         cancelEdit={cancelEdit}
         editMessage={chat.editMessage}
-        sendMessage={chat.sendMessage}
+        handleSendMessage={handleSendMessage}
         selectedDialog={selectedDialog}
       />
     </div>

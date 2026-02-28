@@ -2,7 +2,6 @@ import { memo } from "react";
 import type { Dialog, MessageType } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
 import messageIcon from "../../../assets/message.svg";
-import { encrypt } from "../utils/encrypt";
 
 import styles from "./Inputs.module.css";
 
@@ -13,7 +12,7 @@ type Props = {
   setEditedMessage: React.Dispatch<React.SetStateAction<MessageType | null>>;
   cancelEdit: () => void;
   editMessage: (id: number, text: string) => void;
-  sendMessage: (text: string, dialog_id?: number) => void;
+  handleSendMessage: (text: string, dialog_id?: number) => void;
   selectedDialog: Dialog | null;
 };
 
@@ -23,20 +22,18 @@ const Inputs = ({
   editedMessage,
   cancelEdit,
   editMessage,
-  sendMessage,
+  handleSendMessage,
   selectedDialog,
 }: Props) => {
-  const { userName, key } = useAuthContext();
+  const { userName } = useAuthContext();
 
   const handleSend = async () => {
     if (!messageTextInput || !userName) return;
-    const cryptoMessageText = await encrypt(messageTextInput, key);
-    if (!cryptoMessageText) return;
     if (editedMessage && editedMessage.id) {
       editMessage(editedMessage.id, messageTextInput);
       cancelEdit();
     } else {
-      sendMessage(cryptoMessageText, selectedDialog?.dialog_id);
+      handleSendMessage(messageTextInput, selectedDialog?.dialog_id);
     }
 
     setMessageTextInput("");

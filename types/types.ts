@@ -15,6 +15,7 @@ export interface DBrequestType extends RowDataPacket, MessageType {}
 export type AuthBody = {
   username: string;
   password: string;
+  publicKey: string;
 };
 
 export type DialogDBRow = RowDataPacket & {
@@ -29,7 +30,12 @@ export type UserRow = RowDataPacket & {
   password_hash: string;
 };
 
-export type Dialog = { dialog_id: number; user_id: number; username: string };
+export type Dialog = {
+  dialog_id: number;
+  user_id: number;
+  username: string;
+  public_key: string;
+};
 
 export type User = {
   userId: number;

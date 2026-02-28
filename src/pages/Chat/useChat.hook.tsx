@@ -6,6 +6,7 @@ import type {
   ServerWSData,
   User,
 } from "../../../types/types";
+import { cryptoService } from "../../services/crypto.service";
 
 type Handlers = {
   onHistory: (messages: MessageType[], initial?: boolean) => void;
@@ -106,8 +107,21 @@ export function useChat(handlers: Handlers) {
   }, []);
 
   return {
-    sendMessage: (text: string, dialog_id?: number) =>
-      send({ type: "client_chat", messageText: text, dialog_id }),
+    sendMessage: async (
+      text: string,
+      dialog_id?: number,
+      public_key?: string,
+    ) => {
+      if (dialog_id && public_key) {
+        const cryptedText = await cryptoService.encryptWithPublicKey(
+          text,
+          public_key,
+        );
+        send({ type: "client_chat", messageText: cryptedText, dialog_id });
+      } else {
+        send({ type: "client_chat", messageText: text, dialog_id });
+      }
+    },
 
     editMessage: (id: number, text: string) =>
       send({ type: "client_editMessage", id, text }),

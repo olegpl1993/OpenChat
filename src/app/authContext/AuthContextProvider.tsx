@@ -9,22 +9,22 @@ interface Props {
 export const AuthContextProvider = ({ children }: Props) => {
   const [userName, setUserName] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [key, setKey] = useState(() => localStorage.getItem("key") ?? "");
+  const [privateKey, setPrivateKey] = useState("");
+  const [publicKey, setPublicKey] = useState("");
 
   useEffect(() => {
-    const unsub = authService.subscribe((user, loggedIn) => {
-      setUserName(user?.username ?? "");
-      setLoggedIn(loggedIn);
-    });
+    const unsub = authService.subscribe(
+      (user, loggedIn, publicKey, privateKey) => {
+        setUserName(user?.username ?? "");
+        setLoggedIn(loggedIn);
+        setPublicKey(publicKey ?? "");
+        setPrivateKey(privateKey ?? "");
+      },
+    );
 
     authService.checkAuth();
     return unsub;
   }, []);
-
-  useEffect(() => {
-    if (key) localStorage.setItem("key", key);
-    else localStorage.removeItem("key");
-  }, [key]);
 
   return (
     <AuthContext.Provider
@@ -33,8 +33,10 @@ export const AuthContextProvider = ({ children }: Props) => {
         setUserName,
         loggedIn,
         setLoggedIn,
-        key,
-        setKey,
+        publicKey,
+        setPublicKey,
+        privateKey,
+        setPrivateKey,
       }}
     >
       {children}

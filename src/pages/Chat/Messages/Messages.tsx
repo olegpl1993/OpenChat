@@ -1,8 +1,8 @@
 import { memo, useEffect, useState } from "react";
 import type { Dialog, MessageType, User } from "../../../../types/types";
 import { useAuthContext } from "../../../app/authContext/AuthContext";
+import { cryptoService } from "../../../services/crypto.service";
 import { buildMessagesRenderList } from "../utils/buildMessagesRenderList";
-import { decrypt } from "../utils/decrypt";
 import Message from "./Message/Message";
 import styles from "./Messages.module.css";
 import ScrollButton from "./ScrollButton/ScrollButton";
@@ -45,7 +45,7 @@ const Messages = ({
   handleSelectDialog,
   handleCreateDialog,
 }: Props) => {
-  const { userName, key } = useAuthContext();
+  const { userName, privateKey } = useAuthContext();
   const [decryptedMessagesState, setDecryptedMessagesState] = useState<
     MessageType[]
   >([]);
@@ -53,16 +53,20 @@ const Messages = ({
 
   useEffect(() => {
     async function decryptMessages() {
+      console.log(messagesState);
       const decrypted = await Promise.all(
         messagesState.map(async (message) => ({
           ...message,
-          text: await decrypt(message.text, key),
+          text: await cryptoService.decryptWithPrivateKey(
+            message.text,
+            privateKey,
+          ),
         })),
       );
       setDecryptedMessagesState(decrypted);
     }
     decryptMessages();
-  }, [messagesState, key]);
+  }, [messagesState, privateKey]);
 
   // on scroll
   useEffect(() => {
