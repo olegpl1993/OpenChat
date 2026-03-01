@@ -137,7 +137,6 @@ class AuthService {
       if (!res.ok) throw new Error();
       const data: { loggedIn: boolean; username: string; userId: number } =
         await res.json();
-      console.log(data);
       if (data.loggedIn && data.username && data.userId) {
         this.user = { username: data.username };
         this.loggedIn = true;
