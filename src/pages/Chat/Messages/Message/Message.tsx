@@ -1,5 +1,8 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import type { MessageType } from "../../../../../types/types";
+import closeIcon from "../../../../assets/close.svg";
+import deleteIcon from "../../../../assets/delete.svg";
+import downArrowIcon from "../../../../assets/downArrow.svg";
 import editIcon from "../../../../assets/edit.svg";
 import styles from "./Message.module.css";
 
@@ -11,6 +14,8 @@ interface Props {
 }
 
 const Message = ({ message, currentUser, startEdit, deleteMessage }: Props) => {
+  const [open, setOpen] = useState(false);
+
   const isUser = message.user === currentUser;
   const roleClass = isUser ? styles.user : styles.other;
   const date =
@@ -25,17 +30,43 @@ const Message = ({ message, currentUser, startEdit, deleteMessage }: Props) => {
       <div className={styles.messageHeader}>
         <p className={`${styles.userName} ${roleClass}`}>{message.user}</p>
         {isUser && (
-          <div className={styles.buttons}>
+          <button
+            className={`${styles.buttonOpen}`}
+            onClick={() => setOpen(true)}
+          >
+            <img src={downArrowIcon} className={styles.downArrowIcon} />
+          </button>
+        )}
+        {open && (
+          <div className={styles.menu}>
             <button
-              className={`${styles.editButton}`}
-              onClick={() => startEdit(message)}
+              className={`${styles.button} ${styles.buttonClose}`}
+              onClick={() => setOpen(false)}
             >
-              <img src={editIcon} className={styles.editIcon} />
+              <img src={closeIcon} className={styles.closeIcon} />
             </button>
-            <button
-              className={`${styles.deletButton}`}
-              onClick={() => message.id && deleteMessage(message.id)}
-            />
+            <div className={styles.buttonBox}>
+              <button
+                className={`${styles.button}`}
+                onClick={() => {
+                  startEdit(message);
+                  setOpen(false);
+                }}
+              >
+                <img src={editIcon} className={styles.editIcon} />
+                <p>Edit</p>
+              </button>
+              <button
+                className={`${styles.button}`}
+                onClick={() => {
+                  deleteMessage(message.id);
+                  setOpen(false);
+                }}
+              >
+                <img src={deleteIcon} className={styles.deleteIcon} />
+                <p>Delete</p>
+              </button>
+            </div>
           </div>
         )}
       </div>
