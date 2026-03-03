@@ -1,5 +1,5 @@
 import http from "http";
-import { AuthBody, authService } from "./auth.service";
+import { LoginDTO, RegisterDTO, authService } from "./auth.service";
 import { parseBody } from "./parseBody.util";
 
 export async function authRoutes(
@@ -8,7 +8,7 @@ export async function authRoutes(
 ): Promise<boolean> {
   if (req.method === "POST" && req.url === "/api/register") {
     try {
-      const body = await parseBody<AuthBody>(req);
+      const body = await parseBody<RegisterDTO>(req);
       const result = await authService.register(body);
 
       res.writeHead(201, { "Content-Type": "application/json" });
@@ -25,7 +25,7 @@ export async function authRoutes(
 
   if (req.method === "POST" && req.url === "/api/login") {
     try {
-      const body = await parseBody<AuthBody>(req);
+      const body = await parseBody<LoginDTO>(req);
       const { user, token } = await authService.login(body);
 
       res.writeHead(200, {
@@ -59,8 +59,8 @@ export async function authRoutes(
       res.end(
         JSON.stringify({
           loggedIn: true,
-          username: payload.username,
-          userId: payload.userId,
+          username: payload?.username,
+          userId: payload?.userId,
         }),
       );
       return true;
