@@ -5,31 +5,32 @@ import { db } from "./db";
 export type MessageDBRow = RowDataPacket & MessageType;
 
 export const messageRepository = {
-async create(
-  user: { userId: number; username: string },
-  text: string,
-  dialog_id?: number,
-): Promise<MessageType> {
-  const [result] = await db.query<ResultSetHeader>(
-    `INSERT INTO messages (user, text, user_id, dialog_id)
+  async create(
+    user: { userId: number; username: string },
+    text: string,
+    dialog_id?: number,
+  ): Promise<MessageType> {
+    const [result] = await db.query<ResultSetHeader>(
+      `INSERT INTO messages (user, text, user_id, dialog_id)
      VALUES (?, ?, ?, ?)`,
-    [user.username, text, user.userId, dialog_id ?? null],
-  );
+      [user.username, text, user.userId, dialog_id ?? null],
+    );
 
-  const message = await messageRepository.findById(result.insertId);
+    const message = await messageRepository.findById(result.insertId);
 
-  if (!message) {
-    throw new Error("Failed to create message");
-  }
+    if (!message) {
+      throw new Error("Failed to create message");
+    }
 
-  return message;
-},
+    return message;
+  },
 
   async findById(id: number): Promise<MessageType | null> {
     const [rows] = await db.query<MessageDBRow[]>(
       "SELECT * FROM messages WHERE id = ?",
       [id],
     );
+
     return rows[0] ?? null;
   },
 

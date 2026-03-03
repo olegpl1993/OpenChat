@@ -44,8 +44,13 @@ export const dialogRepository = {
     return rows[0] ?? null;
   },
 
-  async deleteById(id: number): Promise<void> {
-    await db.query<ResultSetHeader>("DELETE FROM dialogs WHERE id = ?", [id]);
+  async deleteById(id: number): Promise<boolean> {
+    const [result] = await db.query<ResultSetHeader>(
+      "DELETE FROM dialogs WHERE id = ?",
+      [id],
+    );
+
+    return result.affectedRows > 0;
   },
 
   async findDialogsByUserId(userId: number): Promise<DialogListItem[]> {
