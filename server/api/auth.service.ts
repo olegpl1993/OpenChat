@@ -1,8 +1,13 @@
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import type { AuthBody } from "../../types/types";
 import { userRepository } from "../db/user.repository";
+
+export type AuthBody = {
+  username: string;
+  password: string;
+  publicKey: string;
+};
 
 dotenv.config();
 

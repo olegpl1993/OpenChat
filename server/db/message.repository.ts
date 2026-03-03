@@ -1,6 +1,8 @@
-import { ResultSetHeader } from "mysql2";
-import { DBrequestType, MessageType } from "../../types/types";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { MessageType } from "../../types/types";
 import { db } from "./db";
+
+export interface DBrequestType extends RowDataPacket, MessageType {}
 
 export const messageRepository = {
   async saveMessage(

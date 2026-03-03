@@ -1,6 +1,5 @@
 import http from "http";
-import type { AuthBody } from "../../types/types";
-import { authService } from "./auth.service";
+import { AuthBody, authService } from "./auth.service";
 import { parseBody } from "./parseBody.util";
 
 export async function authRoutes(

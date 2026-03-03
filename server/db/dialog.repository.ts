@@ -1,6 +1,12 @@
-import { ResultSetHeader } from "mysql2";
-import { DialogDBRow } from "../../types/types";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { db } from "./db";
+
+export type DialogDBRow = RowDataPacket & {
+  id: number;
+  user1_id: number;
+  user2_id: number;
+  created_at: string;
+};
 
 export const dialogRepository = {
   async getUserDialogs(userId: number) {
