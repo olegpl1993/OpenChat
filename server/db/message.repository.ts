@@ -2,69 +2,89 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { MessageType } from "../../types/types";
 import { db } from "./db";
 
-export interface DBrequestType extends RowDataPacket, MessageType {}
+export type MessageDBRow = RowDataPacket & MessageType;
 
 export const messageRepository = {
-  async saveMessage(
-    user: { userId: number; username: string },
-    text: string,
-    dialog_id?: number,
-  ): Promise<number> {
-    const [result] = await db.query<ResultSetHeader>(
-      `INSERT INTO messages (user, text, user_id, dialog_id)
+async create(
+  user: { userId: number; username: string },
+  text: string,
+  dialog_id?: number,
+): Promise<MessageType> {
+  const [result] = await db.query<ResultSetHeader>(
+    `INSERT INTO messages (user, text, user_id, dialog_id)
      VALUES (?, ?, ?, ?)`,
-      [user.username, text, user.userId, dialog_id ?? null],
-    );
+    [user.username, text, user.userId, dialog_id ?? null],
+  );
 
-    return result.insertId;
-  },
+  const message = await messageRepository.findById(result.insertId);
 
-  async getMessageById(id: number): Promise<MessageType | null> {
-    const [rows] = await db.query<DBrequestType[]>(
+  if (!message) {
+    throw new Error("Failed to create message");
+  }
+
+  return message;
+},
+
+  async findById(id: number): Promise<MessageType | null> {
+    const [rows] = await db.query<MessageDBRow[]>(
       "SELECT * FROM messages WHERE id = ?",
       [id],
     );
     return rows[0] ?? null;
   },
 
-  async delete(id: number): Promise<void> {
-    await db.query("DELETE FROM messages WHERE id = ?", [id]);
+  async deleteById(id: number): Promise<boolean> {
+    const [result] = await db.query<ResultSetHeader>(
+      "DELETE FROM messages WHERE id = ?",
+      [id],
+    );
+
+    return result.affectedRows > 0;
   },
 
-  async deleteByDialogId(dialog_id: number): Promise<void> {
-    await db.query("DELETE FROM messages WHERE dialog_id = ?", [dialog_id]);
+  async deleteByDialogId(dialogId: number): Promise<number> {
+    const [result] = await db.query<ResultSetHeader>(
+      "DELETE FROM messages WHERE dialog_id = ?",
+      [dialogId],
+    );
+
+    return result.affectedRows;
   },
 
-  async update(id: number, text: string) {
-    await db.query("UPDATE messages SET text = ?, edited = 1 WHERE id = ?", [
-      text,
-      id,
-    ]);
+  async updateText(id: number, text: string): Promise<boolean> {
+    const [result] = await db.query<ResultSetHeader>(
+      "UPDATE messages SET text = ?, edited = 1 WHERE id = ?",
+      [text, id],
+    );
+
+    return result.affectedRows > 0;
   },
 
-  async getHistory(
-    beforeId?: number,
-    search?: string,
-    dialog_id?: number,
-    limit = 20,
-  ): Promise<MessageType[]> {
+  async findHistory(params: {
+    beforeId?: number;
+    search?: string;
+    dialogId?: number;
+    limit?: number;
+  }): Promise<MessageType[]> {
+    const { beforeId, search, dialogId, limit = 20 } = params;
+
     let sql = "SELECT * FROM messages";
     const conditions: string[] = [];
-    const params: (number | string)[] = [];
+    const queryParams: (number | string)[] = [];
 
     if (beforeId !== undefined) {
       conditions.push("id < ?");
-      params.push(beforeId);
+      queryParams.push(beforeId);
     }
 
     if (search) {
       conditions.push("user = ?");
-      params.push(search);
+      queryParams.push(search);
     }
 
-    if (dialog_id !== undefined) {
+    if (dialogId !== undefined) {
       conditions.push("dialog_id = ?");
-      params.push(dialog_id);
+      queryParams.push(dialogId);
     } else {
       conditions.push("dialog_id IS NULL");
     }
@@ -74,9 +94,10 @@ export const messageRepository = {
     }
 
     sql += " ORDER BY id DESC LIMIT ?";
-    params.push(limit);
+    queryParams.push(limit);
 
-    const [rows] = await db.query<DBrequestType[]>(sql, params);
+    const [rows] = await db.query<MessageDBRow[]>(sql, queryParams);
+
     return rows.reverse();
   },
 };

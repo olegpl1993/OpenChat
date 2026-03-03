@@ -5,9 +5,7 @@ type ListItem =
   | { type: "date"; date: string }
   | { type: "message"; message: MessageType };
 
-export const buildMessagesRenderList = (
-  messages: MessageType[],
-): ListItem[] => {
+export const buildMessagesRenderList = (messages: MessageType[]): ListItem[] => {
   const items: ListItem[] = [];
   let lastDate = "";
   for (const msg of messages) {

@@ -57,35 +57,38 @@ export class ChatService {
   }
 
   async getInitialHistory(dialog_id?: number) {
-    return messageRepository.getHistory(dialog_id);
+    return messageRepository.findHistory({ dialogId: dialog_id });
   }
 
   async getHistory(beforeId?: number, search?: string, dialog_id?: number) {
-    return messageRepository.getHistory(beforeId, search, dialog_id);
+    return messageRepository.findHistory({
+      beforeId,
+      search,
+      dialogId: dialog_id,
+    });
   }
 
   async saveMessage(ws: WebSocket, messageText: string, dialog_id?: number) {
     const user = this.getUser(ws);
     if (!user) throw new Error("Unauthorized");
     this.checkSpam(user.username);
-    const id = await messageRepository.saveMessage(
+    const message = await messageRepository.create(
       user,
       messageText,
       dialog_id,
     );
-    const savedMessage = await messageRepository.getMessageById(id);
-    if (!savedMessage) throw new Error("Message not found after insert");
-    return savedMessage;
+    if (!message) throw new Error("Message not found after insert");
+    return message;
   }
 
   async deleteMessage(ws: WebSocket, id: number) {
     const user = this.getUser(ws);
     if (!user) throw new Error("Unauthorized");
-    const message = await messageRepository.getMessageById(id);
+    const message = await messageRepository.findById(id);
     if (!message) throw new Error("Message not found");
     if (message.user !== user.username)
       throw new Error("You can delete only your own messages");
-    await messageRepository.delete(id);
+    await messageRepository.deleteById(id);
   }
 
   async deleteMessagesByDialogId(dialog_id: number) {
@@ -96,14 +99,14 @@ export class ChatService {
     const user = this.getUser(ws);
     if (!user) throw new Error("Unauthorized");
 
-    const message = await messageRepository.getMessageById(id);
+    const message = await messageRepository.findById(id);
     if (!message) throw new Error("Message not found");
 
     if (message.user !== user.username) {
       throw new Error("You can edit only your own messages");
     }
 
-    await messageRepository.update(id, text);
+    await messageRepository.updateText(id, text);
 
     return {
       ...message,

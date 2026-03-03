@@ -1,11 +1,11 @@
-export interface MessageType {
+export type MessageType = {
   id: number;
+  dialog_id: number | null;
+  user_id: number;
   user: string;
   text: string;
   created_at: string;
   edited: boolean;
-  user_id: number;
-  dialog_id: number | null;
 }
 
 export type Dialog = {
