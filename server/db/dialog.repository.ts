@@ -1,10 +1,60 @@
-import { ResultSetHeader } from "mysql2";
-import { DialogDBRow } from "../../types/types";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { db } from "./db";
 
+export interface Dialog {
+  id: number;
+  user1_id: number;
+  user2_id: number;
+  created_at: string;
+}
+
+export type DialogDBRow = RowDataPacket & Dialog;
+
+export interface DialogListItem {
+  dialog_id: number;
+  user_id: number;
+  username: string;
+  public_key: string;
+}
+
+export type DialogListItemRow = RowDataPacket & DialogListItem;
+
 export const dialogRepository = {
-  async getUserDialogs(userId: number) {
-    const [rows] = await db.query<[]>(
+  async create(user1Id: number, user2Id: number): Promise<Dialog> {
+    const [result] = await db.query<ResultSetHeader>(
+      "INSERT INTO dialogs (user1_id, user2_id) VALUES (?, ?)",
+      [user1Id, user2Id],
+    );
+
+    const dialog = await dialogRepository.findById(result.insertId);
+
+    if (!dialog) {
+      throw new Error("Failed to create dialog");
+    }
+
+    return dialog;
+  },
+
+  async findById(id: number): Promise<Dialog | null> {
+    const [rows] = await db.query<DialogDBRow[]>(
+      "SELECT * FROM dialogs WHERE id = ?",
+      [id],
+    );
+
+    return rows[0] ?? null;
+  },
+
+  async deleteById(id: number): Promise<boolean> {
+    const [result] = await db.query<ResultSetHeader>(
+      "DELETE FROM dialogs WHERE id = ?",
+      [id],
+    );
+
+    return result.affectedRows > 0;
+  },
+
+  async findDialogsByUserId(userId: number): Promise<DialogListItem[]> {
+    const [rows] = await db.query<DialogListItemRow[]>(
       `
     SELECT 
       d.id AS dialog_id,
@@ -22,33 +72,10 @@ export const dialogRepository = {
     return rows;
   },
 
-  async getDialogById(id: number) {
-    const [rows] = await db.query<DialogDBRow[]>(
-      "SELECT * FROM dialogs WHERE id = ?",
-      [id],
-    );
-
-    return rows[0] ?? null;
-  },
-
-  async createDialog(user1Id: number, user2Id: number) {
-    const [result] = await db.query<ResultSetHeader>(
-      "INSERT INTO dialogs (user1_id, user2_id) VALUES (?, ?)",
-      [user1Id, user2Id],
-    );
-
-    return {
-      id: result.insertId,
-      user1_id: user1Id,
-      user2_id: user2Id,
-    };
-  },
-
-  async deleteDialog(id: number) {
-    await db.query("DELETE FROM dialogs WHERE id = ?", [id]);
-  },
-
-  async findDialogBetweenUsers(user1Id: number, user2Id: number) {
+  async findDialogBetweenUsers(
+    user1Id: number,
+    user2Id: number,
+  ): Promise<Dialog | null> {
     const [rows] = await db.query<DialogDBRow[]>(
       `
     SELECT * FROM dialogs

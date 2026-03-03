@@ -1,29 +1,12 @@
-import type { RowDataPacket } from "mysql2";
-
-export interface MessageType {
+export type MessageType = {
   id: number;
+  dialog_id: number | null;
+  user_id: number;
   user: string;
   text: string;
   created_at: string;
   edited: boolean;
-  user_id: number;
-  dialog_id: number | null;
 }
-
-export interface DBrequestType extends RowDataPacket, MessageType {}
-
-export type AuthBody = {
-  username: string;
-  password: string;
-  publicKey: string;
-};
-
-export type DialogDBRow = RowDataPacket & {
-  id: number;
-  user1_id: number;
-  user2_id: number;
-  created_at: string;
-};
 
 export type Dialog = {
   dialog_id: number;

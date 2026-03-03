@@ -1,8 +1,11 @@
+import dotenv from "dotenv";
 import fs from "fs";
 import http from "http";
 import path from "path";
 import { authRoutes } from "./api/auth.routes";
 import { wsServer } from "./ws/wsServer";
+
+dotenv.config();
 
 const __dirname = path.dirname(process.argv[1]);
 export const PORT = process.env.PORT || 4000;
